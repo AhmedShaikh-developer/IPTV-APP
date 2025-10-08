@@ -1,0 +1,24 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>main.qml</file>
+    <file>Welcome.qml</file>
+    <file>SignIn.qml</file>
+    <file>SignUp.qml</file>
+    <file>VerifyEmail.qml</file>
+    <file>PasswordReset.qml</file>
+    <file>PairByCode.qml</file>
+    <file>Plans.qml</file>
+    <file>ProfilePicker.qml</file>
+    <file>ProfileManager.qml</file>
+    <file>PinPad.qml</file>
+    <file>ParentalSettings.qml</file>
+    <file>SplashScreen.qml</file>
+    <file>UpdateRequired.qml</file>
+    <file>OfflineScreen.qml</file>
+    <file>ErrorFallback.qml</file>
+    <file>StatusCheck.qml</file>
+    <file>ChangelogItem.qml</file>
+    <file>LimitedFeature.qml</file>
+    <file>TroubleshootingStep.qml</file>
+</qresource>
+</RCC>
