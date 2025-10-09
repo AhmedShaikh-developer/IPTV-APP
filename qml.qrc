@@ -31,5 +31,8 @@
     <file>SourceSync.qml</file>
     <file>SourceManager.qml</file>
     <file>MetaProviderSettings.qml</file>
+    <file>Home.qml</file>
+    <file>AppDrawer.qml</file>
+    <file>Notifications.qml</file>
 </qresource>
 </RCC>
