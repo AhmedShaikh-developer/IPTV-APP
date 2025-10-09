@@ -31,8 +31,15 @@
     <file>SourceSync.qml</file>
     <file>SourceManager.qml</file>
     <file>MetaProviderSettings.qml</file>
-    <file>Home.qml</file>
-    <file>AppDrawer.qml</file>
-    <file>Notifications.qml</file>
+           <file>Home.qml</file>
+           <file>AppDrawer.qml</file>
+           <file>Notifications.qml</file>
+           <file>LiveGroups.qml</file>
+           <file>ChannelList.qml</file>
+           <file>ChannelDetails.qml</file>
+           <file>EpgGrid.qml</file>
+           <file>ProgramSheet.qml</file>
+           <file>Reminders.qml</file>
+           <file>CatchupBrowser.qml</file>
 </qresource>
 </RCC>

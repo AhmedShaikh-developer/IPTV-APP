@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     color: "#000000"
     
-    property bool showMiniPlayer: true
+    property bool showMiniPlayer: false
     
     ColumnLayout {
         anchors.fill: parent

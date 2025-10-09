@@ -189,7 +189,7 @@ ApplicationWindow {
     title: "IPTV Pro"
     color: backgroundColor
     
-    property string currentRoute: "/main"
+    property string currentRoute: "/home"
     property bool isOnline: true
     property bool hasValidAuth: false
     property bool requiresUpdate: false
@@ -269,18 +269,19 @@ ApplicationWindow {
                 case "/sources/sync": return 23
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
-                case "/home": return 26
+                case "/home": return 38
+                case "/live/groups": return 38
                 case "/inbox": return 27
-                case "/live": return 28
-                case "/guide": return 29
-                case "/movies": return 30
-                case "/series": return 31
-                case "/catchup": return 32
-                case "/favorites": return 33
-                case "/search": return 34
-                case "/settings": return 35
-                case "/account": return 36
-                case "/main": return 37
+                case "/live": return 38
+                case "/guide": return 38
+                case "/movies": return 38
+                case "/series": return 38
+                case "/catchup": return 38
+                case "/favorites": return 38
+                case "/search": return 38
+                case "/settings": return 38
+                case "/account": return 38
+                case "/main": return 38
                 default: return 0
             }
         }
@@ -607,6 +608,9 @@ ApplicationWindow {
         // Notifications
         Notifications {}
         
+        // Live Groups
+        LiveGroups {}
+        
         // Live TV
         PlaceholderScreen {
             title: "📡 Live TV"
@@ -615,11 +619,7 @@ ApplicationWindow {
         }
         
         // TV Guide
-        PlaceholderScreen {
-            title: "📅 TV Guide"
-            description: "Browse upcoming programs and schedules"
-            icon: "📅"
-        }
+        EpgGrid {}
         
         // Movies
         PlaceholderScreen {
@@ -636,11 +636,7 @@ ApplicationWindow {
         }
         
         // Catch-up
-        PlaceholderScreen {
-            title: "⏮️ Catch-up"
-            description: "Watch previously aired programs"
-            icon: "⏮️"
-        }
+        CatchupBrowser {}
         
         // Favorites
         PlaceholderScreen {
@@ -742,10 +738,10 @@ ApplicationWindow {
                                     onClicked: navigateTo("/home")
                                 }
                                 
-                                NavItem {
-                                    itemText: "📡 Live TV"
-                                    onClicked: navigateTo("/live")
-                                }
+                NavItem {
+                    itemText: "📡 Live TV"
+                    onClicked: navigateTo("/live/groups")
+                }
                                 
                                 NavItem {
                                     itemText: "📅 TV Guide"
@@ -842,129 +838,35 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     color: "#000000"
                     
-                    ColumnLayout {
-                        anchors.centerIn: parent
-                        spacing: 40
-                        
-                        // Hero Logo
-                        Rectangle {
-                            width: 200
-                            height: 200
-                            radius: 100
-                            color: "#141414"
-                            border.color: "#e50914"
-                            border.width: 3
-                            Layout.alignment: Qt.AlignHCenter
-                            
-                            Text {
-                                anchors.centerIn: parent
-                                text: "🎬"
-                                font.pixelSize: 80
-                                color: "#e50914"
+                    StackLayout {
+                        anchors.fill: parent
+                        currentIndex: {
+                            switch(currentRoute) {
+                                case "/home": return 0
+                                case "/live/groups": return 1
+                                case "/guide": return 2
+                                case "/catchup": return 3
+                                default: return 0
                             }
                         }
                         
-                        // Hero Title
-                    Text {
-                            text: "Welcome to IPTV Pro"
-                            font.pixelSize: 48
-                        font.bold: true
-                        color: "#ffffff"
-                        Layout.alignment: Qt.AlignHCenter
+                        // Welcome Screen Component
+                        Welcome {
+                            anchors.fill: parent
+                            anchors.leftMargin: 20
+                            anchors.rightMargin: 20
+                            anchors.topMargin: 20
+                            anchors.bottomMargin: 20
                         }
                         
-                        // Hero Description
-                        Text {
-                            text: "Stream your favorite channels and content with a beautiful, intuitive interface"
-                            font.pixelSize: 16
-                            color: "#564d4d"
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.topMargin: 20
-                            wrapMode: Text.WordWrap
-                            horizontalAlignment: Text.AlignHCenter
-                            Layout.fillWidth: true
-                            Layout.maximumWidth: 500
-                        }
+                        // Live Groups Screen
+                        LiveGroups {}
                         
-                        // Get Started Button
-                        Button {
-                            text: "Get Started"
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.preferredWidth: 200
-                            Layout.preferredHeight: 50
-                            Layout.topMargin: 30
-                            
-                            background: Rectangle {
-                                color: "#e50914"
-                                radius: 8
-                                border.color: "#e50914"
-                                border.width: 2
-                            }
-                            
-                            contentItem: Text {
-                                text: parent.text
-                                color: "white"
-                                font.pixelSize: 18
-                                font.bold: true
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                            
-                            onClicked: navigateTo("/sources/add")
-                        }
+                        // TV Guide Screen
+                        EpgGrid {}
                         
-                        // Quick Links
-                        RowLayout {
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.topMargin: 20
-                            spacing: 30
-                        
-                        Button {
-                                text: "Browse Channels"
-                                Layout.preferredWidth: 150
-                                Layout.preferredHeight: 40
-                                
-                                background: Rectangle {
-                                    color: "transparent"
-                                    radius: 6
-                                    border.color: "#564d4d"
-                                    border.width: 1
-                                }
-                                
-                                contentItem: Text {
-                                    text: parent.text
-                                    color: "#b3b3b3"
-                                    font.pixelSize: 14
-                                    horizontalAlignment: Text.AlignHCenter
-                                    verticalAlignment: Text.AlignVCenter
-                                }
-                                
-                                onClicked: navigateTo("/live")
-                        }
-                        
-                        Button {
-                                text: "View Plans"
-                                Layout.preferredWidth: 150
-                                Layout.preferredHeight: 40
-                                
-                                background: Rectangle {
-                                    color: "transparent"
-                                    radius: 6
-                                    border.color: "#564d4d"
-                                    border.width: 1
-                                }
-                                
-                                contentItem: Text {
-                                    text: parent.text
-                                    color: "#b3b3b3"
-                                    font.pixelSize: 14
-                                    horizontalAlignment: Text.AlignHCenter
-                                    verticalAlignment: Text.AlignVCenter
-                                }
-                                
-                                onClicked: navigateTo("/billing/plans")
-                            }
-                        }
+                        // Catch-up Screen
+                        CatchupBrowser {}
                     }
                 }
             }
