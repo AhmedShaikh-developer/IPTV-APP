@@ -42,14 +42,6 @@ Rectangle {
             }
             
             Text {
-                text: "Netflix Style Streaming Experience"
-                font.pixelSize: 18
-                color: "#b3b3b3"
-                horizontalAlignment: Text.AlignHCenter
-                Layout.alignment: Qt.AlignHCenter
-            }
-            
-            Text {
                 text: "Stream thousands of channels worldwide"
                 font.pixelSize: 16
                 color: "#564d4d"
