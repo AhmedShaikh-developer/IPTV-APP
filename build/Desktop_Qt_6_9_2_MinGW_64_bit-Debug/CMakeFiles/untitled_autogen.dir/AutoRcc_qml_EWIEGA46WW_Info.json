@@ -12,8 +12,10 @@
 		"D:/IPTV/OfflineScreen.qml",
 		"D:/IPTV/ErrorFallback.qml",
 		"D:/IPTV/ProfilePicker.qml",
+		"D:/IPTV/SubStatus.qml",
 		"D:/IPTV/Welcome.qml",
 		"D:/IPTV/PinPad.qml",
+		"D:/IPTV/DeviceManager.qml",
 		"D:/IPTV/SignIn.qml",
 		"D:/IPTV/PasswordReset.qml",
 		"D:/IPTV/SignUp.qml",
@@ -27,6 +29,7 @@
 		"D:/IPTV/PairByCode.qml",
 		"D:/IPTV/Plans.qml",
 		"D:/IPTV/UpdateRequired.qml",
+		"D:/IPTV/Checkout.qml",
 		"D:/IPTV/main.qml",
 		"D:/IPTV/SplashScreen.qml"
 	],

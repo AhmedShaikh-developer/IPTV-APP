@@ -8,7 +8,7 @@ ApplicationWindow {
     visible: true
     width: 1200
     height: 800
-    title: "IPTV Pro - Netflix Style"
+    title: "IPTV Pro"
     color: backgroundColor
     
     property string currentRoute: "/boot"
@@ -359,68 +359,14 @@ ApplicationWindow {
         // Plans & Pricing Screen
         Plans {}
         
-        // Checkout Screen (placeholder)
-        Rectangle {
-            color: "#000000"
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 20
-                Text {
-                    text: "💳 Checkout"
-                    font.pixelSize: 32
-                    font.bold: true
-                    color: "#e50914"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-                Button {
-                    text: "Back to Plans"
-                    onClicked: navigateTo("/billing/plans")
-                    Layout.alignment: Qt.AlignHCenter
-                }
-            }
-        }
+        // Checkout Screen
+        Checkout {}
         
-        // Billing Status Screen (placeholder)
-        Rectangle {
-            color: "#000000"
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 20
-                Text {
-                    text: "📊 Billing Status"
-                    font.pixelSize: 32
-                    font.bold: true
-                    color: "#e50914"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-                Button {
-                    text: "Back to Main"
-                    onClicked: navigateTo("/main")
-                    Layout.alignment: Qt.AlignHCenter
-                }
-            }
-        }
+        // Billing Status Screen
+        SubStatus {}
         
-        // Account Devices Screen (placeholder)
-        Rectangle {
-            color: "#000000"
-            ColumnLayout {
-                anchors.centerIn: parent
-                spacing: 20
-                Text {
-                    text: "📱 My Devices"
-                    font.pixelSize: 32
-                    font.bold: true
-                    color: "#e50914"
-                    Layout.alignment: Qt.AlignHCenter
-                }
-                Button {
-                    text: "Back to Main"
-                    onClicked: navigateTo("/main")
-                    Layout.alignment: Qt.AlignHCenter
-                }
-            }
-        }
+        // Account Devices Screen
+        DeviceManager {}
         
         // Profile Picker
         ProfilePicker {}
@@ -461,14 +407,6 @@ ApplicationWindow {
                     }
                     
                     Text {
-                        text: "Netflix Theme Applied Successfully!"
-                        font.pixelSize: 20
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-                    
-                    Text {
                         text: "🔐 Netflix Style Authentication Screens"
                         font.pixelSize: 18
                         font.bold: true
@@ -503,6 +441,21 @@ ApplicationWindow {
                         }
                         
                         Button {
+                            text: "Checkout"
+                            onClicked: navigateTo("/billing/checkout")
+                        }
+                        
+                        Button {
+                            text: "Subscription Status"
+                            onClicked: navigateTo("/billing/status")
+                        }
+                        
+                        Button {
+                            text: "My Devices"
+                            onClicked: navigateTo("/account/devices")
+                        }
+                        
+                        Button {
                             text: "Verify Email"
                             onClicked: navigateTo("/auth/verify")
                         }
@@ -527,7 +480,7 @@ ApplicationWindow {
                     }
                     
                     Text {
-                        text: "👤 Profile & Parental Controls (Phase 2)"
+                        text: "👤 Profile & Parental Controls"
                         font.pixelSize: 18
                         font.bold: true
                         color: "#ffffff"
@@ -560,14 +513,6 @@ ApplicationWindow {
                             text: "Parental Settings"
                             onClicked: navigateTo("/settings/parental")
                         }
-                    }
-                    
-                    Text {
-                        text: "✅ Phase 0, 1, and 2 Complete! Netflix Themed IPTV Pro"
-                        font.pixelSize: 16
-                        color: "#b3b3b3"
-                        horizontalAlignment: Text.AlignHCenter
-                        Layout.alignment: Qt.AlignHCenter
                     }
                 }
             }

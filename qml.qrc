@@ -20,5 +20,8 @@
     <file>ChangelogItem.qml</file>
     <file>LimitedFeature.qml</file>
     <file>TroubleshootingStep.qml</file>
+    <file>Checkout.qml</file>
+    <file>SubStatus.qml</file>
+    <file>DeviceManager.qml</file>
 </qresource>
 </RCC>
