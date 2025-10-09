@@ -23,5 +23,13 @@
     <file>Checkout.qml</file>
     <file>SubStatus.qml</file>
     <file>DeviceManager.qml</file>
+    <file>AddSourceMethod.qml</file>
+    <file>XtreamForm.qml</file>
+    <file>M3UForm.qml</file>
+    <file>StalkerForm.qml</file>
+    <file>SingleItemForm.qml</file>
+    <file>SourceSync.qml</file>
+    <file>SourceManager.qml</file>
+    <file>MetaProviderSettings.qml</file>
 </qresource>
 </RCC>

@@ -83,7 +83,15 @@ ApplicationWindow {
                 case "/profiles/manage": return 15
                 case "/pin": return 16
                 case "/settings/parental": return 17
-                case "/main": return 18
+                case "/sources/add": return 18
+                case "/sources/xtream": return 19
+                case "/sources/m3u": return 20
+                case "/sources/stalker": return 21
+                case "/sources/single": return 22
+                case "/sources/sync": return 23
+                case "/sources/manage": return 24
+                case "/sources/metadata": return 25
+                case "/main": return 26
                 default: return 0
             }
         }
@@ -380,6 +388,30 @@ ApplicationWindow {
         // Parental Settings
         ParentalSettings {}
         
+        // Add Source Method
+        AddSourceMethod {}
+        
+        // Xtream Form
+        XtreamForm {}
+        
+        // M3U Form
+        M3UForm {}
+        
+        // Stalker Form
+        StalkerForm {}
+        
+        // Single Item Form
+        SingleItemForm {}
+        
+        // Source Sync
+        SourceSync {}
+        
+        // Source Manager
+        SourceManager {}
+        
+        // Metadata Provider Settings
+        MetaProviderSettings {}
+        
         // Main Application (placeholder)
         Rectangle {
             color: "#000000"
@@ -398,7 +430,7 @@ ApplicationWindow {
                     spacing: 30
                 
                     Text {
-                        text: "🎬 IPTV Pro - Netflix Style"
+                        text: "🎬 IPTV Pro"
                         font.pixelSize: 32
                         font.bold: true
                         color: "#e50914"
@@ -407,7 +439,7 @@ ApplicationWindow {
                     }
                     
                     Text {
-                        text: "🔐 Netflix Style Authentication Screens"
+                        text: "🔐 Authentication Screens"
                         font.pixelSize: 18
                         font.bold: true
                         color: "#ffffff"
@@ -512,6 +544,62 @@ ApplicationWindow {
                         Button {
                             text: "Parental Settings"
                             onClicked: navigateTo("/settings/parental")
+                        }
+                    }
+                    
+                    Text {
+                        text: "📡 Provider / Source Setup"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#ffffff"
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.topMargin: 20
+                    }
+                    
+                    GridLayout {
+                        Layout.alignment: Qt.AlignHCenter
+                        columns: 4
+                        rowSpacing: 15
+                        columnSpacing: 15
+                        
+                        Button {
+                            text: "Add Source"
+                            onClicked: navigateTo("/sources/add")
+                        }
+                        
+                        Button {
+                            text: "Manage Sources"
+                            onClicked: navigateTo("/sources/manage")
+                        }
+                        
+                        Button {
+                            text: "Xtream Codes"
+                            onClicked: navigateTo("/sources/xtream")
+                        }
+                        
+                        Button {
+                            text: "M3U Playlist"
+                            onClicked: navigateTo("/sources/m3u")
+                        }
+                        
+                        Button {
+                            text: "Stalker Portal"
+                            onClicked: navigateTo("/sources/stalker")
+                        }
+                        
+                        Button {
+                            text: "Single URL"
+                            onClicked: navigateTo("/sources/single")
+                        }
+                        
+                        Button {
+                            text: "Sync Progress"
+                            onClicked: navigateTo("/sources/sync")
+                        }
+                        
+                        Button {
+                            text: "Metadata Settings"
+                            onClicked: navigateTo("/sources/metadata")
                         }
                     }
                 }

@@ -1,0 +1,13 @@
+module IPTVPro
+typeinfo IPTVPro.qmltypes
+prefer :/IPTVPro/
+App 1.0 qml/App.qml
+SplashScreen 1.0 qml/screens/SplashScreen.qml
+OfflineScreen 1.0 qml/screens/OfflineScreen.qml
+UpdateRequired 1.0 qml/screens/UpdateRequired.qml
+ErrorFallback 1.0 qml/screens/ErrorFallback.qml
+Toast 1.0 qml/components/Toast.qml
+SkeletonList 1.0 qml/components/SkeletonList.qml
+EmptyState 1.0 qml/components/EmptyState.qml
+depends QtQuick
+

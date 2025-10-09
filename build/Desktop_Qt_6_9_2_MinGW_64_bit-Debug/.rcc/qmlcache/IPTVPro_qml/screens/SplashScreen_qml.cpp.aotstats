@@ -1,0 +1,356 @@
+[
+    {
+        "moduleFiles": [
+            {
+                "entries": [
+                    {
+                        "codegenSuccessful": false,
+                        "column": 12,
+                        "durationMicroseconds": 3053,
+                        "errorMessage": "Cannot load property bg from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 8
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 18,
+                        "durationMicroseconds": 58,
+                        "errorMessage": "Cannot load property spacing10 from const QMetaObject.",
+                        "functionName": "spacing",
+                        "line": 19
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 16,
+                        "durationMicroseconds": 3860,
+                        "errorMessage": "",
+                        "functionName": "width",
+                        "line": 20
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 27,
+                        "durationMicroseconds": 157,
+                        "errorMessage": "",
+                        "functionName": "centerIn",
+                        "line": 18
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 21,
+                        "durationMicroseconds": 57,
+                        "errorMessage": "Cannot load property radiusMedium from const QMetaObject.",
+                        "functionName": "radius",
+                        "line": 25
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 20,
+                        "durationMicroseconds": 41,
+                        "errorMessage": "Cannot load property accent from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 26
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 31,
+                        "durationMicroseconds": 164,
+                        "errorMessage": "",
+                        "functionName": "alignment",
+                        "line": 27
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 24,
+                        "durationMicroseconds": 51,
+                        "errorMessage": "Cannot load property text from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 34
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 35,
+                        "durationMicroseconds": 104,
+                        "errorMessage": "",
+                        "functionName": "centerIn",
+                        "line": 30
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 24,
+                        "durationMicroseconds": 133,
+                        "errorMessage": "",
+                        "functionName": "loops",
+                        "line": 39
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 20,
+                        "durationMicroseconds": 45,
+                        "errorMessage": "Cannot load property accent from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 50
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 29,
+                        "durationMicroseconds": 41,
+                        "errorMessage": "Cannot load property font4Xl from const QMetaObject.",
+                        "functionName": "pixelSize",
+                        "line": 48
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 31,
+                        "durationMicroseconds": 146,
+                        "errorMessage": "",
+                        "functionName": "alignment",
+                        "line": 51
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 20,
+                        "durationMicroseconds": 45,
+                        "errorMessage": "Cannot load property border from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 57
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 21,
+                        "durationMicroseconds": 38,
+                        "errorMessage": "Cannot load property radiusSmall from const QMetaObject.",
+                        "functionName": "radius",
+                        "line": 58
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 31,
+                        "durationMicroseconds": 137,
+                        "errorMessage": "",
+                        "functionName": "alignment",
+                        "line": 59
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 25,
+                        "durationMicroseconds": 169,
+                        "errorMessage": "",
+                        "functionName": "height",
+                        "line": 62
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 25,
+                        "durationMicroseconds": 143,
+                        "errorMessage": "Cannot load property radius from (component in D:/IPTV/qml/screens/SplashScreen.qml)::parent with type QQuickItem.",
+                        "functionName": "radius",
+                        "line": 63
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 24,
+                        "durationMicroseconds": 42,
+                        "errorMessage": "Cannot load property accent from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 64
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 24,
+                        "durationMicroseconds": 258,
+                        "errorMessage": "",
+                        "functionName": "width",
+                        "line": 65
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 28,
+                        "durationMicroseconds": 133,
+                        "errorMessage": "",
+                        "functionName": "loops",
+                        "line": 71
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 75,
+                        "durationMicroseconds": 129,
+                        "errorMessage": "",
+                        "functionName": "type",
+                        "line": 72
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 22,
+                        "durationMicroseconds": 49,
+                        "errorMessage": "Cannot load property spacing3 from const QMetaObject.",
+                        "functionName": "spacing",
+                        "line": 80
+                    },
+                    {
+                        "codegenSuccessful": true,
+                        "column": 31,
+                        "durationMicroseconds": 143,
+                        "errorMessage": "",
+                        "functionName": "alignment",
+                        "line": 79
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 26,
+                        "durationMicroseconds": 75,
+                        "errorMessage": "Cannot access value for name networkOk",
+                        "functionName": "checked",
+                        "line": 84
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 26,
+                        "durationMicroseconds": 52,
+                        "errorMessage": "Cannot access value for name authOk",
+                        "functionName": "checked",
+                        "line": 89
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 26,
+                        "durationMicroseconds": 48,
+                        "errorMessage": "Cannot access value for name sourceOk",
+                        "functionName": "checked",
+                        "line": 94
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 26,
+                        "durationMicroseconds": 51,
+                        "errorMessage": "Cannot access value for name subscriptionOk",
+                        "functionName": "checked",
+                        "line": 99
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 22,
+                        "durationMicroseconds": 48,
+                        "errorMessage": "Cannot load property spacing3 from const QMetaObject.",
+                        "functionName": "spacing",
+                        "line": 108
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 23,
+                        "durationMicroseconds": 187,
+                        "errorMessage": "Cannot load property checked from (component in D:/IPTV/qml/screens/SplashScreen.qml)::parent with type QQuickItem.",
+                        "functionName": "text",
+                        "line": 114
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 24,
+                        "durationMicroseconds": 190,
+                        "errorMessage": "Cannot load property checked from (component in D:/IPTV/qml/screens/SplashScreen.qml)::parent with type QQuickItem.",
+                        "functionName": "color",
+                        "line": 116
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 33,
+                        "durationMicroseconds": 46,
+                        "errorMessage": "Cannot load property fontBase from const QMetaObject.",
+                        "functionName": "pixelSize",
+                        "line": 115
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 23,
+                        "durationMicroseconds": 126,
+                        "errorMessage": "Cannot load property text from (component in D:/IPTV/qml/screens/SplashScreen.qml)::parent with type QQuickItem.",
+                        "functionName": "text",
+                        "line": 120
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 24,
+                        "durationMicroseconds": 44,
+                        "errorMessage": "Cannot load property textSecondary from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 122
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 33,
+                        "durationMicroseconds": 46,
+                        "errorMessage": "Cannot load property fontBase from const QMetaObject.",
+                        "functionName": "pixelSize",
+                        "line": 121
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 18,
+                        "durationMicroseconds": 48,
+                        "errorMessage": "Cannot load property spacing3 from const QMetaObject.",
+                        "functionName": "spacing",
+                        "line": 130
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 19,
+                        "durationMicroseconds": 114,
+                        "errorMessage": "Cannot access value for name checked",
+                        "functionName": "text",
+                        "line": 133
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 20,
+                        "durationMicroseconds": 191,
+                        "errorMessage": "Cannot access value for name checked",
+                        "functionName": "color",
+                        "line": 135
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 29,
+                        "durationMicroseconds": 111,
+                        "errorMessage": "Cannot load property fontBase from const QMetaObject.",
+                        "functionName": "pixelSize",
+                        "line": 134
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 19,
+                        "durationMicroseconds": 143,
+                        "errorMessage": "Cannot load property text from (component in D:/IPTV/qml/screens/SplashScreen.qml)::parent with type QQuickItem.",
+                        "functionName": "text",
+                        "line": 139
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 20,
+                        "durationMicroseconds": 39,
+                        "errorMessage": "Cannot load property textSecondary from const QMetaObject.",
+                        "functionName": "color",
+                        "line": 141
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 29,
+                        "durationMicroseconds": 97,
+                        "errorMessage": "Cannot load property fontBase from const QMetaObject.",
+                        "functionName": "pixelSize",
+                        "line": 140
+                    },
+                    {
+                        "codegenSuccessful": false,
+                        "column": 22,
+                        "durationMicroseconds": 495,
+                        "errorMessage": "Cannot find name networkOk",
+                        "functionName": "onTriggered",
+                        "line": 151
+                    }
+                ],
+                "filePath": "D:/IPTV/qml/screens/SplashScreen.qml"
+            }
+        ],
+        "moduleId": "IPTVPro(IPTVPro)"
+    }
+]
