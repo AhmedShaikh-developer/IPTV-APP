@@ -26,17 +26,25 @@ Rectangle {
         id: backButton
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.margins: 24
+        anchors.margins: 20
         z: 1000
         text: "← Back"
-        width: 100
-        height: 48
+        width: 110
+        height: 44
         background: Rectangle {
-            color: parent.hovered ? "#E50914" : "transparent"
-            radius: 24
-            border.color: parent.hovered ? "#E50914" : "#666666"
-            border.width: 2
-            opacity: parent.hovered ? 1.0 : 0.8
+            color: parent.hovered ? "#E50914" : "#1a1a1a"
+            radius: 22
+            border.color: parent.hovered ? "#E50914" : "#444444"
+            border.width: 1
+            
+            // Subtle shadow effect
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: -1
+                radius: parent.radius + 1
+                color: "#00000040"
+                z: -1
+            }
             
             Behavior on color {
                 ColorAnimation { duration: 200 }
@@ -48,7 +56,7 @@ Rectangle {
         contentItem: Text {
             text: parent.text
             color: "#FFFFFF"
-            font.pixelSize: 16
+            font.pixelSize: 15
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -82,7 +90,7 @@ Rectangle {
 
                     // Series poster
                     Rectangle {
-                        Layout.preferredWidth: Math.min(280, parent.width * 0.3)
+                        Layout.preferredWidth: Math.min(300, parent.width * 0.35)
                         Layout.fillHeight: true
                         radius: 16
                         color: "#111111"
@@ -262,7 +270,7 @@ Rectangle {
             // Continue Season Card (if progress exists)
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 100
+                Layout.preferredHeight: 120
                 Layout.leftMargin: 32
                 Layout.rightMargin: 32
                 Layout.bottomMargin: 24
@@ -287,42 +295,50 @@ Rectangle {
                     anchors.margins: 20
                     spacing: 16
 
+                    // TV Icon
                     Rectangle {
-                        Layout.preferredWidth: 60
-                        Layout.preferredHeight: 60
+                        Layout.preferredWidth: 50
+                        Layout.preferredHeight: 50
                         color: "#333333"
-                        radius: 12
+                        radius: 10
                         border.color: "#555555"
                         border.width: 1
 
                         Text {
                             anchors.centerIn: parent
                             text: "📺"
-                            font.pixelSize: 28
+                            font.pixelSize: 24
                             color: "#666666"
                         }
                     }
 
-                    ColumnLayout {
-                        Layout.fillWidth: true
+                    // Text Content - Fixed width to prevent clipping
+                    Column {
+                        Layout.preferredWidth: 250
+                        Layout.fillHeight: true
                         spacing: 6
+                        anchors.verticalCenter: parent.verticalCenter
 
                         Text {
                             text: "Continue Season 2"
                             font.pixelSize: 16
                             font.bold: true
                             color: "#FFFFFF"
+                            width: parent.width
+                            wrapMode: Text.Wrap
                         }
 
                         Text {
                             text: "Episode 5: The Battle Begins"
                             font.pixelSize: 14
                             color: "#B3B3B3"
+                            width: parent.width
+                            wrapMode: Text.Wrap
                         }
 
                         Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 4
+                            width: parent.width
+                            height: 4
                             color: "#333333"
                             radius: 2
                             Rectangle {
@@ -334,13 +350,19 @@ Rectangle {
                         }
                     }
 
+                    // Flexible spacer
+                    Item { 
+                        Layout.fillWidth: true 
+                    }
+
+                    // Continue Button
                     Button {
                         text: "▶ Continue"
-                        Layout.preferredWidth: 110
-                        Layout.preferredHeight: 36
+                        Layout.preferredWidth: 100
+                        Layout.preferredHeight: 40
                         background: Rectangle {
                             color: "#E50914"
-                            radius: 18
+                            radius: 20
                             border.color: "#E50914"
                             border.width: 1
                         }
@@ -508,13 +530,13 @@ Rectangle {
 
                     ScrollView {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        Layout.preferredHeight: 240
                         clip: true
 
                         Row {
                             spacing: 16
                             Repeater {
-                                model: 6
+                                model: 8
                                 delegate: Rectangle {
                                     width: 150
                                     height: 220
@@ -548,17 +570,30 @@ Rectangle {
                                             }
                                         }
 
-                                        Text {
+                                        Column {
                                             width: parent.width
                                             height: parent.height * 0.2
-                                            text: "Related " + (index + 1)
-                                            font.pixelSize: 12
-                                            font.bold: true
-                                            color: "#FFFFFF"
-                                            wrapMode: Text.WordWrap
-                                            horizontalAlignment: Text.AlignHCenter
-                                            verticalAlignment: Text.AlignVCenter
+                                            spacing: 2
                                             anchors.margins: 8
+                                            
+                                            Text {
+                                                text: "Related Series " + (index + 1)
+                                                width: parent.width
+                                                font.pixelSize: 12
+                                                font.bold: true
+                                                color: "#FFFFFF"
+                                                wrapMode: Text.WordWrap
+                                                horizontalAlignment: Text.AlignHCenter
+                                            }
+                                            
+                                            Text {
+                                                text: "2023 • Action • 8." + (index + 1)
+                                                width: parent.width
+                                                font.pixelSize: 10
+                                                color: "#B3B3B3"
+                                                wrapMode: Text.WordWrap
+                                                horizontalAlignment: Text.AlignHCenter
+                                            }
                                         }
                                     }
 
