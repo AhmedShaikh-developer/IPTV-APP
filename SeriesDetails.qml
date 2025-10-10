@@ -26,22 +26,29 @@ Rectangle {
         id: backButton
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.margins: 20
+        anchors.margins: 24
         z: 1000
         text: "← Back"
-        width: 120
-        height: 60
+        width: 100
+        height: 48
         background: Rectangle {
-            color: parent.hovered ? "#E50914" : "#FF0000"  // Bright red for testing
-            radius: 10
-            border.color: "#FFFFFF"
-            border.width: 3
-            opacity: 1.0
+            color: parent.hovered ? "#E50914" : "transparent"
+            radius: 24
+            border.color: parent.hovered ? "#E50914" : "#666666"
+            border.width: 2
+            opacity: parent.hovered ? 1.0 : 0.8
+            
+            Behavior on color {
+                ColorAnimation { duration: 200 }
+            }
+            Behavior on border.color {
+                ColorAnimation { duration: 200 }
+            }
         }
         contentItem: Text {
             text: parent.text
             color: "#FFFFFF"
-            font.pixelSize: 18
+            font.pixelSize: 16
             font.bold: true
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -65,26 +72,38 @@ Rectangle {
             // Hero Banner (50-60% of viewport)
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.max(600, parent.parent.height * 0.6)
+                Layout.preferredHeight: Math.max(500, parent.parent.height * 0.55)
                 color: "transparent"
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 40
-                    spacing: 40
+                    anchors.margins: 32
+                    spacing: 32
 
                     // Series poster
                     Rectangle {
-                        Layout.preferredWidth: 300
+                        Layout.preferredWidth: Math.min(280, parent.width * 0.3)
                         Layout.fillHeight: true
-                        radius: 12
+                        radius: 16
                         color: "#111111"
+                        border.color: "#333333"
+                        border.width: 1
 
                         Text {
                             anchors.centerIn: parent
                             text: "📺"
-                            font.pixelSize: 120
+                            font.pixelSize: 100
                             color: "#666666"
+                        }
+
+                        // Shadow effect
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -4
+                            anchors.topMargin: 0
+                            radius: parent.radius + 2
+                            color: "#00000080"
+                            z: -1
                         }
                     }
 
@@ -243,41 +262,54 @@ Rectangle {
             // Continue Season Card (if progress exists)
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 120
-                Layout.leftMargin: 40
-                Layout.rightMargin: 40
-                Layout.bottomMargin: 20
-                color: "#111111"
-                radius: 12
+                Layout.preferredHeight: 100
+                Layout.leftMargin: 32
+                Layout.rightMargin: 32
+                Layout.bottomMargin: 24
+                color: "#1a1a1a"
+                radius: 16
                 border.color: "#E50914"
-                border.width: 2
+                border.width: 1
+
+                // Gradient background
+                Rectangle {
+                    anchors.fill: parent
+                    radius: parent.radius
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#1a1a1a" }
+                        GradientStop { position: 1.0; color: "#111111" }
+                    }
+                    opacity: 0.8
+                }
 
                 RowLayout {
                     anchors.fill: parent
                     anchors.margins: 20
-                    spacing: 20
+                    spacing: 16
 
                     Rectangle {
-                        Layout.preferredWidth: 80
+                        Layout.preferredWidth: 60
                         Layout.preferredHeight: 60
                         color: "#333333"
-                        radius: 8
+                        radius: 12
+                        border.color: "#555555"
+                        border.width: 1
 
                         Text {
                             anchors.centerIn: parent
                             text: "📺"
-                            font.pixelSize: 32
+                            font.pixelSize: 28
                             color: "#666666"
                         }
                     }
 
                     ColumnLayout {
                         Layout.fillWidth: true
-                        spacing: 4
+                        spacing: 6
 
                         Text {
                             text: "Continue Season 2"
-                            font.pixelSize: 18
+                            font.pixelSize: 16
                             font.bold: true
                             color: "#FFFFFF"
                         }
@@ -290,25 +322,27 @@ Rectangle {
 
                         Rectangle {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 6
+                            Layout.preferredHeight: 4
                             color: "#333333"
-                            radius: 3
+                            radius: 2
                             Rectangle {
                                 width: parent.width * 0.65
                                 height: parent.height
                                 color: "#E50914"
-                                radius: 3
+                                radius: 2
                             }
                         }
                     }
 
                     Button {
                         text: "▶ Continue"
-                        Layout.preferredWidth: 120
-                        Layout.preferredHeight: 40
+                        Layout.preferredWidth: 110
+                        Layout.preferredHeight: 36
                         background: Rectangle {
                             color: "#E50914"
-                            radius: 6
+                            radius: 18
+                            border.color: "#E50914"
+                            border.width: 1
                         }
                         contentItem: Text {
                             text: parent.text
@@ -326,14 +360,17 @@ Rectangle {
             // Seasons Tabs (sticky on scroll)
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 60
-                color: "#111111"
+                Layout.preferredHeight: 64
+                Layout.leftMargin: 32
+                Layout.rightMargin: 32
+                color: "#1a1a1a"
                 border.color: "#333333"
                 border.width: 1
+                radius: 12
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 20
+                    anchors.margins: 16
                     spacing: 20
 
                     Text {
@@ -341,6 +378,7 @@ Rectangle {
                         font.pixelSize: 16
                         font.bold: true
                         color: "#FFFFFF"
+                        Layout.alignment: Qt.AlignVCenter
                     }
 
                     ScrollView {
@@ -354,18 +392,18 @@ Rectangle {
                                 model: 4
                                 delegate: Button {
                                     text: "Season " + (index + 1)
-                                    width: 120
-                                    height: 40
+                                    width: 100
+                                    height: 36
                                     background: Rectangle {
                                         color: parent.checked ? "#E50914" : "#333333"
-                                        radius: 20
-                                        border.color: parent.checked ? "#E50914" : "transparent"
-                                        border.width: 2
+                                        radius: 18
+                                        border.color: parent.checked ? "#E50914" : "#555555"
+                                        border.width: 1
                                     }
                                     contentItem: Text {
                                         text: parent.text
                                         color: "#FFFFFF"
-                                        font.pixelSize: 14
+                                        font.pixelSize: 13
                                         font.bold: parent.checked
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
@@ -382,24 +420,26 @@ Rectangle {
             // Tabs section
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 60
+                Layout.preferredHeight: 64
+                Layout.leftMargin: 32
+                Layout.rightMargin: 32
                 color: "transparent"
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 40
-                    spacing: 40
+                    anchors.margins: 16
+                    spacing: 24
 
                     TabButton {
                         text: "Overview"
                         background: Rectangle {
                             color: parent.checked ? "#E50914" : "transparent"
-                            radius: 6
+                            radius: 18
                         }
                         contentItem: Text {
                             text: parent.text
                             color: parent.checked ? "#FFFFFF" : "#B3B3B3"
-                            font.pixelSize: 16
+                            font.pixelSize: 14
                             font.bold: parent.checked
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -412,12 +452,12 @@ Rectangle {
                         text: "Seasons"
                         background: Rectangle {
                             color: parent.checked ? "#E50914" : "transparent"
-                            radius: 6
+                            radius: 18
                         }
                         contentItem: Text {
                             text: parent.text
                             color: parent.checked ? "#FFFFFF" : "#B3B3B3"
-                            font.pixelSize: 16
+                            font.pixelSize: 14
                             font.bold: parent.checked
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -429,12 +469,12 @@ Rectangle {
                         text: "Related"
                         background: Rectangle {
                             color: parent.checked ? "#E50914" : "transparent"
-                            radius: 6
+                            radius: 18
                         }
                         contentItem: Text {
                             text: parent.text
                             color: parent.checked ? "#FFFFFF" : "#B3B3B3"
-                            font.pixelSize: 16
+                            font.pixelSize: 14
                             font.bold: parent.checked
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -450,17 +490,18 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 400
+                Layout.leftMargin: 32
+                Layout.rightMargin: 32
                 color: "transparent"
-                anchors.margins: 40
 
                 // Related series carousel
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 20
+                    spacing: 24
 
                     Text {
                         text: "More Like This"
-                        font.pixelSize: 24
+                        font.pixelSize: 22
                         font.bold: true
                         color: "#FFFFFF"
                     }
@@ -471,17 +512,17 @@ Rectangle {
                         clip: true
 
                         Row {
-                            spacing: 20
+                            spacing: 16
                             Repeater {
                                 model: 6
                                 delegate: Rectangle {
-                                    width: 160
-                                    height: 240
+                                    width: 150
+                                    height: 220
                                     radius: 12
-                                    color: "#111111"
-                                    border.color: parent.hovered || parent.activeFocus ? "#E50914" : "transparent"
-                                    border.width: 2
-                                    scale: parent.hovered || parent.activeFocus ? 1.08 : 1.0
+                                    color: "#1a1a1a"
+                                    border.color: parent.hovered || parent.activeFocus ? "#E50914" : "#333333"
+                                    border.width: 1
+                                    scale: parent.hovered || parent.activeFocus ? 1.05 : 1.0
 
                                     Behavior on scale {
                                         NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
