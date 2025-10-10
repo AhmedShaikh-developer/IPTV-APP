@@ -20,6 +20,7 @@ Rectangle {
         opacity: 0.8
     }
 
+
     // Floating back button (always visible at top)
     Button {
         id: backButton
@@ -31,11 +32,11 @@ Rectangle {
         width: 120
         height: 60
         background: Rectangle {
-            color: parent.hovered ? "#E50914" : "#000000"
+            color: parent.hovered ? "#E50914" : "#FF0000"  // Bright red for testing
             radius: 10
             border.color: "#FFFFFF"
-            border.width: 2
-            opacity: 0.9
+            border.width: 3
+            opacity: 1.0
         }
         contentItem: Text {
             text: parent.text
@@ -45,7 +46,12 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
-        onClicked: console.log("Navigate back to series hub")
+        onClicked: {
+            console.log("Navigate back to series hub")
+            if (typeof navigateTo !== 'undefined') {
+                navigateTo("/series")
+            }
+        }
     }
 
     ScrollView {

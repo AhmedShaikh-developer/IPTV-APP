@@ -216,7 +216,10 @@ ApplicationWindow {
     // Navigation system
     function navigateTo(route) {
         console.log("Navigating to:", route)
+        console.log("Current route before:", currentRoute)
         currentRoute = route
+        console.log("Current route after:", currentRoute)
+        console.log("StackLayout currentIndex:", mainStack.currentIndex)
     }
     
     function showError(message) {
@@ -634,7 +637,11 @@ ApplicationWindow {
         MovieGrid {}
         
         // Movie Details
-        MovieDetails {}
+        MovieDetails {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
         
         // Series Hub
         SeriesHub {
@@ -644,7 +651,11 @@ ApplicationWindow {
         }
         
         // Series Details
-        SeriesDetails {}
+        SeriesDetails {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
         
         // Season Episodes
         SeasonEpisodes {}
