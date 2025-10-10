@@ -27,6 +27,7 @@ QtObject {
     readonly property int transitionFast: 150
     readonly property int transitionMedium: 250
     readonly property int transitionSlow: 300
+    readonly property int delayedFade: 350
     
     readonly property int controlHeight: 48
     readonly property int controlBarHeight: 120

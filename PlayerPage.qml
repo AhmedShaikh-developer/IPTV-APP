@@ -7,6 +7,7 @@ Rectangle {
     id: playerPage
     color: "#000000"
     
+    property url currentSource: "qrc:/src/IPTV Pro.mp4"
     property bool isPlaying: false
     property bool isPaused: false
     property bool showControls: true
@@ -26,9 +27,25 @@ Rectangle {
         onTriggered: showControls = false
     }
     
+    Timer {
+        id: placeholderDelayTimer
+        interval: 350
+        onTriggered: {
+            if (videoPlayer.playbackState === MediaPlayer.StoppedState) {
+                fallbackRect.visible = true
+            }
+        }
+    }
+    
     function resetAutoHide() {
         showControls = true
         autoHideTimer.restart()
+    }
+    
+    function retryPlayback() {
+        videoPlayer.source = currentSource
+        videoPlayer.play()
+        fallbackRect.visible = false
     }
     
     Rectangle {
@@ -39,8 +56,8 @@ Rectangle {
         Video {
             id: videoPlayer
             anchors.fill: parent
-            source: "qrc:/src/IPTV Pro.mp4"
-            autoPlay: false
+            source: currentSource
+            autoPlay: true
             loops: MediaPlayer.Once
             focus: false
             
@@ -56,26 +73,52 @@ Rectangle {
             
             onErrorOccurred: function(error, errorString) {
                 console.log("Video error:", errorString)
-                fallbackRect.visible = true
+                playerError.showError("network", "Playback Error", errorString)
             }
             
-            Rectangle {
-                id: fallbackRect
-                anchors.centerIn: parent
-                width: Math.min(parent.width * 0.8, parent.height * 1.78)
-                height: width / 1.78
-                color: "#181818"
-                radius: 8
-                visible: true
-                
-                Text {
-                    anchors.centerIn: parent
-                    text: "📺 Video Stream\n(IPTV Pro Test Video)"
-                    font.pixelSize: 20
-                    color: "#ffffff"
-                    opacity: 0.7
-                    horizontalAlignment: Text.AlignHCenter
+            onPlaybackStateChanged: {
+                if (playbackState === MediaPlayer.StoppedState) {
+                    placeholderDelayTimer.start()
+                } else if (playbackState === MediaPlayer.PlayingState) {
+                    fallbackRect.visible = false
+                    placeholderDelayTimer.stop()
+                    isPlaying = true
+                } else if (playbackState === MediaPlayer.PausedState) {
+                    isPlaying = false
                 }
+            }
+            
+            opacity: (playbackState === MediaPlayer.PlayingState || 
+                     playbackState === MediaPlayer.PausedState) ? 1.0 : 0.0
+            
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+            }
+        }
+        
+        Rectangle {
+            id: fallbackRect
+            anchors.centerIn: parent
+            width: Math.min(parent.width * 0.8, parent.height * 1.78)
+            height: width / 1.78
+            color: "#181818"
+            radius: 8
+            visible: currentSource === "" || 
+                    videoPlayer.playbackState === MediaPlayer.StoppedState
+            
+            opacity: visible ? 1.0 : 0.0
+            
+            Behavior on opacity {
+                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+            }
+            
+            Text {
+                anchors.centerIn: parent
+                text: "📺 Video Stream\n(IPTV Pro Test Video)"
+                font.pixelSize: 20
+                color: "#ffffff"
+                opacity: 0.7
+                horizontalAlignment: Text.AlignHCenter
             }
         }
         
@@ -167,7 +210,6 @@ Rectangle {
         }
         
         onBackPressed: {
-            // Navigate back to home screen
             if (typeof navigateTo !== "undefined") {
                 navigateTo("/home")
             } else {
@@ -224,12 +266,13 @@ Rectangle {
         visible: false
         
         onRetry: {
-            console.log("Retrying playback...")
-            videoPlayer.play()
+            retryPlayback()
         }
         
         onBack: {
-            console.log("Going back...")
+            if (typeof navigateTo !== "undefined") {
+                navigateTo("/home")
+            }
         }
         
         onChangeSource: {
@@ -312,13 +355,6 @@ Rectangle {
         opacity = 0.0
         fadeInAnimation.start()
         forceActiveFocus()
-        
-        // Start playing the video after a short delay
-        Qt.callLater(function() {
-            isPlaying = true
-            isPaused = false
-            videoPlayer.mockPlaying = true
-        })
     }
     
     NumberAnimation {
