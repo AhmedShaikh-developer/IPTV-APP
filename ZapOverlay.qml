@@ -6,70 +6,141 @@ Rectangle {
     id: zapOverlay
     color: "transparent"
     
+    property int currentChannelIndex: 2
     property bool isVisible: false
-    property int currentChannelIndex: 5 // Center channel
-    property int totalChannels: 10
-    property real slideOffset: -height
     
-    // Horizontal strip with channel thumbnails
+    function show() {
+        isVisible = true
+        slideAnimation.to = parent.height - zapPanel.height - 160
+        slideAnimation.start()
+        autoHideTimer.restart()
+    }
+    
+    function hide() {
+        isVisible = false
+        slideAnimation.to = parent.height + 20
+        slideAnimation.start()
+    }
+    
+    function zapUp() {
+        if (currentChannelIndex < channelModel.count - 1) {
+            currentChannelIndex++
+            zapList.positionViewAtIndex(currentChannelIndex, ListView.Center)
+        }
+    }
+    
+    function zapDown() {
+        if (currentChannelIndex > 0) {
+            currentChannelIndex--
+            zapList.positionViewAtIndex(currentChannelIndex, ListView.Center)
+        }
+    }
+    
+    Timer {
+        id: autoHideTimer
+        interval: 3000
+        onTriggered: hide()
+    }
+    
     Rectangle {
-        id: channelStrip
-        anchors.centerIn: parent
-        width: Math.min(parent.width * 0.9, 800)
-        height: 120
-        y: slideOffset
+        id: zapPanel
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 100, 800)
+        height: 140
+        y: parent.height + 20
+        radius: 12
+        color: "#0B0B0BE0"
         
-        // Semi-transparent background
-        Rectangle {
-            anchors.fill: parent
-            color: "#CC000000"
-            radius: 12
-            border.color: "#1AFFFFFF"
-            border.width: 1
+        NumberAnimation on y {
+            id: slideAnimation
+            duration: 300
+            easing.type: Easing.OutCubic
         }
         
-        // Channel list
-        ListView {
-            id: channelList
+        layer.enabled: true
+        layer.effect: ShaderEffect {
+            property variant source: zapPanel
+            fragmentShader: "
+                varying highp vec2 qt_TexCoord0;
+                uniform sampler2D source;
+                uniform lowp float qt_Opacity;
+                void main() {
+                    gl_FragColor = texture2D(source, qt_TexCoord0) * qt_Opacity;
+                }
+            "
+        }
+        
+        Rectangle {
             anchors.fill: parent
-            anchors.margins: 15
-            orientation: ListView.Horizontal
-            spacing: 15
-            clip: true
+            anchors.margins: -6
+            radius: parent.radius + 2
+            color: "transparent"
+            border.color: "#33000000"
+            border.width: 6
+            z: -1
+        }
+        
+        RowLayout {
+            anchors.fill: parent
+            spacing: 0
             
-            model: ListModel {
-                ListElement { channelNum: "101"; name: "BBC One"; logo: "📺"; program: "BBC News" }
-                ListElement { channelNum: "102"; name: "BBC Two"; logo: "📺"; program: "Documentary" }
-                ListElement { channelNum: "103"; name: "ITV"; logo: "📺"; program: "ITV News" }
-                ListElement { channelNum: "104"; name: "Channel 4"; logo: "📺"; program: "4 News" }
-                ListElement { channelNum: "105"; name: "Channel 5"; logo: "📺"; program: "5 News" }
-                ListElement { channelNum: "106"; name: "BBC News HD"; logo: "📺"; program: "BBC News at 10" }
-                ListElement { channelNum: "107"; name: "Sky News"; logo: "📺"; program: "Sky News" }
-                ListElement { channelNum: "108"; name: "CNN"; logo: "📺"; program: "CNN Newsroom" }
-                ListElement { channelNum: "109"; name: "Al Jazeera"; logo: "📺"; program: "News" }
-                ListElement { channelNum: "110"; name: "RT"; logo: "📺"; program: "RT News" }
+            Button {
+                Layout.preferredWidth: 50
+                Layout.fillHeight: true
+                
+                background: Rectangle {
+                    color: parent.hovered ? "#262626" : "transparent"
+                    radius: 12
+                }
+                
+                contentItem: Text {
+                    text: "◀"
+                    font.pixelSize: 24
+                    color: "#FFFFFF"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                
+                onClicked: {
+                    zapList.decrementCurrentIndex()
+                    autoHideTimer.restart()
+                }
             }
             
-            delegate: Rectangle {
-                width: 200
-                height: channelList.height
-                color: "transparent"
+            ListView {
+                id: zapList
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                orientation: ListView.Horizontal
+                spacing: 15
+                clip: true
+                currentIndex: currentChannelIndex
                 
-                Rectangle {
-                    anchors.fill: parent
-                    radius: 8
-                    color: index === currentChannelIndex ? "#33E50914" : "#0DFFFFFF"
-                    border.color: index === currentChannelIndex ? "#E50914" : "transparent"
-                    border.width: 2
-                    
-                    // Scale animation for active channel
-                    scale: index === currentChannelIndex ? 1.05 : 1.0
+                model: ListModel {
+                    id: channelModel
+                    ListElement { name: "BBC One"; logo: "📺"; number: "1"; current: "News at 10" }
+                    ListElement { name: "ITV"; logo: "📺"; number: "2"; current: "Coronation Street" }
+                    ListElement { name: "Channel 4"; logo: "📺"; number: "3"; current: "Bake Off" }
+                    ListElement { name: "Sky Sports"; logo: "⚽"; number: "4"; current: "Premier League" }
+                    ListElement { name: "ESPN"; logo: "🏀"; number: "5"; current: "NBA Live" }
+                    ListElement { name: "CNN"; logo: "📰"; number: "6"; current: "Breaking News" }
+                }
+                
+                delegate: Rectangle {
+                    width: 160
+                    height: 110
+                    radius: 10
+                    color: index === currentChannelIndex ? "#1E1E1E" : "#141414"
+                    border.color: index === currentChannelIndex ? "#E50914" : "#2f2f2f"
+                    border.width: index === currentChannelIndex ? 3 : 1
+                    scale: index === currentChannelIndex ? 1.05 : 0.95
                     
                     Behavior on scale {
-                        NumberAnimation {
-                            duration: 200
-                            easing.type: Easing.OutQuad
-                        }
+                        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    }
+                    
+                    Behavior on color {
+                        ColorAnimation { duration: 200 }
                     }
                     
                     Behavior on border.color {
@@ -78,243 +149,103 @@ Rectangle {
                     
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 10
+                        anchors.margins: 12
                         spacing: 8
                         
-                        // Channel number and logo
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 8
+                            spacing: 10
                             
-                            Text {
-                                text: channelNum
-                                font.pixelSize: 12
-                                font.bold: true
-                                color: "#E50914"
+                            Rectangle {
+                                width: 40
+                                height: 40
+                                radius: 8
+                                color: "#2f2f2f"
+                                
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: model.logo
+                                    font.pixelSize: 20
+                                }
                             }
                             
-                            Item { Layout.fillWidth: true }
-                            
-                            Text {
-                                text: logo
-                                font.pixelSize: 20
-                                color: "#ffffff"
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+                                
+                                Text {
+                                    text: model.number
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                    color: index === currentChannelIndex ? "#E50914" : "#B3B3B3"
+                                }
+                                
+                                Text {
+                                    text: model.name
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                    color: "#FFFFFF"
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
                             }
                         }
                         
-                        // Channel name
-                        Text {
-                            text: name
-                            font.pixelSize: 14
-                            font.bold: true
-                            color: "#ffffff"
+                        Rectangle {
                             Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignHCenter
-                            elide: Text.ElideRight
+                            Layout.preferredHeight: 1
+                            color: "#2f2f2f"
                         }
                         
-                        // Now playing
                         Text {
-                            text: program
+                            text: model.current
                             font.pixelSize: 12
-                            color: "#b3b3b3"
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignHCenter
+                            color: "#B3B3B3"
                             elide: Text.ElideRight
-                            wrapMode: Text.WordWrap
-                            maximumLineCount: 2
+                            Layout.fillWidth: true
+                        }
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            currentChannelIndex = index
+                            zapList.currentIndex = index
+                            autoHideTimer.restart()
                         }
                     }
                 }
+                
+                highlightFollowsCurrentItem: true
+                highlightMoveDuration: 200
+                preferredHighlightBegin: width / 2 - 80
+                preferredHighlightEnd: width / 2 + 80
+                highlightRangeMode: ListView.StrictlyEnforceRange
             }
             
-            // Ensure current channel is visible
-            onCurrentIndexChanged: {
-                positionViewAtIndex(currentIndex, ListView.Center)
+            Button {
+                Layout.preferredWidth: 50
+                Layout.fillHeight: true
+                
+                background: Rectangle {
+                    color: parent.hovered ? "#262626" : "transparent"
+                    radius: 12
+                }
+                
+                contentItem: Text {
+                    text: "▶"
+                    font.pixelSize: 24
+                    color: "#FFFFFF"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                
+                onClicked: {
+                    zapList.incrementCurrentIndex()
+                    autoHideTimer.restart()
+                }
             }
         }
-        
-        // Navigation arrows
-        Button {
-            id: leftArrow
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            width: 40
-            height: 40
-            visible: channelList.contentX > 0
-            
-            background: Rectangle {
-                color: parent.hovered ? "#33FFFFFF" : "#1AFFFFFF"
-                radius: 20
-                border.color: parent.activeFocus ? "#E50914" : "transparent"
-                border.width: 2
-            }
-            
-            contentItem: Text {
-                text: "←"
-                font.pixelSize: 18
-                color: "#ffffff"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-            
-            onClicked: {
-                channelList.decrementCurrentIndex()
-                currentChannelIndex = channelList.currentIndex
-            }
-            Keys.onReturnPressed: {
-                channelList.decrementCurrentIndex()
-                currentChannelIndex = channelList.currentIndex
-            }
-        }
-        
-        Button {
-            id: rightArrow
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            width: 40
-            height: 40
-            visible: channelList.contentX < (channelList.contentWidth - channelList.width)
-            
-            background: Rectangle {
-                color: parent.hovered ? "#33FFFFFF" : "#1AFFFFFF"
-                radius: 20
-                border.color: parent.activeFocus ? "#E50914" : "transparent"
-                border.width: 2
-            }
-            
-            contentItem: Text {
-                text: "→"
-                font.pixelSize: 18
-                color: "#ffffff"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-            
-            onClicked: {
-                channelList.incrementCurrentIndex()
-                currentChannelIndex = channelList.currentIndex
-            }
-            Keys.onReturnPressed: {
-                channelList.incrementCurrentIndex()
-                currentChannelIndex = channelList.currentIndex
-            }
-        }
-        
-        // Animation for slide in/out
-        Behavior on y {
-            NumberAnimation {
-                duration: 250
-                easing.type: Easing.OutQuad
-            }
-        }
-    }
-    
-    // Auto-dismiss timer
-    Timer {
-        id: dismissTimer
-        interval: 3000
-        running: isVisible
-        repeat: false
-        onTriggered: {
-            if (isVisible) {
-                hide()
-            }
-        }
-    }
-    
-    // Show overlay
-    function show() {
-        isVisible = true
-        slideOffset = 0
-        dismissTimer.restart()
-    }
-    
-    // Hide overlay
-    function hide() {
-        slideOffset = -height
-        hideTimer.start()
-    }
-    
-    Timer {
-        id: hideTimer
-        interval: 250
-        repeat: false
-        onTriggered: {
-            isVisible = false
-            visible = false
-        }
-    }
-    
-    // Zap up (previous channel)
-    function zapUp() {
-        currentChannelIndex = Math.max(0, currentChannelIndex - 1)
-        channelList.currentIndex = currentChannelIndex
-        show()
-    }
-    
-    // Zap down (next channel)
-    function zapDown() {
-        currentChannelIndex = Math.min(totalChannels - 1, currentChannelIndex + 1)
-        channelList.currentIndex = currentChannelIndex
-        show()
-    }
-    
-    // Mouse area to close on click outside
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        onClicked: {
-            hide()
-        }
-        
-        // Don't interfere with strip clicks
-        onPressed: function(mouse) {
-            if (channelStrip.contains(Qt.point(mouse.x, mouse.y))) {
-                mouse.accepted = false
-            }
-        }
-    }
-    
-    // Keyboard shortcuts
-    Keys.onPressed: function(event) {
-        switch(event.key) {
-            case Qt.Key_Left:
-                channelList.decrementCurrentIndex()
-                currentChannelIndex = channelList.currentIndex
-                event.accepted = true
-                break
-            case Qt.Key_Right:
-                channelList.incrementCurrentIndex()
-                currentChannelIndex = channelList.currentIndex
-                event.accepted = true
-                break
-            case Qt.Key_Return:
-            case Qt.Key_Enter:
-                // Switch to selected channel
-                console.log("Switching to channel:", channelList.model.get(currentChannelIndex).name)
-                hide()
-                event.accepted = true
-                break
-            case Qt.Key_Escape:
-                hide()
-                event.accepted = true
-                break
-        }
-    }
-    
-    focus: isVisible
-    
-    // Update visibility
-    onIsVisibleChanged: {
-        visible = isVisible
-        if (isVisible) {
-            dismissTimer.restart()
-        }
-    }
-    
-    // Initialize current index
-    Component.onCompleted: {
-        channelList.currentIndex = currentChannelIndex
     }
 }

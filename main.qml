@@ -672,7 +672,11 @@ ApplicationWindow {
             id: playerPageLoader
             active: currentRoute === "/player"
             sourceComponent: Component {
-                PlayerPage {}
+                PlayerPage {
+                    function navigateTo(route) {
+                        mainWindow.navigateTo(route)
+                    }
+                }
             }
         }
 

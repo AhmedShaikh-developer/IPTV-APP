@@ -6,7 +6,10 @@ Rectangle {
     id: playerControls
     color: "transparent"
     
-    // Signals for parent communication
+    property bool isPlaying: false
+    property real playbackPosition: 0.3
+    property real bufferedPosition: 0.7
+    
     signal togglePlay()
     signal showInfo()
     signal zapUp()
@@ -17,412 +20,344 @@ Rectangle {
     signal showError()
     signal toggleRecording()
     
-    // Control bar at bottom
+    Behavior on opacity {
+        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+    }
+    
     Rectangle {
         id: controlsBar
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.margins: 20
         height: 120
-        color: "transparent"
+        radius: 12
+        color: "#0B0B0BE0"
         
-        // Semi-transparent gradient background
+        layer.enabled: true
+        layer.effect: ShaderEffect {
+            property variant source: controlsBar
+            fragmentShader: "
+                varying highp vec2 qt_TexCoord0;
+                uniform sampler2D source;
+                uniform lowp float qt_Opacity;
+                void main() {
+                    gl_FragColor = texture2D(source, qt_TexCoord0) * qt_Opacity;
+                }
+            "
+        }
+        
         Rectangle {
+            id: shadow
             anchors.fill: parent
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: "#00000000" }
-                GradientStop { position: 0.3; color: "#4D000000" }
-                GradientStop { position: 1.0; color: "#CC000000" }
-            }
-            radius: 10
+            anchors.margins: -8
+            radius: parent.radius + 2
+            color: "transparent"
+            border.color: "#33000000"
+            border.width: 8
+            z: -1
         }
         
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 20
-            spacing: 10
+            spacing: 15
             
-            // Seek bar
             Rectangle {
+                id: progressContainer
                 Layout.fillWidth: true
-                Layout.preferredHeight: 4
+                Layout.preferredHeight: 6
                 color: "#404040"
-                radius: 2
+                radius: 3
                 
                 Rectangle {
-                    width: parent.width * 0.3 // Playback position
+                    id: buffered
+                    width: parent.width * bufferedPosition
                     height: parent.height
-                    color: "#E50914"
-                    radius: 2
+                    color: "#666666"
+                    radius: parent.radius
+                    opacity: 0.6
                 }
                 
                 Rectangle {
-                    width: parent.width * 0.7 // Buffered position
+                    id: played
+                    width: parent.width * playbackPosition
                     height: parent.height
-                    color: "#666666"
-                    radius: 2
-                    opacity: 0.6
+                    color: "#E50914"
+                    radius: parent.radius
+                    
+                    Rectangle {
+                        id: handle
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 16
+                        height: 16
+                        radius: 8
+                        color: "#E50914"
+                        scale: handleArea.containsMouse ? 1.3 : 1.0
+                        visible: handleArea.containsMouse || handleArea.pressed
+                        
+                        Behavior on scale {
+                            NumberAnimation { duration: 150; easing.type: Easing.OutBack }
+                        }
+                    }
+                }
+                
+                MouseArea {
+                    id: handleArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onPositionChanged: {
+                        if (pressed) {
+                            var newPos = Math.max(0, Math.min(1, mouse.x / width))
+                            playbackPosition = newPos
+                        }
+                    }
                 }
             }
             
-            // Main controls row
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: 20
+                spacing: 12
                 
-                // Zap Down button
-                Button {
-                    id: zapDownBtn
-                    Layout.preferredWidth: 120
-                    Layout.preferredHeight: 40
+                component ControlButton: Button {
+                    id: control
+                    property string label: ""
+                    property string iconText: ""
+                    property bool isActive: false
                     
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
+                    Layout.preferredWidth: 52
+                    Layout.preferredHeight: 48
+                    
+                    scale: hovered ? 1.08 : 1.0
+                    
+                    Behavior on scale {
+                        NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
                     }
                     
-                    contentItem: RowLayout {
-                        spacing: 8
-                        anchors.centerIn: parent
-                        
-                        Text {
-                            text: "⬇️"
-                            font.pixelSize: 16
-                            color: "#ffffff"
-                        }
-                        
-                        Text {
-                            text: "Zap Down"
-                            font.pixelSize: 14
-                            color: "#ffffff"
-                        }
-                    }
-                    
-                    onClicked: zapDown()
-                    Keys.onReturnPressed: zapDown()
-                    Keys.onEnterPressed: zapDown()
-                }
-                
-                // Audio track selector
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
                     background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
+                        radius: 10
+                        color: control.isActive ? "#2E2E2E" : (control.hovered ? "#262626" : "#1E1E1E")
+                        border.color: control.activeFocus ? "#E50914" : "transparent"
                         border.width: 2
+                        
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
+                        
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: parent.radius
+                            color: "#E50914"
+                            opacity: control.isActive ? 0.15 : 0
+                            
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+                        }
                     }
                     
                     contentItem: Text {
-                        text: "🔊 Audio"
-                        font.pixelSize: 14
-                        color: "#ffffff"
+                        text: control.iconText
+                        font.pixelSize: 20
+                        color: "#FFFFFF"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
                     
+                    ToolTip {
+                        visible: parent.hovered
+                        text: control.label
+                        delay: 500
+                        
+                        background: Rectangle {
+                            color: "#1E1E1E"
+                            radius: 6
+                            border.color: "#E50914"
+                            border.width: 1
+                        }
+                        
+                        contentItem: Text {
+                            text: parent.text
+                            color: "#FFFFFF"
+                            font.pixelSize: 12
+                        }
+                    }
+                }
+                
+                ControlButton {
+                    iconText: "⏮"
+                    label: "Zap Down (↓)"
+                    onClicked: zapDown()
+                }
+                
+                ControlButton {
+                    iconText: "🔊"
+                    label: "Audio Tracks (A)"
                     onClicked: console.log("Audio tracks")
                 }
                 
-                // Aspect ratio toggle
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "📐 16:9"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                ControlButton {
+                    iconText: "🖼"
+                    label: "Aspect Ratio (F)"
                     onClicked: console.log("Aspect ratio")
                 }
                 
-                // Play/Pause button (center)
+                Item { Layout.fillWidth: true }
+                
                 Button {
                     id: playPauseBtn
-                    Layout.preferredWidth: 60
-                    Layout.preferredHeight: 60
+                    Layout.preferredWidth: 64
+                    Layout.preferredHeight: 64
+                    
+                    scale: hovered ? 1.1 : 1.0
+                    
+                    Behavior on scale {
+                        NumberAnimation { duration: 150; easing.type: Easing.OutBack }
+                    }
                     
                     background: Rectangle {
-                        color: parent.hovered ? "#F5191F" : "#E50914"
-                        radius: 30
-                        border.color: parent.activeFocus ? "#ffffff" : "transparent"
+                        radius: 32
+                        color: playPauseBtn.hovered ? "#F5191F" : "#E50914"
+                        border.color: playPauseBtn.activeFocus ? "#FFFFFF" : "transparent"
                         border.width: 2
+                        
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
+                        
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: parent.width + 8
+                            height: parent.height + 8
+                            radius: width / 2
+                            color: "transparent"
+                            border.color: "#E50914"
+                            border.width: 2
+                            opacity: playPauseBtn.hovered ? 0.3 : 0
+                            
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+                        }
                     }
                     
                     contentItem: Text {
-                        text: "⏸️" // Will toggle between ⏸️ and ▶️
-                        font.pixelSize: 24
-                        color: "#ffffff"
+                        text: isPlaying ? "⏸" : "▶"
+                        font.pixelSize: 28
+                        color: "#FFFFFF"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
                     
-                    onClicked: togglePlay()
-                    Keys.onReturnPressed: togglePlay()
-                    Keys.onEnterPressed: togglePlay()
+                    onClicked: {
+                        togglePlay()
+                        isPlaying = !isPlaying
+                    }
                 }
                 
-                // Info button
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "ℹ️ Info"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                Item { Layout.fillWidth: true }
+                
+                ControlButton {
+                    iconText: "ℹ"
+                    label: "Info (I)"
                     onClicked: showInfo()
-                    Keys.onReturnPressed: showInfo()
-                    Keys.onEnterPressed: showInfo()
                 }
                 
-                // Deinterlace toggle
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "📺 Deint"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                ControlButton {
+                    iconText: "🌀"
+                    label: "Deinterlace (D)"
                     onClicked: console.log("Deinterlace")
                 }
                 
-                // Stats button
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "📊 Stats"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                ControlButton {
+                    iconText: "📊"
+                    label: "Stats (S)"
                     onClicked: showError()
                 }
                 
-                // Multi-view button
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "📱 Multi"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                ControlButton {
+                    iconText: "🧩"
+                    label: "Multi-View (M)"
                     onClicked: showMultiView()
-                    Keys.onReturnPressed: showMultiView()
-                    Keys.onEnterPressed: showMultiView()
                 }
                 
-                // PiP button
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "📺 PiP"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                ControlButton {
+                    iconText: "🖥"
+                    label: "Picture-in-Picture (P)"
                     onClicked: togglePiP()
-                    Keys.onReturnPressed: togglePiP()
-                    Keys.onEnterPressed: togglePiP()
                 }
                 
-                // Record button
-                Button {
-                    Layout.preferredWidth: 100
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: Text {
-                        text: "⏺️ Record"
-                        font.pixelSize: 14
-                        color: "#ffffff"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    
+                ControlButton {
+                    iconText: "⏺"
+                    label: "Record (R)"
+                    isActive: false
                     onClicked: toggleRecording()
-                    Keys.onReturnPressed: toggleRecording()
-                    Keys.onEnterPressed: toggleRecording()
                 }
                 
-                // Zap Up button
-                Button {
-                    id: zapUpBtn
-                    Layout.preferredWidth: 120
-                    Layout.preferredHeight: 40
-                    
-                    background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "#1a1a1a"
-                        radius: 6
-                        border.color: parent.activeFocus ? "#E50914" : "transparent"
-                        border.width: 2
-                    }
-                    
-                    contentItem: RowLayout {
-                        spacing: 8
-                        anchors.centerIn: parent
-                        
-                        Text {
-                            text: "⬆️"
-                            font.pixelSize: 16
-                            color: "#ffffff"
-                        }
-                        
-                        Text {
-                            text: "Zap Up"
-                            font.pixelSize: 14
-                            color: "#ffffff"
-                        }
-                    }
-                    
+                ControlButton {
+                    iconText: "⏭"
+                    label: "Zap Up (↑)"
                     onClicked: zapUp()
-                    Keys.onReturnPressed: zapUp()
-                    Keys.onEnterPressed: zapUp()
                 }
             }
         }
     }
     
-    // Back button (top-left)
     Button {
         id: backBtn
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 20
-        width: 50
-        height: 50
+        width: 52
+        height: 52
+        
+        scale: hovered ? 1.1 : 1.0
+        
+        Behavior on scale {
+            NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+        }
         
         background: Rectangle {
-            color: parent.hovered ? "#2a2a2a" : "#80000000"
-            radius: 25
-            border.color: parent.activeFocus ? "#E50914" : "transparent"
+            radius: 26
+            color: backBtn.hovered ? "#262626" : "#80000000"
+            border.color: backBtn.activeFocus ? "#E50914" : "transparent"
             border.width: 2
+            
+            Behavior on color {
+                ColorAnimation { duration: 150 }
+            }
         }
         
         contentItem: Text {
             text: "←"
-            font.pixelSize: 20
-            color: "#ffffff"
+            font.pixelSize: 24
+            color: "#FFFFFF"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
         
         onClicked: backPressed()
-        Keys.onReturnPressed: backPressed()
-        Keys.onEnterPressed: backPressed()
-    }
-    
-    // Focus management for DPAD navigation
-    focus: true
-    
-    Keys.onPressed: function(event) {
-        switch(event.key) {
-            case Qt.Key_Left:
-                // Move focus left through controls
-                event.accepted = true
-                break
-            case Qt.Key_Right:
-                // Move focus right through controls
-                event.accepted = true
-                break
-            case Qt.Key_Up:
-                zapUp()
-                event.accepted = true
-                break
-            case Qt.Key_Down:
-                zapDown()
-                event.accepted = true
-                break
-            case Qt.Key_Space:
-                togglePlay()
-                event.accepted = true
-                break
-            case Qt.Key_Return:
-            case Qt.Key_Enter:
-                if (activeFocus) {
-                    // Trigger focused button
-                }
-                event.accepted = true
-                break
+        
+        ToolTip {
+            visible: parent.hovered
+            text: "Back (Esc)"
+            delay: 500
+            
+            background: Rectangle {
+                color: "#1E1E1E"
+                radius: 6
+                border.color: "#E50914"
+                border.width: 1
+            }
+            
+            contentItem: Text {
+                text: parent.text
+                color: "#FFFFFF"
+                font.pixelSize: 12
+            }
         }
     }
 }

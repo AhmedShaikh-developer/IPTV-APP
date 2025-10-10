@@ -7,62 +7,45 @@ Rectangle {
     id: playerPage
     color: "#000000"
     
-    // Player state properties
-    property bool isPlaying: true
+    property bool isPlaying: false
     property bool isPaused: false
     property bool showControls: true
     property bool showMiniPlayer: false
     property real playbackPosition: 0.3
     property real bufferedPosition: 0.7
+    property real overlayOpacity: showControls ? 1.0 : 0.0
     
-    // Animation properties
-    property real overlayOpacity: 1.0
+    Behavior on overlayOpacity {
+        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+    }
     
-    // Video area with safe margins for overlays
+    Timer {
+        id: autoHideTimer
+        interval: 3000
+        running: showControls && isPlaying
+        onTriggered: showControls = false
+    }
+    
+    function resetAutoHide() {
+        showControls = true
+        autoHideTimer.restart()
+    }
+    
     Rectangle {
         id: videoArea
         anchors.fill: parent
         color: "#000000"
         
-        // Blurred background gradient
-        Rectangle {
-            anchors.fill: parent
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: "#1a0000" }
-                GradientStop { position: 0.5; color: "#000000" }
-                GradientStop { position: 1.0; color: "#000000" }
-            }
-            opacity: 0.8
-        }
-        
-        // Pause overlay
-        Rectangle {
-            anchors.fill: parent
-            color: "#000000"
-            opacity: isPaused ? 0.3 : 0.0
-            
-            Behavior on opacity {
-                NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
-            }
-        }
-        
-        // Video player with local test video
         Video {
             id: videoPlayer
             anchors.fill: parent
             source: "qrc:/src/IPTV Pro.mp4"
             autoPlay: false
             loops: MediaPlayer.Once
-            
-            // Video controls (hidden, controlled by overlays)
             focus: false
             
-            // Mock playback state
             property bool mockPlaying: isPlaying && !isPaused
-            property real mockPosition: playbackPosition
-            property real mockBuffered: bufferedPosition
             
-            // Update mock state based on player state
             onMockPlayingChanged: {
                 if (mockPlaying) {
                     play()
@@ -71,28 +54,19 @@ Rectangle {
                 }
             }
             
-            // Mock seek functionality
-            function mockSeek(position) {
-                playbackPosition = position
-                seek(position * duration)
-            }
-            
-            // Fallback if video fails to load
             onErrorOccurred: function(error, errorString) {
                 console.log("Video error:", errorString)
-                // Show placeholder if video fails
                 fallbackRect.visible = true
             }
             
-            // Fallback rectangle
             Rectangle {
                 id: fallbackRect
                 anchors.centerIn: parent
-                width: Math.min(parent.width * 0.8, parent.height * 1.78) // 16:9 aspect
+                width: Math.min(parent.width * 0.8, parent.height * 1.78)
                 height: width / 1.78
                 color: "#181818"
                 radius: 8
-                visible: false
+                visible: true
                 
                 Text {
                     anchors.centerIn: parent
@@ -104,112 +78,138 @@ Rectangle {
                 }
             }
         }
+        
+        Rectangle {
+            anchors.fill: parent
+            color: "#000000"
+            opacity: isPaused ? 0.4 : 0.0
+            
+            Behavior on opacity {
+                NumberAnimation { duration: 250 }
+            }
+            
+            Text {
+                anchors.centerIn: parent
+                text: "⏸"
+                font.pixelSize: 120
+                color: "#FFFFFF"
+                opacity: isPaused ? 0.8 : 0.0
+                scale: isPaused ? 1.0 : 0.8
+                
+                Behavior on opacity {
+                    NumberAnimation { duration: 300 }
+                }
+                
+                Behavior on scale {
+                    NumberAnimation { duration: 300; easing.type: Easing.OutBack }
+                }
+            }
+        }
     }
     
-    // Bottom fade mask for controls legibility
     Rectangle {
         anchors.bottom: parent.bottom
         width: parent.width
-        height: 120
+        height: 200
         gradient: Gradient {
             GradientStop { position: 0.0; color: "transparent" }
-            GradientStop { position: 1.0; color: "#000000" }
+            GradientStop { position: 0.7; color: "#33000000" }
+            GradientStop { position: 1.0; color: "#66000000" }
         }
-        opacity: showControls ? 0.8 : 0.0
+        opacity: showControls ? 1.0 : 0.0
         
         Behavior on opacity {
-            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+            NumberAnimation { duration: 250 }
         }
     }
     
-    // Player Controls Overlay
     PlayerControls {
         id: playerControls
         anchors.fill: parent
-        visible: showControls
         opacity: overlayOpacity
+        visible: opacity > 0
+        
+        isPlaying: playerPage.isPlaying
+        playbackPosition: playerPage.playbackPosition
+        bufferedPosition: playerPage.bufferedPosition
         
         onTogglePlay: {
-            isPaused = !isPaused
-            isPlaying = !isPaused
-            // Update video player
-            videoPlayer.mockPlaying = isPlaying && !isPaused
+            playerPage.isPaused = !playerPage.isPaused
+            playerPage.isPlaying = !playerPage.isPaused
+            videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
+            resetAutoHide()
         }
         
         onShowInfo: {
-            playerInfoBar.visible = true
             playerInfoBar.slideIn()
+            resetAutoHide()
         }
         
         onZapUp: {
             zapOverlay.show()
-            zapOverlay.zapUp()
+            resetAutoHide()
         }
         
         onZapDown: {
             zapOverlay.show()
-            zapOverlay.zapDown()
+            resetAutoHide()
         }
         
         onTogglePiP: {
-            pipController.togglePiP()
+            pipController.visible = !pipController.visible
+            resetAutoHide()
         }
         
         onShowMultiView: {
             multiView.visible = true
             multiView.enterMultiView()
+            resetAutoHide()
         }
         
         onBackPressed: {
-            if (showMiniPlayer) {
-                showMiniPlayer = false
+            // Navigate back to home screen
+            if (typeof navigateTo !== "undefined") {
+                navigateTo("/home")
             } else {
-                showMiniPlayer = true
+                console.log("Back button pressed - navigate to home")
             }
         }
         
         onShowError: {
             playerError.showError("network", "Connection Error", "Unable to connect to video stream. Please check your internet connection and try again.")
+            resetAutoHide()
         }
         
         onToggleRecording: {
-            if (recordBadge.isRecording) {
-                recordBadge.stopRecording()
-            } else {
-                recordBadge.startRecording()
-            }
+            recordBadge.toggleRecording()
+            resetAutoHide()
         }
     }
     
-    // Player Info Bar
     PlayerInfoBar {
         id: playerInfoBar
         anchors.fill: parent
         visible: false
     }
     
-    // Zap Overlay
     ZapOverlay {
         id: zapOverlay
         anchors.fill: parent
         visible: false
     }
     
-    // PiP Controller
     PipController {
         id: pipController
         anchors.fill: parent
         visible: false
     }
     
-    // Multi View
     MultiView {
         id: multiView
         anchors.fill: parent
         visible: false
     }
     
-    // Record Badge
     RecordBadge {
         id: recordBadge
         anchors.top: parent.top
@@ -218,141 +218,47 @@ Rectangle {
         visible: false
     }
     
-    // Player Error Overlay
     PlayerError {
         id: playerError
         anchors.fill: parent
         visible: false
         
         onRetry: {
-            // Retry playback logic
             console.log("Retrying playback...")
+            videoPlayer.play()
         }
         
         onBack: {
-            playerError.visible = false
+            console.log("Going back...")
         }
         
         onChangeSource: {
-            playerError.visible = false
-            // Navigate to source selection
+            console.log("Changing source...")
         }
     }
     
-    // Mini Player Preview (when BACK is pressed)
-    Rectangle {
-        id: miniPlayerPreview
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 80
-        color: "#141414"
-        visible: showMiniPlayer
-        opacity: showMiniPlayer ? 1.0 : 0.0
-        
-        Behavior on opacity {
-            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
-        }
-        
-        Behavior on height {
-            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
-        }
-        
-        RowLayout {
-            anchors.fill: parent
-            anchors.margins: 15
-            spacing: 15
-            
-            Rectangle {
-                width: 100
-                height: 56
-                radius: 4
-                color: "#2f2f2f"
-                
-                Text {
-                    anchors.centerIn: parent
-                    text: "📺"
-                    font.pixelSize: 24
-                    color: "#ffffff"
-                }
-            }
-            
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 5
-                
-                Text {
-                    text: "BBC News HD"
-                    font.pixelSize: 16
-                    font.bold: true
-                    color: "#ffffff"
-                }
-                
-                Text {
-                    text: "BBC News at 10"
-                    font.pixelSize: 14
-                    color: "#b3b3b3"
-                }
-            }
-            
-            Button {
-                text: "▶️"
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: 40
-                background: Rectangle {
-                    color: "#2f2f2f"
-                    radius: 20
-                }
-                onClicked: showMiniPlayer = false
-            }
-        }
-    }
-    
-    // Auto-hide controls timer
-    Timer {
-        id: controlsTimer
-        interval: 4000
-        running: showControls && isPlaying
-        repeat: false
-        onTriggered: {
-            if (showControls) {
-                overlayOpacity = 0.0
-                showControls = false
-            }
-        }
-    }
-    
-    // Mouse area for showing controls
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
-            showControls = true
-            overlayOpacity = 1.0
-            controlsTimer.restart()
-        }
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
         
         onPositionChanged: {
-            if (showControls) {
-                controlsTimer.restart()
-            }
+            resetAutoHide()
+        }
+        
+        onClicked: {
+            resetAutoHide()
         }
     }
     
-    // Keyboard shortcuts
     Keys.onPressed: function(event) {
+        resetAutoHide()
+        
         switch(event.key) {
             case Qt.Key_Space:
-                isPaused = !isPaused
-                isPlaying = !isPaused
-                event.accepted = true
-                break
-            case Qt.Key_Escape:
-                if (showMiniPlayer) {
-                    showMiniPlayer = false
-                } else {
-                    showMiniPlayer = true
-                }
+                playerPage.isPaused = !playerPage.isPaused
+                playerPage.isPlaying = !playerPage.isPaused
+                videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
                 event.accepted = true
                 break
             case Qt.Key_Up:
@@ -365,27 +271,12 @@ Rectangle {
                 zapOverlay.zapDown()
                 event.accepted = true
                 break
-            case Qt.Key_Return:
-            case Qt.Key_Enter:
-                playerInfoBar.visible = true
-                playerInfoBar.slideIn()
-                event.accepted = true
-                break
             case Qt.Key_I:
-                playerInfoBar.visible = true
                 playerInfoBar.slideIn()
                 event.accepted = true
                 break
-            case Qt.Key_E:
-                playerError.showError("network", "Connection Error", "Unable to connect to video stream. Please check your internet connection and try again.")
-                event.accepted = true
-                break
-            case Qt.Key_R:
-                if (recordBadge.isRecording) {
-                    recordBadge.stopRecording()
-                } else {
-                    recordBadge.startRecording()
-                }
+            case Qt.Key_S:
+                playerError.showError("stats", "Stats", "Resolution: 1920x1080\nFPS: 30\nBitrate: 5 Mbps")
                 event.accepted = true
                 break
             case Qt.Key_M:
@@ -394,18 +285,40 @@ Rectangle {
                 event.accepted = true
                 break
             case Qt.Key_P:
-                pipController.togglePiP()
+                pipController.visible = !pipController.visible
+                event.accepted = true
+                break
+            case Qt.Key_R:
+                recordBadge.toggleRecording()
+                event.accepted = true
+                break
+            case Qt.Key_Escape:
+            case Qt.Key_Back:
+                if (playerInfoBar.isVisible) {
+                    playerInfoBar.slideOut()
+                } else if (multiView.visible) {
+                    multiView.exitMultiView()
+                } else if (playerError.visible) {
+                    playerError.hideError()
+                } else {
+                    console.log("Exit player")
+                }
                 event.accepted = true
                 break
         }
     }
     
-    focus: true
-    
-    // Fade-in animation when entering
     Component.onCompleted: {
         opacity = 0.0
         fadeInAnimation.start()
+        forceActiveFocus()
+        
+        // Start playing the video after a short delay
+        Qt.callLater(function() {
+            isPlaying = true
+            isPaused = false
+            videoPlayer.mockPlaying = true
+        })
     }
     
     NumberAnimation {

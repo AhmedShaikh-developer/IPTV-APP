@@ -7,284 +7,238 @@ Rectangle {
     color: "transparent"
     
     property bool isVisible: false
-    property real slideOffset: height
     
-    // Slide-up panel
+    function slideIn() {
+        isVisible = true
+        slideAnimation.to = 0
+        slideAnimation.start()
+        autoHideTimer.restart()
+    }
+    
+    function slideOut() {
+        isVisible = false
+        slideAnimation.to = infoPanel.height + 20
+        slideAnimation.start()
+    }
+    
+    Timer {
+        id: autoHideTimer
+        interval: 4000
+        onTriggered: slideOut()
+    }
+    
     Rectangle {
         id: infoPanel
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 200
-        y: slideOffset
+        anchors.margins: 20
+        height: 220
+        y: height + 20
+        radius: 12
+        color: "#0B0B0BE0"
         
-        // Translucent background with blur effect
+        NumberAnimation on y {
+            id: slideAnimation
+            duration: 300
+            easing.type: Easing.OutCubic
+        }
+        
+        layer.enabled: true
+        layer.effect: ShaderEffect {
+            property variant source: infoPanel
+            fragmentShader: "
+                varying highp vec2 qt_TexCoord0;
+                uniform sampler2D source;
+                uniform lowp float qt_Opacity;
+                void main() {
+                    gl_FragColor = texture2D(source, qt_TexCoord0) * qt_Opacity;
+                }
+            "
+        }
+        
         Rectangle {
             anchors.fill: parent
-            color: "#CC000000"
-            radius: 15
-            
-            // Blur effect simulation
-            Rectangle {
-                anchors.fill: parent
-                color: "#4D141414"
-                radius: 15
-            }
+            anchors.margins: -6
+            radius: parent.radius + 2
+            color: "transparent"
+            border.color: "#33000000"
+            border.width: 6
+            z: -1
         }
         
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 20
-            spacing: 15
+            anchors.margins: 25
+            spacing: 18
             
-            // Channel info row
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 15
+                spacing: 20
                 
-                // Channel logo
                 Rectangle {
-                    Layout.preferredWidth: 80
-                    Layout.preferredHeight: 60
-                    radius: 8
-                    color: "#2f2f2f"
+                    Layout.preferredWidth: 100
+                    Layout.preferredHeight: 75
+                    radius: 10
+                    color: "#1E1E1E"
+                    border.color: "#2f2f2f"
+                    border.width: 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "📺"
-                        font.pixelSize: 32
-                        color: "#ffffff"
+                        font.pixelSize: 40
+                        color: "#FFFFFF"
                     }
                 }
                 
-                // Channel details
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 5
+                    spacing: 8
                     
-                    Text {
-                        text: "BBC News HD"
-                        font.pixelSize: 20
-                        font.bold: true
-                        color: "#ffffff"
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 12
+                        
+                        Text {
+                            text: "BBC News HD"
+                            font.pixelSize: 26
+                            font.bold: true
+                            color: "#FFFFFF"
+                        }
+                        
+                        Rectangle {
+                            width: 50
+                            height: 24
+                            radius: 12
+                            color: "#E50914"
+                            
+                            Text {
+                                anchors.centerIn: parent
+                                text: "LIVE"
+                                font.pixelSize: 11
+                                font.bold: true
+                                color: "#FFFFFF"
+                            }
+                            
+                            SequentialAnimation on opacity {
+                                running: true
+                                loops: Animation.Infinite
+                                NumberAnimation { from: 1.0; to: 0.6; duration: 800 }
+                                NumberAnimation { from: 0.6; to: 1.0; duration: 800 }
+                            }
+                        }
                     }
                     
                     Text {
-                        text: "Channel 24 • HD • Live"
-                        font.pixelSize: 14
-                        color: "#b3b3b3"
+                        text: "Channel 24 • HD • News"
+                        font.pixelSize: 15
+                        color: "#B3B3B3"
+                    }
+                    
+                    Rectangle {
+                        Layout.preferredWidth: 1
+                        Layout.preferredHeight: 1
+                        color: "transparent"
+                        Layout.topMargin: 4
                     }
                     
                     Text {
-                        text: "BBC News at 10"
-                        font.pixelSize: 16
-                        color: "#E50914"
+                        text: "Now: News Live"
+                        font.pixelSize: 18
                         font.bold: true
+                        color: "#FFFFFF"
                     }
                 }
                 
-                // Close button
                 Button {
-                    Layout.preferredWidth: 40
-                    Layout.preferredHeight: 40
+                    Layout.preferredWidth: 44
+                    Layout.preferredHeight: 44
                     
                     background: Rectangle {
-                        color: parent.hovered ? "#2a2a2a" : "transparent"
-                        radius: 20
+                        radius: 22
+                        color: parent.hovered ? "#2E2E2E" : "#1E1E1E"
                         border.color: parent.activeFocus ? "#E50914" : "transparent"
                         border.width: 2
+                        
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
                     }
                     
                     contentItem: Text {
                         text: "✕"
-                        font.pixelSize: 18
-                        color: "#ffffff"
+                        font.pixelSize: 20
+                        color: "#FFFFFF"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
                     
                     onClicked: slideOut()
-                    Keys.onReturnPressed: slideOut()
-                    Keys.onEnterPressed: slideOut()
                 }
             }
             
-            // Timeline section
-            ColumnLayout {
+            Rectangle {
                 Layout.fillWidth: true
-                spacing: 10
+                Layout.preferredHeight: 1
+                color: "#2f2f2f"
+            }
+            
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 20
                 
-                // Current program timeline
-                RowLayout {
+                ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 10
+                    spacing: 8
                     
                     Text {
-                        text: "22:00"
+                        text: "19:00 - 20:30"
                         font.pixelSize: 14
-                        color: "#b3b3b3"
+                        color: "#B3B3B3"
                     }
                     
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 6
-                        color: "#404040"
                         radius: 3
+                        color: "#2f2f2f"
                         
                         Rectangle {
-                            width: parent.width * 0.6 // Current progress
+                            width: parent.width * 0.65
                             height: parent.height
+                            radius: parent.radius
                             color: "#E50914"
-                            radius: 3
                         }
                     }
                     
                     Text {
-                        text: "23:00"
-                        font.pixelSize: 14
-                        color: "#b3b3b3"
+                        text: "65% complete • 29 min remaining"
+                        font.pixelSize: 12
+                        color: "#B3B3B3"
                     }
                 }
+            }
+            
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 15
                 
-                // Program description
                 Text {
-                    text: "Live coverage of the day's news with analysis and interviews. Featuring breaking news updates and in-depth reporting from around the world."
+                    text: "Next:"
                     font.pixelSize: 14
-                    color: "#ffffff"
-                    wrapMode: Text.WordWrap
-                    Layout.fillWidth: true
-                    Layout.maximumHeight: 60
-                    elide: Text.ElideRight
+                    font.bold: true
+                    color: "#E50914"
                 }
                 
-                // Next program preview
-                Rectangle {
+                Text {
+                    text: "BBC Newsroom • 20:30"
+                    font.pixelSize: 14
+                    color: "#FFFFFF"
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 50
-                    color: "#0DFFFFFF"
-                    radius: 8
-                    
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 10
-                        
-                        Text {
-                            text: "Next:"
-                            font.pixelSize: 14
-                            color: "#b3b3b3"
-                        }
-                        
-                        Text {
-                            text: "BBC News at 11"
-                            font.pixelSize: 14
-                            font.bold: true
-                            color: "#ffffff"
-                        }
-                        
-                        Text {
-                            text: "23:00 - 00:00"
-                            font.pixelSize: 12
-                            color: "#888888"
-                        }
-                        
-                        Item { Layout.fillWidth: true }
-                        
-                        Text {
-                            text: "⏭️"
-                            font.pixelSize: 16
-                            color: "#b3b3b3"
-                        }
-                    }
                 }
             }
-        }
-        
-        // Animation for slide in/out
-        Behavior on y {
-            NumberAnimation {
-                duration: 300
-                easing.type: Easing.OutBack
-                easing.overshoot: 0.3
-            }
-        }
-    }
-    
-    // Slide in animation
-    function slideIn() {
-        isVisible = true
-        slideOffset = 0
-    }
-    
-    // Slide out animation
-    function slideOut() {
-        slideOffset = height
-        // Hide after animation completes
-        slideOutTimer.start()
-    }
-    
-    Timer {
-        id: slideOutTimer
-        interval: 300
-        repeat: false
-        onTriggered: {
-            isVisible = false
-            visible = false
-        }
-    }
-    
-    // Auto-hide timer
-    Timer {
-        id: autoHideTimer
-        interval: 5000
-        running: isVisible
-        repeat: false
-        onTriggered: {
-            if (isVisible) {
-                slideOut()
-            }
-        }
-    }
-    
-    // Mouse area to close on click outside
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        onClicked: {
-            slideOut()
-        }
-        
-        // Don't interfere with panel clicks
-        onPressed: function(mouse) {
-            if (infoPanel.contains(Qt.point(mouse.x, mouse.y))) {
-                mouse.accepted = false
-            }
-        }
-    }
-    
-    // Keyboard shortcuts
-    Keys.onPressed: function(event) {
-        switch(event.key) {
-            case Qt.Key_Escape:
-            case Qt.Key_Down:
-                slideOut()
-                event.accepted = true
-                break
-            case Qt.Key_Return:
-            case Qt.Key_Enter:
-                slideOut()
-                event.accepted = true
-                break
-        }
-    }
-    
-    focus: isVisible
-    
-    // Update visibility
-    onIsVisibleChanged: {
-        visible = isVisible
-        if (isVisible) {
-            autoHideTimer.restart()
         }
     }
 }
+
