@@ -23,7 +23,7 @@ Rectangle {
     Timer {
         id: autoHideTimer
         interval: 3000
-        running: showControls && isPlaying
+        running: false // Disabled auto-hide for now
         onTriggered: showControls = false
     }
     
@@ -159,18 +159,40 @@ Rectangle {
             GradientStop { position: 0.7; color: "#33000000" }
             GradientStop { position: 1.0; color: "#66000000" }
         }
-        opacity: showControls ? 1.0 : 0.0
+        opacity: 1.0
+        z: -1 // Put behind controls
         
         Behavior on opacity {
             NumberAnimation { duration: 250 }
         }
     }
     
+    // Test rectangle to verify positioning
+    Rectangle {
+        id: testRect
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 120
+        color: "#E50914"
+        opacity: 0.8
+        z: 15
+        
+        Text {
+            anchors.centerIn: parent
+            text: "PLAYER CONTROLS SHOULD BE HERE"
+            color: "white"
+            font.pixelSize: 20
+            font.bold: true
+        }
+    }
+    
     PlayerControls {
         id: playerControls
         anchors.fill: parent
-        opacity: overlayOpacity
-        visible: opacity > 0
+        opacity: 1.0
+        visible: true
+        z: 10
         
         isPlaying: playerPage.isPlaying
         playbackPosition: playerPage.playbackPosition
@@ -355,6 +377,10 @@ Rectangle {
         opacity = 0.0
         fadeInAnimation.start()
         forceActiveFocus()
+        
+        // Ensure controls are visible
+        showControls = true
+        overlayOpacity = 1.0
     }
     
     NumberAnimation {
