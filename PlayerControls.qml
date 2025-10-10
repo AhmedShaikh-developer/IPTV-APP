@@ -44,6 +44,7 @@ Rectangle {
             anchors.fill: parent
             anchors.margins: 24
             spacing: 16
+            Layout.alignment: Qt.AlignHCenter
             
             // Progress bar
             Rectangle {
@@ -132,11 +133,16 @@ Rectangle {
                 }
             }
             
-            // Control buttons row - properly centered
-            Row {
+            // Control buttons row - properly centered with top margin
+            Item {
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 32
+                Layout.preferredHeight: 56
+                Layout.topMargin: 20
+                
+                Row {
+                    anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 10
+                    spacing: 32
                 
                 // Back button
                 Rectangle {
@@ -399,6 +405,7 @@ Rectangle {
                             NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
                         }
                     }
+                }
                 }
             }
         }
