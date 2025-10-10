@@ -7,455 +7,486 @@ Rectangle {
     
     property bool showMiniPlayer: false
     
-    ColumnLayout {
+    // Background gradient
+    gradient: Gradient {
+        GradientStop { position: 0.0; color: "#0D0D0D" }
+        GradientStop { position: 1.0; color: "#000000" }
+    }
+    
+    ScrollView {
         anchors.fill: parent
-        spacing: 0
+        anchors.margins: 32
         
-        // Mini-Player Top Bar
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: showMiniPlayer ? 80 : 0
-            color: "#141414"
-            visible: showMiniPlayer
+        ColumnLayout {
+            width: parent.width
+            spacing: 48
             
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 15
-                spacing: 20
-                
-                Rectangle {
-                    width: 100
-                    height: 56
-                    radius: 4
-                    color: "#2f2f2f"
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        text: "📺"
-                        font.pixelSize: 30
-                    }
-                }
-                
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Text {
-                        text: "BBC News HD"
-                        font.pixelSize: 16
-                        font.bold: true
-                        color: "#ffffff"
-                    }
-                    
-                    Text {
-                        text: "News • Live"
-                        font.pixelSize: 12
-                        color: "#b3b3b3"
-                    }
-                }
-                
-                RowLayout {
-                    spacing: 15
-                    
-                    Button {
-                        text: "⏸️"
-                        Layout.preferredWidth: 50
-                        Layout.preferredHeight: 50
-                        background: Rectangle {
-                            color: "#e50914"
-                            radius: 25
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            font.pixelSize: 20
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                    }
-                    
-                    Button {
-                        text: "✕"
-                        Layout.preferredWidth: 40
-                        Layout.preferredHeight: 40
-                        background: Rectangle {
-                            color: "#2f2f2f"
-                            radius: 20
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#b3b3b3"
-                            font.pixelSize: 16
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: showMiniPlayer = false
-                    }
-                }
-            }
-        }
-        
-        // Main Content
-        ScrollView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            
+            // Continue Watching Section
             Rectangle {
-                width: parent.width
+                Layout.fillWidth: true
+                Layout.preferredHeight: 200
                 color: "transparent"
-                anchors.margins: 20
                 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 40
-                
-                    // Continue Watching Rail
-                    Column {
-                    width: parent.width
-                    spacing: 20
-                    topPadding: 30
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
+                    spacing: 16
                     
-                    Text {
-                        text: "▶️ Continue Watching"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
+                    // Section Header
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 16
+                        
+                        Text {
+                            text: "Continue Watching"
+                            font.pixelSize: 24
+                            font.bold: true
+                            color: "#FFFFFF"
+                        }
+                        
+                        Rectangle {
+                            Layout.preferredWidth: 48
+                            Layout.preferredHeight: 2
+                            color: "#E50914"
+                            radius: 1
+                        }
                     }
                     
-                    Flow {
-                        width: parent.width
-                        spacing: 20
+                    // Media Cards Row
+                    ScrollView {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        clip: true
                         
-                        Repeater {
-                            model: 5
+                        Row {
+                            spacing: 24
                             
-                            Rectangle {
-                                width: Math.min(280, parent.width / 4.5)
-                                height: Math.min(160, parent.width / 7.5)
-                                radius: 8
-                                color: "#181818"
+                            Repeater {
+                                model: [
+                                    { title: "The Crown", subtitle: "Drama", progress: 0.65 },
+                                    { title: "Stranger Things", subtitle: "Sci-Fi", progress: 0.30 },
+                                    { title: "Ozark", subtitle: "Crime", progress: 0.80 },
+                                    { title: "The Witcher", subtitle: "Fantasy", progress: 0.45 },
+                                    { title: "Money Heist", subtitle: "Thriller", progress: 0.20 },
+                                    { title: "Dark", subtitle: "Mystery", progress: 0.90 }
+                                ]
                                 
-                                Column {
-                                    anchors.fill: parent
+                                Rectangle {
+                                    width: 220
+                                    height: 130
+                                    radius: 12
+                                    color: "#111111"
                                     
+                                    // Simple shadow effect
                                     Rectangle {
-                                        width: parent.width
-                                        height: 120
-                                        radius: 8
-                                        color: "#2f2f2f"
+                                        anchors.fill: parent
+                                        anchors.margins: -4
+                                        anchors.topMargin: 0
+                                        radius: parent.radius + 2
+                                        color: "#00000080"
+                                        z: -1
+                                    }
+                                    
+                                    // Hover animation
+                                    Behavior on scale {
+                                        NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+                                    }
+                                    
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
                                         
+                                        onEntered: {
+                                            parent.scale = 1.08
+                                        }
+                                        
+                                        onExited: {
+                                            parent.scale = 1.0
+                                        }
+                                        
+                                        onClicked: {
+                                            console.log("Clicked:", modelData.title)
+                                        }
+                                    }
+                                    
+                                    // Card content
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: parent.radius
+                                        color: "#1A1A1A"
+                                        border.color: parent.scale > 1.0 ? "#E50914" : "transparent"
+                                        border.width: 2
+                                        
+                                        // Icon placeholder
                                         Text {
                                             anchors.centerIn: parent
                                             text: "🎬"
                                             font.pixelSize: 40
+                                            color: "#666666"
                                         }
                                         
+                                        // Progress bar
                                         Rectangle {
                                             anchors.bottom: parent.bottom
-                                            width: parent.width * 0.65
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
                                             height: 4
-                                            color: "#e50914"
+                                            radius: 2
+                                            color: "transparent"
+                                            
+                                            Rectangle {
+                                                anchors.fill: parent
+                                                color: "#333333"
+                                                radius: 2
+                                                
+                                                Rectangle {
+                                                    width: parent.width * modelData.progress
+                                                    height: parent.height
+                                                    color: "#E50914"
+                                                    radius: 2
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Title overlay
+                                        Rectangle {
+                                            anchors.bottom: parent.bottom
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            height: 60
+                                            gradient: Gradient {
+                                                GradientStop { position: 0.0; color: "transparent" }
+                                                GradientStop { position: 1.0; color: "#000000CC" }
+                                            }
+                                            radius: parent.radius
+                                            
+                                            ColumnLayout {
+                                                anchors.fill: parent
+                                                anchors.margins: 12
+                                                spacing: 4
+                                                
+                                                Text {
+                                                    text: modelData.title
+                                                    font.pixelSize: 14
+                                                    font.bold: true
+                                                    color: "#FFFFFF"
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 2
+                                                    elide: Text.ElideRight
+                                                }
+                                                
+                                                Text {
+                                                    text: modelData.subtitle
+                                                    font.pixelSize: 12
+                                                    color: "#B3B3B3"
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 1
+                                                    elide: Text.ElideRight
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // My List Section
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 200
+                color: "transparent"
+                
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 16
+                    
+                    // Section Header
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 16
+                        
+                        Text {
+                            text: "My List"
+                            font.pixelSize: 24
+                            font.bold: true
+                            color: "#FFFFFF"
+                        }
+                        
+                        Rectangle {
+                            Layout.preferredWidth: 48
+                            Layout.preferredHeight: 2
+                            color: "#E50914"
+                            radius: 1
+                        }
+                    }
+                    
+                    // Media Cards Row
+                    ScrollView {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        clip: true
+                        
+                        Row {
+                            spacing: 24
+                            
+                            Repeater {
+                                model: [
+                                    { title: "Breaking Bad", subtitle: "Crime Drama" },
+                                    { title: "Game of Thrones", subtitle: "Fantasy" },
+                                    { title: "House of Cards", subtitle: "Political" },
+                                    { title: "Narcos", subtitle: "Crime" },
+                                    { title: "Black Mirror", subtitle: "Sci-Fi" },
+                                    { title: "The Office", subtitle: "Comedy" }
+                                ]
+                                
+                                Rectangle {
+                                    width: 220
+                                    height: 130
+                                    radius: 12
+                                    color: "#111111"
+                                    
+                                    // Simple shadow effect
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        anchors.margins: -4
+                                        anchors.topMargin: 0
+                                        radius: parent.radius + 2
+                                        color: "#00000080"
+                                        z: -1
+                                    }
+                                    
+                                    // Hover animation
+                                    Behavior on scale {
+                                        NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+                                    }
+                                    
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        
+                                        onEntered: {
+                                            parent.scale = 1.08
+                                        }
+                                        
+                                        onExited: {
+                                            parent.scale = 1.0
+                                        }
+                                        
+                                        onClicked: {
+                                            console.log("Clicked:", modelData.title)
                                         }
                                     }
                                     
-                                    Text {
-                                        text: "Movie Title " + (index + 1)
-                                        font.pixelSize: 14
-                                        color: "#ffffff"
-                                        leftPadding: 10
-                                        topPadding: 8
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Favorites Rail
-                Column {
-                    width: parent.width
-                    spacing: 20
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
-                    
-                    Text {
-                        text: "⭐ Favorites"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
-                    }
-                    
-                    Flow {
-                        width: parent.width
-                        spacing: 20
-                        
-                        Repeater {
-                            model: 6
-                            
-                            Rectangle {
-                                width: Math.min(180, parent.width / 5)
-                                height: Math.min(100, parent.width / 9)
-                                radius: 8
-                                color: "#2f2f2f"
-                                
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "📺"
-                                    font.pixelSize: 40
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Live Categories Rail
-                Column {
-                    width: parent.width
-                    spacing: 20
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
-                    
-                    Text {
-                        text: "📡 Live Categories"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
-                    }
-                    
-                    Flow {
-                        width: parent.width
-                        spacing: 20
-                        
-                        Repeater {
-                            model: ["Sports", "News", "Entertainment", "Kids", "Movies", "Music"]
-                            
-                            Rectangle {
-                                width: Math.min(200, parent.width / 4)
-                                height: Math.min(120, parent.width / 6.7)
-                                radius: 8
-                                color: "#181818"
-                                border.color: "#2f2f2f"
-                                border.width: 1
-                                
-                                Column {
-                                    anchors.centerIn: parent
-                                    spacing: 10
-                                    
-                                    Text {
-                                        text: ["⚽", "📰", "🎭", "🧒", "🎬", "🎵"][index]
-                                        font.pixelSize: 40
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                    }
-                                    
-                                    Text {
-                                        text: modelData
-                                        font.pixelSize: 16
-                                        font.bold: true
-                                        color: "#ffffff"
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Movies Rail
-                Column {
-                    width: parent.width
-                    spacing: 20
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
-                    
-                    Text {
-                        text: "🎬 Movies"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
-                    }
-                    
-                    Flow {
-                        width: parent.width
-                        spacing: 20
-                        
-                        Repeater {
-                            model: 6
-                            
-                            Rectangle {
-                                width: Math.min(160, parent.width / 5.5)
-                                height: Math.min(240, parent.width * 1.5)
-                                radius: 8
-                                color: "#2f2f2f"
-                                
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "🎥"
-                                    font.pixelSize: 50
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Series Rail
-                Column {
-                    width: parent.width
-                    spacing: 20
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
-                    
-                    Text {
-                        text: "📺 Series"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
-                    }
-                    
-                    Flow {
-                        width: parent.width
-                        spacing: 20
-                        
-                        Repeater {
-                            model: 6
-                            
-                            Rectangle {
-                                width: Math.min(160, parent.width / 5.5)
-                                height: Math.min(240, parent.width * 1.5)
-                                radius: 8
-                                color: "#2f2f2f"
-                                
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "📺"
-                                    font.pixelSize: 50
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Catch-up Rail
-                Column {
-                    width: parent.width
-                    spacing: 20
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
-                    
-                    Text {
-                        text: "⏮️ Catch-up"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
-                    }
-                    
-                    Flow {
-                        width: parent.width
-                        spacing: 20
-                        
-                        Repeater {
-                            model: 5
-                            
-                            Rectangle {
-                                width: Math.min(280, parent.width / 4.5)
-                                height: Math.min(160, parent.width / 7.5)
-                                radius: 8
-                                color: "#181818"
-                                
-                                Column {
-                                    anchors.fill: parent
-                                    spacing: 10
-                                    topPadding: 10
-                                    
+                                    // Card content
                                     Rectangle {
-                                        width: parent.width - 20
-                                        height: 100
-                                        radius: 6
-                                        color: "#2f2f2f"
-                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.fill: parent
+                                        radius: parent.radius
+                                        color: "#1A1A1A"
+                                        border.color: parent.scale > 1.0 ? "#E50914" : "transparent"
+                                        border.width: 2
                                         
+                                        // Icon placeholder
                                         Text {
                                             anchors.centerIn: parent
-                                            text: "📡"
-                                            font.pixelSize: 35
+                                            text: "🎬"
+                                            font.pixelSize: 40
+                                            color: "#666666"
                                         }
-                                    }
-                                    
-                                    Text {
-                                        text: "Program " + (index + 1)
-                                        font.pixelSize: 13
-                                        color: "#ffffff"
-                                        leftPadding: 10
+                                        
+                                        // Title overlay
+                                        Rectangle {
+                                            anchors.bottom: parent.bottom
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            height: 60
+                                            gradient: Gradient {
+                                                GradientStop { position: 0.0; color: "transparent" }
+                                                GradientStop { position: 1.0; color: "#000000CC" }
+                                            }
+                                            radius: parent.radius
+                                            
+                                            ColumnLayout {
+                                                anchors.fill: parent
+                                                anchors.margins: 12
+                                                spacing: 4
+                                                
+                                                Text {
+                                                    text: modelData.title
+                                                    font.pixelSize: 14
+                                                    font.bold: true
+                                                    color: "#FFFFFF"
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 2
+                                                    elide: Text.ElideRight
+                                                }
+                                                
+                                                Text {
+                                                    text: modelData.subtitle
+                                                    font.pixelSize: 12
+                                                    color: "#B3B3B3"
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 1
+                                                    elide: Text.ElideRight
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+            
+            // Live Categories Section
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 200
+                color: "transparent"
                 
-                // Recently Added Rail
-                Column {
-                    width: parent.width
-                    spacing: 20
-                    leftPadding: Math.max(20, parent.width * 0.05)
-                    rightPadding: Math.max(20, parent.width * 0.05)
-                    bottomPadding: 40
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 16
                     
-                    Text {
-                        text: "🆕 Recently Added"
-                        font.pixelSize: Math.min(parent.parent.width / 40, 24)
-                        font.bold: true
-                        color: "#ffffff"
+                    // Section Header
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 16
+                        
+                        Text {
+                            text: "Live Categories"
+                            font.pixelSize: 24
+                            font.bold: true
+                            color: "#FFFFFF"
+                        }
+                        
+                        Rectangle {
+                            Layout.preferredWidth: 48
+                            Layout.preferredHeight: 2
+                            color: "#E50914"
+                            radius: 1
+                        }
                     }
                     
-                    Flow {
-                        width: parent.width
-                        spacing: 20
+                    // Media Cards Row
+                    ScrollView {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        clip: true
                         
-                        Repeater {
-                            model: 6
+                        Row {
+                            spacing: 24
                             
-                            Rectangle {
-                                width: Math.min(200, parent.width / 4)
-                                height: Math.min(120, parent.width / 6.7)
-                                radius: 8
-                                color: "#181818"
-                                border.color: "#e50914"
-                                border.width: 1
+                            Repeater {
+                                model: [
+                                    { title: "Sports", subtitle: "Live", icon: "⚽" },
+                                    { title: "News", subtitle: "24/7", icon: "📰" },
+                                    { title: "Entertainment", subtitle: "Variety", icon: "🎭" },
+                                    { title: "Movies", subtitle: "Cinema", icon: "🎬" },
+                                    { title: "Kids", subtitle: "Family", icon: "🧒" },
+                                    { title: "Music", subtitle: "Concerts", icon: "🎵" }
+                                ]
                                 
-                                ColumnLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 10
+                                Rectangle {
+                                    width: 220
+                                    height: 130
+                                    radius: 12
+                                    color: "#111111"
                                     
-                                    Text {
-                                        text: "🎬"
-                                        font.pixelSize: 40
-                                        Layout.alignment: Qt.AlignHCenter
+                                    // Simple shadow effect
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        anchors.margins: -4
+                                        anchors.topMargin: 0
+                                        radius: parent.radius + 2
+                                        color: "#00000080"
+                                        z: -1
                                     }
                                     
-                                    Rectangle {
-                                        Layout.preferredWidth: 60
-                                        Layout.preferredHeight: 22
-                                        radius: 11
-                                        color: "#e50914"
-                                        Layout.alignment: Qt.AlignHCenter
+                                    // Hover animation
+                                    Behavior on scale {
+                                        NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+                                    }
+                                    
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
                                         
+                                        onEntered: {
+                                            parent.scale = 1.08
+                                        }
+                                        
+                                        onExited: {
+                                            parent.scale = 1.0
+                                        }
+                                        
+                                        onClicked: {
+                                            console.log("Clicked:", modelData.title)
+                                        }
+                                    }
+                                    
+                                    // Card content
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: parent.radius
+                                        color: "#1A1A1A"
+                                        border.color: parent.scale > 1.0 ? "#E50914" : "transparent"
+                                        border.width: 2
+                                        
+                                        // Icon
                                         Text {
                                             anchors.centerIn: parent
-                                            text: "NEW"
-                                            font.pixelSize: 10
-                                            font.bold: true
-                                            color: "white"
+                                            text: modelData.icon
+                                            font.pixelSize: 40
+                                            color: "#FFFFFF"
+                                        }
+                                        
+                                        // Title overlay
+                                        Rectangle {
+                                            anchors.bottom: parent.bottom
+                                            anchors.left: parent.left
+                                            anchors.right: parent.right
+                                            height: 60
+                                            gradient: Gradient {
+                                                GradientStop { position: 0.0; color: "transparent" }
+                                                GradientStop { position: 1.0; color: "#000000CC" }
+                                            }
+                                            radius: parent.radius
+                                            
+                                            ColumnLayout {
+                                                anchors.fill: parent
+                                                anchors.margins: 12
+                                                spacing: 4
+                                                
+                                                Text {
+                                                    text: modelData.title
+                                                    font.pixelSize: 14
+                                                    font.bold: true
+                                                    color: "#FFFFFF"
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 2
+                                                    elide: Text.ElideRight
+                                                }
+                                                
+                                                Text {
+                                                    text: modelData.subtitle
+                                                    font.pixelSize: 12
+                                                    color: "#B3B3B3"
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 1
+                                                    elide: Text.ElideRight
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
                 }
             }
         }
     }
 }
-

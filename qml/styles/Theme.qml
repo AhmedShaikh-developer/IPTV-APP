@@ -17,6 +17,13 @@ QtObject {
     readonly property color trackColor: "#404040"
     readonly property color bufferedColor: "#666666"
     
+    // Home screen colors
+    readonly property color backgroundPrimary: "#0D0D0D"
+    readonly property color backgroundSecondary: "#1A1A1A"
+    readonly property color cardBg: "#111111"
+    readonly property real cardRadius: 12
+    readonly property real cardShadow: 20
+    
     readonly property int radiusSm: 6
     readonly property int radiusMd: 10
     readonly property int radiusLg: 12
