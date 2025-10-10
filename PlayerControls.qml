@@ -132,11 +132,16 @@ Rectangle {
                 }
             }
             
-            // Control buttons row
+            // Control buttons row - centered
             RowLayout {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 spacing: 32
+                
+                // Spacer to center the buttons
+                Item {
+                    Layout.fillWidth: true
+                }
                 
                 // Back button
                 Rectangle {
@@ -264,6 +269,11 @@ Rectangle {
                             NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
                         }
                     }
+                }
+                
+                // Spacer to center the buttons
+                Item {
+                    Layout.fillWidth: true
                 }
             }
         }
