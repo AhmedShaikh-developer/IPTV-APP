@@ -132,16 +132,11 @@ Rectangle {
                 }
             }
             
-            // Control buttons row - centered
-            RowLayout {
+            // Control buttons row - properly centered
+            Row {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 spacing: 32
-                
-                // Spacer to center the buttons
-                Item {
-                    Layout.fillWidth: true
-                }
                 
                 // Back button
                 Rectangle {
@@ -213,6 +208,7 @@ Rectangle {
                     color: "#FFFFFF"
                     font.pixelSize: 16
                     font.family: "Arial"
+                    anchors.verticalCenter: parent.verticalCenter
                 }
                 
                 // Volume button
@@ -236,6 +232,137 @@ Rectangle {
                         hoverEnabled: true
                         onEntered: parent.scale = 1.1
                         onExited: parent.scale = 1.0
+                        onClicked: {
+                            anyUserAction()
+                        }
+                        
+                        Behavior on scale {
+                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                        }
+                    }
+                }
+                
+                // Record button
+                Rectangle {
+                    width: 48
+                    height: 48
+                    radius: 24
+                    color: "#0D0D0DB3"
+                    border.color: "#333333"
+                    border.width: 1
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "●"
+                        color: "#E50914"
+                        font.pixelSize: 24
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: parent.scale = 1.1
+                        onExited: parent.scale = 1.0
+                        onClicked: {
+                            playerControls.toggleRecording()
+                            anyUserAction()
+                        }
+                        
+                        Behavior on scale {
+                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                        }
+                    }
+                }
+                
+                // PiP button
+                Rectangle {
+                    width: 48
+                    height: 48
+                    radius: 24
+                    color: "#0D0D0DB3"
+                    border.color: "#333333"
+                    border.width: 1
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "⊞"
+                        color: "#FFFFFF"
+                        font.pixelSize: 24
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: parent.scale = 1.1
+                        onExited: parent.scale = 1.0
+                        onClicked: {
+                            playerControls.togglePiP()
+                            anyUserAction()
+                        }
+                        
+                        Behavior on scale {
+                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                        }
+                    }
+                }
+                
+                // MultiView button
+                Rectangle {
+                    width: 48
+                    height: 48
+                    radius: 24
+                    color: "#0D0D0DB3"
+                    border.color: "#333333"
+                    border.width: 1
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "⊡"
+                        color: "#FFFFFF"
+                        font.pixelSize: 24
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: parent.scale = 1.1
+                        onExited: parent.scale = 1.0
+                        onClicked: {
+                            playerControls.showMultiView()
+                            anyUserAction()
+                        }
+                        
+                        Behavior on scale {
+                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                        }
+                    }
+                }
+                
+                // Info button
+                Rectangle {
+                    width: 48
+                    height: 48
+                    radius: 24
+                    color: "#0D0D0DB3"
+                    border.color: "#333333"
+                    border.width: 1
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "ⓘ"
+                        color: "#FFFFFF"
+                        font.pixelSize: 24
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onEntered: parent.scale = 1.1
+                        onExited: parent.scale = 1.0
+                        onClicked: {
+                            playerControls.showInfo()
+                            anyUserAction()
+                        }
                         
                         Behavior on scale {
                             NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
@@ -264,16 +391,14 @@ Rectangle {
                         hoverEnabled: true
                         onEntered: parent.scale = 1.1
                         onExited: parent.scale = 1.0
+                        onClicked: {
+                            anyUserAction()
+                        }
                         
                         Behavior on scale {
                             NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
                         }
                     }
-                }
-                
-                // Spacer to center the buttons
-                Item {
-                    Layout.fillWidth: true
                 }
             }
         }
