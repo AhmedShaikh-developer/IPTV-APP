@@ -202,7 +202,13 @@ Rectangle {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onClicked: console.log("Continue watching series " + (index + 1))
+                                        onClicked: {
+                                            console.log("Continue watching series " + (index + 1))
+                                            // Navigate to series details page
+                                            if (typeof navigateTo !== 'undefined') {
+                                                navigateTo("/series/details")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -299,7 +305,13 @@ Rectangle {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onClicked: console.log("Navigate to series details")
+                                        onClicked: {
+                                            console.log("Navigate to series details")
+                                            // Navigate to series details page
+                                            if (typeof navigateTo !== 'undefined') {
+                                                navigateTo("/series/details")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -396,7 +408,13 @@ Rectangle {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onClicked: console.log("Navigate to series details")
+                                        onClicked: {
+                                            console.log("Navigate to series details")
+                                            // Navigate to series details page
+                                            if (typeof navigateTo !== 'undefined') {
+                                                navigateTo("/series/details")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -528,7 +546,13 @@ Rectangle {
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
-                                        onClicked: console.log("Navigate to series details")
+                                        onClicked: {
+                                            console.log("Navigate to series details")
+                                            // Navigate to series details page
+                                            if (typeof navigateTo !== 'undefined') {
+                                                navigateTo("/series/details")
+                                            }
+                                        }
                                     }
                                 }
                             }

@@ -637,7 +637,11 @@ ApplicationWindow {
         MovieDetails {}
         
         // Series Hub
-        SeriesHub {}
+        SeriesHub {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
         
         // Series Details
         SeriesDetails {}

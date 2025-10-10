@@ -20,6 +20,34 @@ Rectangle {
         opacity: 0.8
     }
 
+    // Floating back button (always visible at top)
+    Button {
+        id: backButton
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: 20
+        z: 1000
+        text: "← Back"
+        width: 120
+        height: 60
+        background: Rectangle {
+            color: parent.hovered ? "#E50914" : "#000000"
+            radius: 10
+            border.color: "#FFFFFF"
+            border.width: 2
+            opacity: 0.9
+        }
+        contentItem: Text {
+            text: parent.text
+            color: "#FFFFFF"
+            font.pixelSize: 18
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        onClicked: console.log("Navigate back to series hub")
+    }
+
     ScrollView {
         anchors.fill: parent
         clip: true
