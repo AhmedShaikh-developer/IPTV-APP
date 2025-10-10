@@ -49,6 +49,14 @@
            <file>MultiView.qml</file>
            <file>RecordBadge.qml</file>
            <file>PlayerError.qml</file>
+           <file>MoviesHub.qml</file>
+           <file>MovieGrid.qml</file>
+           <file>MovieDetails.qml</file>
+           <file>SeriesHub.qml</file>
+           <file>SeriesDetails.qml</file>
+           <file>SeasonEpisodes.qml</file>
+           <file>EpisodeSheet.qml</file>
+           <file>UserLists.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>

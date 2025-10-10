@@ -269,20 +269,25 @@ ApplicationWindow {
                 case "/sources/sync": return 23
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
-                case "/home": return 39 // Main Application layout
-                case "/live/groups": return 39 // Main Application layout
+                case "/home": return 44 // Main Application layout
+                case "/live/groups": return 44 // Main Application layout
                 case "/inbox": return 27
-                case "/live": return 39 // Main Application layout
-                case "/guide": return 39 // Main Application layout
-                case "/movies": return 39 // Main Application layout
-                case "/series": return 39 // Main Application layout
-                case "/catchup": return 39 // Main Application layout
-                case "/favorites": return 39 // Main Application layout
-                case "/search": return 39 // Main Application layout
-                case "/settings": return 39 // Main Application layout
-                case "/account": return 39 // Main Application layout
-                case "/main": return 39 // Main Application layout
-                case "/player": return 38 // Player Loader
+                case "/live": return 44 // Main Application layout
+                case "/guide": return 44 // Main Application layout
+                case "/movies": return 31 // MoviesHub
+                case "/movies/genre": return 32 // MovieGrid
+                case "/movie": return 33 // MovieDetails
+                case "/series": return 34 // SeriesHub
+                case "/series/details": return 35 // SeriesDetails
+                case "/series/season": return 36 // SeasonEpisodes
+                case "/lists": return 37 // UserLists
+                case "/catchup": return 44 // Main Application layout
+                case "/favorites": return 39 // Favorites placeholder
+                case "/search": return 44 // Main Application layout
+                case "/settings": return 44 // Main Application layout
+                case "/account": return 44 // Main Application layout
+                case "/main": return 44 // Main Application layout
+                case "/player": return 43 // Player Loader
                 default: return 0
             }
         }
@@ -622,19 +627,26 @@ ApplicationWindow {
         // TV Guide
         EpgGrid {}
         
-        // Movies
-        PlaceholderScreen {
-            title: "🎬 Movies"
-            description: "Browse and watch movies"
-            icon: "🎥"
-        }
+        // Movies Hub
+        MoviesHub {}
         
-        // Series
-        PlaceholderScreen {
-            title: "📺 Series"
-            description: "Watch TV series and shows"
-            icon: "📺"
-        }
+        // Movie Grid
+        MovieGrid {}
+        
+        // Movie Details
+        MovieDetails {}
+        
+        // Series Hub
+        SeriesHub {}
+        
+        // Series Details
+        SeriesDetails {}
+        
+        // Season Episodes
+        SeasonEpisodes {}
+        
+        // User Lists
+        UserLists {}
         
         // Catch-up
         CatchupBrowser {}
