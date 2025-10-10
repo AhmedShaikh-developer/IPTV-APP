@@ -3,7 +3,7 @@ import QtQuick 2.15
 
 QtObject {
     readonly property color accent: "#E50914"
-    readonly property color overlayBg: "#111111CC"
+    readonly property color overlayBg: "#0D0D0DB3"
     readonly property color controlBg: "#0B0B0BE0"
     readonly property color glass: "#1A1A1A99"
     readonly property color controlPill: "#1E1E1E"

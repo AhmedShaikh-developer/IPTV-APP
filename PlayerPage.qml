@@ -9,22 +9,21 @@ Rectangle {
     
     property url currentSource: "qrc:/src/IPTV Pro.mp4"
     property bool isPlaying: false
-    property bool isPaused: false
     property bool showControls: true
     property bool showMiniPlayer: false
     property real playbackPosition: 0.3
     property real bufferedPosition: 0.7
-    property real overlayOpacity: showControls ? 1.0 : 0.0
+    property bool isSeeking: false
+    property bool isPaused: videoPlayer.playbackState === MediaPlayer.PausedState
     
-    Behavior on overlayOpacity {
-        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
-    }
     
     Timer {
         id: autoHideTimer
         interval: 3000
-        running: false // Disabled auto-hide for now
-        onTriggered: showControls = false
+        running: showControls && !isPaused && !isSeeking
+        onTriggered: {
+            showControls = false
+        }
     }
     
     Timer {
@@ -37,7 +36,7 @@ Rectangle {
         }
     }
     
-    function resetAutoHide() {
+    function revealControls() {
         showControls = true
         autoHideTimer.restart()
     }
@@ -168,126 +167,52 @@ Rectangle {
     }
     
     
-    // Simple test controls to replace PlayerControls
-    Rectangle {
+    
+    PlayerControls {
         id: playerControls
         anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 120
-        color: "#1a1a1a"
-        opacity: 1.0
-        visible: true
-        z: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.margins: 24
+        opacity: showControls ? 1.0 : 0.0
+        visible: showControls
+        enabled: showControls
+        z: 900
         
-        RowLayout {
-            anchors.centerIn: parent
-            spacing: 20
-            
-            Button {
-                text: "←"
-                width: 50
-                height: 50
-                background: Rectangle {
-                    color: "#333333"
-                    radius: 25
-                }
-                contentItem: Text {
-                    text: parent.text
-                    color: "white"
-                    font.pixelSize: 20
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                onClicked: {
-                    if (typeof navigateTo !== "undefined") {
-                        navigateTo("/home")
-                    } else {
-                        console.log("Back button pressed - navigate to home")
-                    }
-                }
+        Behavior on opacity {
+            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+        }
+        
+        isPlaying: playerPage.isPlaying
+        playbackPosition: playerPage.playbackPosition
+        bufferedPosition: playerPage.bufferedPosition
+        
+        onAnyUserAction: {
+            revealControls()
+        }
+        
+        onTogglePlay: {
+            playerPage.isPaused = !playerPage.isPaused
+            playerPage.isPlaying = !playerPage.isPaused
+            videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
+            revealControls()
+        }
+        
+        onBackPressed: {
+            if (typeof navigateTo !== "undefined") {
+                navigateTo("/home")
+            } else {
+                console.log("Back button pressed - navigate to home")
             }
-            
-            Button {
-                text: "⏯️"
-                width: 50
-                height: 50
-                background: Rectangle {
-                    color: "#E50914"
-                    radius: 25
-                }
-                contentItem: Text {
-                    text: parent.text
-                    color: "white"
-                    font.pixelSize: 20
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                onClicked: {
-                    playerPage.isPaused = !playerPage.isPaused
-                    playerPage.isPlaying = !playerPage.isPaused
-                }
-            }
-            
-            Text {
-                text: "00:30"
-                color: "white"
-                font.pixelSize: 16
-            }
-            
-            Rectangle {
-                width: 200
-                height: 4
-                color: "#404040"
-                radius: 2
-                
-                Rectangle {
-                    width: parent.width * playerPage.playbackPosition
-                    height: parent.height
-                    color: "#E50914"
-                    radius: 2
-                }
-            }
-            
-            Text {
-                text: "00:30"
-                color: "white"
-                font.pixelSize: 16
-            }
-            
-            Button {
-                text: "🔊"
-                width: 50
-                height: 50
-                background: Rectangle {
-                    color: "#333333"
-                    radius: 25
-                }
-                contentItem: Text {
-                    text: parent.text
-                    color: "white"
-                    font.pixelSize: 20
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-            
-            Button {
-                text: "⚙️"
-                width: 50
-                height: 50
-                background: Rectangle {
-                    color: "#333333"
-                    radius: 25
-                }
-                contentItem: Text {
-                    text: parent.text
-                    color: "white"
-                    font.pixelSize: 20
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
+        }
+        
+        onSeekStart: {
+            playerPage.isSeeking = true
+            revealControls()
+        }
+        
+        onSeekEnd: {
+            playerPage.isSeeking = false
+            revealControls()
         }
     }
     
@@ -295,24 +220,28 @@ Rectangle {
         id: playerInfoBar
         anchors.fill: parent
         visible: false
+        z: 950
     }
     
     ZapOverlay {
         id: zapOverlay
         anchors.fill: parent
         visible: false
+        z: 850
     }
     
     PipController {
         id: pipController
         anchors.fill: parent
         visible: false
+        z: 850
     }
     
     MultiView {
         id: multiView
         anchors.fill: parent
         visible: false
+        z: 850
     }
     
     RecordBadge {
@@ -321,12 +250,14 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 20
         visible: false
+        z: 850
     }
     
     PlayerError {
         id: playerError
         anchors.fill: parent
         visible: false
+        z: 1000
         
         onRetry: {
             retryPlayback()
@@ -344,27 +275,34 @@ Rectangle {
     }
     
     MouseArea {
+        id: interactionLayer
         anchors.fill: parent
         hoverEnabled: true
-        acceptedButtons: Qt.NoButton
+        acceptedButtons: Qt.AllButtons
+        propagateComposedEvents: !showControls
         
         onPositionChanged: {
-            resetAutoHide()
+            revealControls()
         }
         
-        onClicked: {
-            resetAutoHide()
+        onPressed: {
+            revealControls()
         }
     }
     
     Keys.onPressed: function(event) {
-        resetAutoHide()
+        revealControls()
         
         switch(event.key) {
+            case Qt.Key_C:
+                showControls = !showControls
+                event.accepted = true
+                break
             case Qt.Key_Space:
                 playerPage.isPaused = !playerPage.isPaused
                 playerPage.isPlaying = !playerPage.isPaused
                 videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
+                revealControls()
                 event.accepted = true
                 break
             case Qt.Key_Up:
@@ -419,10 +357,10 @@ Rectangle {
         fadeInAnimation.start()
         forceActiveFocus()
         
-        // Ensure controls are visible
-        showControls = true
-        overlayOpacity = 1.0
+        // Show controls initially
+        revealControls()
     }
+    
     
     NumberAnimation {
         id: fadeInAnimation
