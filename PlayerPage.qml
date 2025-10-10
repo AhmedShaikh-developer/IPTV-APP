@@ -167,86 +167,127 @@ Rectangle {
         }
     }
     
-    // Test rectangle to verify positioning
+    
+    // Simple test controls to replace PlayerControls
     Rectangle {
-        id: testRect
+        id: playerControls
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         height: 120
-        color: "#E50914"
-        opacity: 0.8
-        z: 15
-        
-        Text {
-            anchors.centerIn: parent
-            text: "PLAYER CONTROLS SHOULD BE HERE"
-            color: "white"
-            font.pixelSize: 20
-            font.bold: true
-        }
-    }
-    
-    PlayerControls {
-        id: playerControls
-        anchors.fill: parent
+        color: "#1a1a1a"
         opacity: 1.0
         visible: true
         z: 10
         
-        isPlaying: playerPage.isPlaying
-        playbackPosition: playerPage.playbackPosition
-        bufferedPosition: playerPage.bufferedPosition
-        
-        onTogglePlay: {
-            playerPage.isPaused = !playerPage.isPaused
-            playerPage.isPlaying = !playerPage.isPaused
-            videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
-            resetAutoHide()
-        }
-        
-        onShowInfo: {
-            playerInfoBar.slideIn()
-            resetAutoHide()
-        }
-        
-        onZapUp: {
-            zapOverlay.show()
-            resetAutoHide()
-        }
-        
-        onZapDown: {
-            zapOverlay.show()
-            resetAutoHide()
-        }
-        
-        onTogglePiP: {
-            pipController.visible = !pipController.visible
-            resetAutoHide()
-        }
-        
-        onShowMultiView: {
-            multiView.visible = true
-            multiView.enterMultiView()
-            resetAutoHide()
-        }
-        
-        onBackPressed: {
-            if (typeof navigateTo !== "undefined") {
-                navigateTo("/home")
-            } else {
-                console.log("Back button pressed - navigate to home")
+        RowLayout {
+            anchors.centerIn: parent
+            spacing: 20
+            
+            Button {
+                text: "←"
+                width: 50
+                height: 50
+                background: Rectangle {
+                    color: "#333333"
+                    radius: 25
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    font.pixelSize: 20
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                onClicked: {
+                    if (typeof navigateTo !== "undefined") {
+                        navigateTo("/home")
+                    } else {
+                        console.log("Back button pressed - navigate to home")
+                    }
+                }
             }
-        }
-        
-        onShowError: {
-            playerError.showError("network", "Connection Error", "Unable to connect to video stream. Please check your internet connection and try again.")
-            resetAutoHide()
-        }
-        
-        onToggleRecording: {
-            recordBadge.toggleRecording()
-            resetAutoHide()
+            
+            Button {
+                text: "⏯️"
+                width: 50
+                height: 50
+                background: Rectangle {
+                    color: "#E50914"
+                    radius: 25
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    font.pixelSize: 20
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                onClicked: {
+                    playerPage.isPaused = !playerPage.isPaused
+                    playerPage.isPlaying = !playerPage.isPaused
+                }
+            }
+            
+            Text {
+                text: "00:30"
+                color: "white"
+                font.pixelSize: 16
+            }
+            
+            Rectangle {
+                width: 200
+                height: 4
+                color: "#404040"
+                radius: 2
+                
+                Rectangle {
+                    width: parent.width * playerPage.playbackPosition
+                    height: parent.height
+                    color: "#E50914"
+                    radius: 2
+                }
+            }
+            
+            Text {
+                text: "00:30"
+                color: "white"
+                font.pixelSize: 16
+            }
+            
+            Button {
+                text: "🔊"
+                width: 50
+                height: 50
+                background: Rectangle {
+                    color: "#333333"
+                    radius: 25
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    font.pixelSize: 20
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+            
+            Button {
+                text: "⚙️"
+                width: 50
+                height: 50
+                background: Rectangle {
+                    color: "#333333"
+                    radius: 25
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    font.pixelSize: 20
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
         }
     }
     
