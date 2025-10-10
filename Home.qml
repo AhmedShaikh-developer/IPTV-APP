@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     color: "#000000"
     
-    property bool showMiniPlayer: true
+    property bool showMiniPlayer: false
     
     ColumnLayout {
         anchors.fill: parent
@@ -108,8 +108,8 @@ Rectangle {
                     anchors.fill: parent
                     spacing: 40
                 
-                // Continue Watching Rail
-                Column {
+                    // Continue Watching Rail
+                    Column {
                     width: parent.width
                     spacing: 20
                     topPadding: 30

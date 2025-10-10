@@ -331,8 +331,8 @@ Rectangle {
                                                     anchors.fill: parent
                                                     cursorShape: Qt.PointingHandCursor
                                                     onClicked: {
-                                                        // Show program details
-                                                        console.log("Selected program:", index)
+                                                        // Navigate to player to watch live/start over
+                                                        navigateTo("/player")
                                                     }
                                                 }
                                             }

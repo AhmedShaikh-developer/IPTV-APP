@@ -385,7 +385,7 @@ Rectangle {
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: navigateTo("/live/channel/" + index)
+                                    onClicked: navigateTo("/player")
                                 }
                             }
                         }

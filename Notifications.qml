@@ -13,8 +13,8 @@ Rectangle {
                     width: parent.width
                     spacing: 30
             
-            // Header
-            RowLayout {
+                    // Header
+                    RowLayout {
                 Layout.fillWidth: true
                 spacing: 20
                 

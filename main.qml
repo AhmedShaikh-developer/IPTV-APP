@@ -269,19 +269,20 @@ ApplicationWindow {
                 case "/sources/sync": return 23
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
-                case "/home": return 38
-                case "/live/groups": return 38
+                case "/home": return 39 // Main Application layout
+                case "/live/groups": return 39 // Main Application layout
                 case "/inbox": return 27
-                case "/live": return 38
-                case "/guide": return 38
-                case "/movies": return 38
-                case "/series": return 38
-                case "/catchup": return 38
-                case "/favorites": return 38
-                case "/search": return 38
-                case "/settings": return 38
-                case "/account": return 38
-                case "/main": return 38
+                case "/live": return 39 // Main Application layout
+                case "/guide": return 39 // Main Application layout
+                case "/movies": return 39 // Main Application layout
+                case "/series": return 39 // Main Application layout
+                case "/catchup": return 39 // Main Application layout
+                case "/favorites": return 39 // Main Application layout
+                case "/search": return 39 // Main Application layout
+                case "/settings": return 39 // Main Application layout
+                case "/account": return 39 // Main Application layout
+                case "/main": return 39 // Main Application layout
+                case "/player": return 38 // Player Loader
                 default: return 0
             }
         }
@@ -666,6 +667,15 @@ ApplicationWindow {
             icon: "👤"
         }
         
+        // Player Page (Lazy loaded)
+        Loader {
+            id: playerPageLoader
+            active: currentRoute === "/player"
+            sourceComponent: Component {
+                PlayerPage {}
+            }
+        }
+
         // Main Application (Netflix-style with sidebar)
         Rectangle {
             color: "#000000"
@@ -800,10 +810,16 @@ ApplicationWindow {
                                     onClicked: navigateTo("/profiles/pick")
                                 }
                                 
-                                NavItem {
-                                    itemText: "📬 Notifications"
-                                    onClicked: navigateTo("/inbox")
-                                }
+                                       NavItem {
+                                           itemText: "📬 Notifications"
+                                           onClicked: navigateTo("/inbox")
+                                       }
+
+                                       // Test Player Button
+                                       NavItem {
+                                           itemText: "🎬 Test Player"
+                                           onClicked: navigateTo("/player")
+                                       }
                                 
                                 // Divider
                                 Rectangle {
@@ -850,13 +866,11 @@ ApplicationWindow {
                             }
                         }
                         
-                        // Welcome Screen Component
-                        Welcome {
-                            anchors.fill: parent
-                            anchors.leftMargin: 20
-                            anchors.rightMargin: 20
-                            anchors.topMargin: 20
-                            anchors.bottomMargin: 20
+                        // Home Screen Component (Netflix-style rails)
+                        Home {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 20
                         }
                         
                         // Live Groups Screen

@@ -41,5 +41,14 @@
            <file>ProgramSheet.qml</file>
            <file>Reminders.qml</file>
            <file>CatchupBrowser.qml</file>
+           <file>PlayerPage.qml</file>
+           <file>PlayerControls.qml</file>
+           <file>PlayerInfoBar.qml</file>
+           <file>ZapOverlay.qml</file>
+           <file>PipController.qml</file>
+           <file>MultiView.qml</file>
+           <file>RecordBadge.qml</file>
+           <file>PlayerError.qml</file>
+           <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>
