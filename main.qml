@@ -273,11 +273,11 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 46 // Main Application layout
-                case "/live/groups": return 46 // Main Application layout
+                case "/home": return 48 // Main Application layout
+                case "/live/groups": return 48 // Main Application layout
                 case "/inbox": return 28
-                case "/live": return 46 // Main Application layout
-                case "/guide": return 46 // Main Application layout
+                case "/live": return 48 // Main Application layout
+                case "/guide": return 48 // Main Application layout
                 case "/movies": return 32 // MoviesHub
                 case "/movies/genre": return 33 // MovieGrid
                 case "/movie": return 34 // MovieDetails
@@ -285,14 +285,16 @@ ApplicationWindow {
                 case "/series/details": return 36 // SeriesDetails
                 case "/series/season": return 37 // SeasonEpisodes
                 case "/lists": return 38 // UserLists
-                case "/catchup": return 46 // Main Application layout
+                case "/catchup": return 48 // Main Application layout
                 case "/favorites": return 40 // Favorites placeholder
-                case "/search": return 46 // Main Application layout
-                case "/settings": return 46 // Main Application layout
+                case "/search": return 42 // Search
+                case "/search/results": return 43 // Search Results  
+                case "/search/voice": return 44 // Voice Search
+                case "/settings": return 48 // Main Application layout
                 case "/settings/storage": return 41 // Storage Settings
-                case "/account": return 46 // Main Application layout
-                case "/main": return 46 // Main Application layout
-                case "/player": return 43 // Player Loader
+                case "/account": return 48 // Main Application layout
+                case "/main": return 48 // Main Application layout
+                case "/player": return 45 // Player Loader
                 default: return 0
             }
         }
@@ -690,10 +692,24 @@ ApplicationWindow {
         }
         
         // Search
-        PlaceholderScreen {
-            title: "🔍 Search"
-            description: "Search for channels and content"
-            icon: "🔍"
+        Search {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Search Results
+        SearchResults {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Voice Search
+        VoiceSearch {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
         }
         
         // Settings

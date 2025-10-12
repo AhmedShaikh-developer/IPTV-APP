@@ -60,6 +60,9 @@
            <file>Downloads.qml</file>
            <file>DownloadQualitySheet.qml</file>
            <file>StorageSettings.qml</file>
+           <file>Search.qml</file>
+           <file>SearchResults.qml</file>
+           <file>VoiceSearch.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>
