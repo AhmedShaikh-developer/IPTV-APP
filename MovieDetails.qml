@@ -230,7 +230,11 @@ Rectangle {
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
-                                onClicked: console.log("Open download sheet")
+                                onClicked: {
+                                    if (typeof downloadQualitySheet !== 'undefined') {
+                                        downloadQualitySheet.show("The Dark Knight", "Movie")
+                                    }
+                                }
                             }
 
                             Button {
@@ -502,6 +506,18 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    // Download Quality Picker
+    DownloadQualitySheet {
+        id: downloadQualitySheet
+        onConfirmed: function(quality) {
+            console.log("Download confirmed with quality:", quality)
+            // Here you would add the item to downloads queue
+        }
+        onCancelled: {
+            console.log("Download cancelled")
         }
     }
 }

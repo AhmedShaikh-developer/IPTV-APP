@@ -242,6 +242,30 @@ Rectangle {
                             }
 
                             Button {
+                                text: "⬇ Download"
+                                Layout.preferredWidth: 120
+                                Layout.preferredHeight: 50
+                                background: Rectangle {
+                                    color: "transparent"
+                                    border.color: "#666666"
+                                    border.width: 2
+                                    radius: 6
+                                }
+                                contentItem: Text {
+                                    text: parent.text
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 16
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                onClicked: {
+                                    if (typeof downloadQualitySheet !== 'undefined') {
+                                        downloadQualitySheet.show("Epic Series Title", "Series")
+                                    }
+                                }
+                            }
+
+                            Button {
                                 text: "❤ Add to Watchlist"
                                 Layout.preferredWidth: 160
                                 Layout.preferredHeight: 50
@@ -608,6 +632,18 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    // Download Quality Picker
+    DownloadQualitySheet {
+        id: downloadQualitySheet
+        onConfirmed: function(quality) {
+            console.log("Download confirmed with quality:", quality)
+            // Here you would add the item to downloads queue
+        }
+        onCancelled: {
+            console.log("Download cancelled")
         }
     }
 }
