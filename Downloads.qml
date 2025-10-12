@@ -111,19 +111,6 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 80
             color: "#111111"
-            layer.enabled: true
-            layer.effect: Item {
-                anchors.fill: parent
-                Rectangle {
-                    anchors.fill: parent
-                    anchors.topMargin: parent.height
-                    height: 4
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: "#00000040" }
-                        GradientStop { position: 1.0; color: "transparent" }
-                    }
-                }
-            }
 
             RowLayout {
                 anchors.fill: parent
@@ -131,34 +118,23 @@ Rectangle {
                 spacing: 20
 
                 Button {
-                    width: 44
-                    height: 44
+                    width: 50
+                    height: 50
+                    z: 1000
                     background: Rectangle {
-                        color: parent.hovered ? "#2A2A2A" : "#1A1A1A"
-                        radius: 22
-                        border.color: "#444444"
-                        border.width: 1
-                        
-                        // Subtle shadow effect
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.margins: -1
-                            radius: parent.radius + 1
-                            color: "#00000040"
-                            z: -1
-                        }
+                        color: parent.hovered ? "#E50914" : "#FF0000"
+                        radius: 25
+                        border.color: "#FFFFFF"
+                        border.width: 2
+                        opacity: 1.0
                     }
                     contentItem: Text {
                         text: "←"
-                        font.pixelSize: 22
+                        font.pixelSize: 24
                         font.bold: true
                         color: "#FFFFFF"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
-                        
-                        // Add text shadow for better visibility
-                        style: Text.Outline
-                        styleColor: "#000000"
                     }
                     onClicked: {
                         if (typeof navigateTo !== 'undefined') {
