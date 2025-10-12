@@ -272,24 +272,26 @@ ApplicationWindow {
                 case "/sources/sync": return 23
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
-                case "/home": return 44 // Main Application layout
-                case "/live/groups": return 44 // Main Application layout
-                case "/inbox": return 27
-                case "/live": return 44 // Main Application layout
-                case "/guide": return 44 // Main Application layout
-                case "/movies": return 31 // MoviesHub
-                case "/movies/genre": return 32 // MovieGrid
-                case "/movie": return 33 // MovieDetails
-                case "/series": return 34 // SeriesHub
-                case "/series/details": return 35 // SeriesDetails
-                case "/series/season": return 36 // SeasonEpisodes
-                case "/lists": return 37 // UserLists
-                case "/catchup": return 44 // Main Application layout
-                case "/favorites": return 39 // Favorites placeholder
-                case "/search": return 44 // Main Application layout
-                case "/settings": return 44 // Main Application layout
-                case "/account": return 44 // Main Application layout
-                case "/main": return 44 // Main Application layout
+                case "/downloads": return 26
+                case "/home": return 46 // Main Application layout
+                case "/live/groups": return 46 // Main Application layout
+                case "/inbox": return 28
+                case "/live": return 46 // Main Application layout
+                case "/guide": return 46 // Main Application layout
+                case "/movies": return 32 // MoviesHub
+                case "/movies/genre": return 33 // MovieGrid
+                case "/movie": return 34 // MovieDetails
+                case "/series": return 35 // SeriesHub
+                case "/series/details": return 36 // SeriesDetails
+                case "/series/season": return 37 // SeasonEpisodes
+                case "/lists": return 38 // UserLists
+                case "/catchup": return 46 // Main Application layout
+                case "/favorites": return 40 // Favorites placeholder
+                case "/search": return 46 // Main Application layout
+                case "/settings": return 46 // Main Application layout
+                case "/settings/storage": return 41 // Storage Settings
+                case "/account": return 46 // Main Application layout
+                case "/main": return 46 // Main Application layout
                 case "/player": return 43 // Player Loader
                 default: return 0
             }
@@ -611,6 +613,13 @@ ApplicationWindow {
         // Metadata Provider Settings
         MetaProviderSettings {}
         
+        // Downloads
+        Downloads {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+        
         // Home / Dashboard
         Home {}
         
@@ -671,6 +680,13 @@ ApplicationWindow {
             title: "⭐ Favorites"
             description: "Your favorite channels and content"
             icon: "⭐"
+        }
+        
+        // Storage Settings
+        StorageSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
         }
         
         // Search
@@ -812,6 +828,11 @@ ApplicationWindow {
                                 NavItem {
                                     itemText: "🔍 Search"
                                     onClicked: navigateTo("/search")
+                                }
+                                
+                                NavItem {
+                                    itemText: "📥 Downloads"
+                                    onClicked: navigateTo("/downloads")
                                 }
                                 
                                 // Divider

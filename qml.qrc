@@ -57,6 +57,9 @@
            <file>SeasonEpisodes.qml</file>
            <file>EpisodeSheet.qml</file>
            <file>UserLists.qml</file>
+           <file>Downloads.qml</file>
+           <file>DownloadQualitySheet.qml</file>
+           <file>StorageSettings.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>
