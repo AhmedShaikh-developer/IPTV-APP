@@ -273,11 +273,11 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 50 // Main Application layout
-                case "/live/groups": return 50 // Main Application layout
+                case "/home": return 53 // Main Application layout
+                case "/live/groups": return 53 // Main Application layout
                 case "/inbox": return 28
-                case "/live": return 50 // Main Application layout
-                case "/guide": return 50 // Main Application layout
+                case "/live": return 53 // Main Application layout
+                case "/guide": return 53 // Main Application layout
                 case "/movies": return 32 // MoviesHub
                 case "/movies/genre": return 33 // MovieGrid
                 case "/movie": return 34 // MovieDetails
@@ -285,17 +285,20 @@ ApplicationWindow {
                 case "/series/details": return 36 // SeriesDetails
                 case "/series/season": return 37 // SeasonEpisodes
                 case "/lists": return 38 // UserLists
-                case "/catchup": return 50 // Main Application layout
+                case "/catchup": return 53 // Main Application layout
                 case "/favorites": return 40 // Favorites
                 case "/search": return 42 // Search
                 case "/search/results": return 43 // Search Results  
                 case "/search/voice": return 44 // Voice Search
                 case "/live/custom-groups": return 45 // Custom Groups
                 case "/history": return 46 // History
-                case "/settings": return 50 // Main Application layout
+                case "/record/schedule": return 47 // Record Schedule Form
+                case "/record/scheduled": return 48 // Scheduled Recordings
+                case "/record/library": return 49 // Recorded Library
+                case "/settings": return 53 // Main Application layout
                 case "/settings/storage": return 41 // Storage Settings
-                case "/account": return 50 // Main Application layout
-                case "/main": return 50 // Main Application layout
+                case "/account": return 53 // Main Application layout
+                case "/main": return 53 // Main Application layout
                 case "/player": return 47 // Player Loader
                 default: return 0
             }
@@ -727,6 +730,27 @@ ApplicationWindow {
                 mainWindow.navigateTo(route)
             }
         }
+
+        // Record Schedule Form
+        RecordScheduleForm {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Scheduled Recordings
+        RecordingsSchedule {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Recorded Library
+        RecordingsLibrary {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
         
         // Settings
         PlaceholderScreen {
@@ -875,6 +899,16 @@ ApplicationWindow {
                                 NavItem {
                                     itemText: "🕒 History"
                                     onClicked: navigateTo("/history")
+                                }
+
+                                NavItem {
+                                    itemText: "📹 Recordings"
+                                    onClicked: navigateTo("/record/library")
+                                }
+
+                                NavItem {
+                                    itemText: "📋 Scheduled"
+                                    onClicked: navigateTo("/record/scheduled")
                                 }
                                 
                                 // Divider

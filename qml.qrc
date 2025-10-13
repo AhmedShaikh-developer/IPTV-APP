@@ -67,6 +67,9 @@
            <file>CustomGroups.qml</file>
            <file>CreateGroupSheet.qml</file>
            <file>History.qml</file>
+           <file>RecordScheduleForm.qml</file>
+           <file>RecordingsSchedule.qml</file>
+           <file>RecordingsLibrary.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>
