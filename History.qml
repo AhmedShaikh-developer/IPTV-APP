@@ -103,12 +103,21 @@ Rectangle {
     // Main content container
     ScrollView {
         anchors.fill: parent
-        anchors.margins: 32
         clip: true
 
         ColumnLayout {
-            width: Math.min(maxContentWidth, parent.width)
+            width: {
+                if (screenWidth >= 1920) return Math.min(1200, parent.width - 96)
+                if (screenWidth >= 1366) return Math.min(1100, parent.width - 64)
+                if (screenWidth <= 1024) return parent.width - 32
+                return Math.min(1000, parent.width - 48)
+            }
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.margins: {
+                if (screenWidth <= 1024) return 16
+                if (screenWidth >= 1920) return 48
+                return 32
+            }
             spacing: 24
 
             // Header Row
@@ -116,8 +125,6 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 60
                 Layout.topMargin: 32
-                Layout.leftMargin: 48
-                Layout.rightMargin: 48
                 spacing: 20
 
                 Button {
@@ -156,8 +163,23 @@ Rectangle {
                     background: Rectangle {
                         color: parent.hovered ? "#E50914" : "#444444"
                         radius: 12
-                        border.color: "#666666"
+                        border.color: parent.hovered ? "#E50914" : "#666666"
                         border.width: 1
+                        
+                        // Subtle glow effect on hover
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -2
+                            radius: parent.radius + 2
+                            color: "transparent"
+                            border.color: parent.parent.hovered ? "#E50914" : "transparent"
+                            border.width: 1
+                            opacity: parent.parent.hovered ? 0.3 : 0
+                            
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+                        }
                     }
                     contentItem: Text {
                         text: parent.text
@@ -174,8 +196,6 @@ Rectangle {
             // Sort & Filter Bar
             RowLayout {
                 Layout.fillWidth: true
-                Layout.leftMargin: 48
-                Layout.rightMargin: 48
                 spacing: 16
 
                 Text {
@@ -318,12 +338,15 @@ Rectangle {
             ScrollView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: 48
-                Layout.rightMargin: 48
                 clip: true
 
                 ColumnLayout {
-                    width: Math.min(maxContentWidth - 96, parent.width)
+                    width: {
+                        if (screenWidth >= 1920) return Math.min(1200, parent.width)
+                        if (screenWidth >= 1366) return Math.min(1100, parent.width)
+                        if (screenWidth <= 1024) return parent.width - 32
+                        return Math.min(1000, parent.width)
+                    }
                     anchors.horizontalCenter: parent.horizontalCenter
                     spacing: 24
 
@@ -348,13 +371,14 @@ Rectangle {
                             ColumnLayout {
                                 Layout.fillWidth: true
                                 Layout.topMargin: 24
-                                spacing: 8
+                                spacing: 12
 
                                 Text {
                                     text: modelData.name
                                     font.pixelSize: 16
                                     font.bold: true
                                     color: "#B3B3B3"
+                                    Layout.leftMargin: 64 // Align with card text, not icons
                                 }
 
                                 Rectangle {
@@ -370,23 +394,28 @@ Rectangle {
 
                                 delegate: Rectangle {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 92
-                                    Layout.maximumWidth: 1000
+                                    Layout.preferredHeight: 80
+                                    Layout.maximumWidth: {
+                                        if (screenWidth >= 1920) return 1100
+                                        if (screenWidth >= 1366) return 1000
+                                        return parent.width - 40
+                                    }
                                     Layout.alignment: Qt.AlignHCenter
                                     color: "#151515"
                                     radius: 12
-                                    border.color: "#2A2A2A"
+                                    border.color: MouseArea.hovered ? "#E50914" : "#2A2A2A"
                                     border.width: 1
 
                                     RowLayout {
                                         anchors.fill: parent
                                         anchors.margins: 20
-                                        spacing: 16
+                                        spacing: 20
 
                                         // Left: Square icon tile
                                         Rectangle {
                                             Layout.preferredWidth: 64
                                             Layout.preferredHeight: 64
+                                            Layout.alignment: Qt.AlignVCenter
                                             color: "#333333"
                                             radius: 8
                                             
@@ -402,6 +431,7 @@ Rectangle {
                                         ColumnLayout {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
+                                            Layout.alignment: Qt.AlignVCenter
                                             spacing: 4
 
                                             Text {
@@ -411,6 +441,7 @@ Rectangle {
                                                 color: "#FFFFFF"
                                                 wrapMode: Text.WordWrap
                                                 Layout.fillWidth: true
+                                                elide: Text.ElideRight
                                             }
 
                                             Text {
@@ -419,39 +450,40 @@ Rectangle {
                                                 font.weight: Font.Normal
                                                 color: "#B3B3B3"
                                                 Layout.fillWidth: true
+                                                elide: Text.ElideRight
                                             }
 
                                             // Progress bar (if available)
                                             Rectangle {
                                                 Layout.fillWidth: true
-                                                Layout.preferredHeight: 6
+                                                Layout.preferredHeight: 4
                                                 color: "#333333"
-                                                radius: 3
+                                                radius: 2
                                                 visible: modelData.progress < 1.0
 
                                                 Rectangle {
                                                     width: parent.width * modelData.progress
                                                     height: parent.height
                                                     color: "#E50914"
-                                                    radius: 3
+                                                    radius: 2
                                                 }
                                             }
                                         }
 
                                         // Right: Remove button
                                         Button {
-                                            Layout.preferredWidth: 36
-                                            Layout.preferredHeight: 36
+                                            Layout.preferredWidth: 32
+                                            Layout.preferredHeight: 32
                                             Layout.alignment: Qt.AlignVCenter
                                             background: Rectangle {
                                                 color: parent.hovered ? "#E50914" : "#2A2A2A"
-                                                radius: 18
+                                                radius: 16
                                                 border.color: "#444444"
                                                 border.width: 1
                                             }
                                             contentItem: Text {
                                                 text: "×"
-                                                font.pixelSize: 18
+                                                font.pixelSize: 16
                                                 color: "#FFFFFF"
                                                 horizontalAlignment: Text.AlignHCenter
                                                 verticalAlignment: Text.AlignVCenter
@@ -481,7 +513,7 @@ Rectangle {
                                     }
 
                                     // Hover animations
-                                    scale: parent.hovered ? 1.02 : 1.0
+                                    scale: MouseArea.hovered ? 1.02 : 1.0
                                     Behavior on scale {
                                         NumberAnimation { duration: 200; easing.type: Easing.OutQuad }
                                     }
