@@ -4,7 +4,9 @@ import QtQuick.Layouts 1.15
 
 Rectangle {
     id: createGroupSheet
+    anchors.fill: parent
     color: "#00000000"
+    z: 9999
 
     property string groupName: ""
     property var selectedChannels: []
@@ -27,16 +29,14 @@ Rectangle {
     readonly property bool isDesktop: screenWidth >= 1920
     readonly property bool isTablet: screenWidth >= 1366 && screenWidth < 1920
     readonly property bool isMobile: screenWidth < 1366
-    readonly property bool isSmallMobile: screenWidth <= 1024
 
     // Responsive dimensions
     readonly property real modalWidth: {
         if (isDesktop) return Math.min(900, screenWidth * 0.7)
         if (isTablet) return Math.min(800, screenWidth * 0.8)
-        if (isSmallMobile) return screenWidth - 40
-        return Math.min(700, screenWidth * 0.85)
+        return Math.min(700, screenWidth * 0.9)
     }
-    readonly property real modalHeight: Math.min(700, screenHeight * 0.85)
+    readonly property real modalHeight: Math.min(600, screenHeight * 0.8)
     readonly property real gridColumns: {
         if (isDesktop) return 4
         if (isTablet) return 3
@@ -59,71 +59,72 @@ Rectangle {
         }
     }
 
-    // Glass overlay background with blur effect
+    // Backdrop overlay - dims background content
     Rectangle {
+        id: backdropOverlay
         anchors.fill: parent
-        color: "#000000"
-        opacity: 0.6
+        color: "#000000CC"
+        z: 1
     }
 
-    Rectangle {
-        anchors.fill: parent
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: "#00000030" }
-            GradientStop { position: 0.5; color: "#00000070" }
-            GradientStop { position: 1.0; color: "#00000030" }
-        }
-    }
-
-    // Fade-in animation
+    // Fade-in animation for backdrop
     OpacityAnimator {
-        target: createGroupSheet
+        target: backdropOverlay
         from: 0.0
         to: 1.0
-        duration: 200
+        duration: 150
         running: true
     }
 
-    // Modal content with slide-up animation
+    // Modal content - perfectly centered
     Rectangle {
         id: modalContainer
         width: modalWidth
         height: modalHeight
         anchors.centerIn: parent
-        color: "#111111EE"
+        color: "#111111"
         radius: 16
         border.color: "#333333"
         border.width: 1
+        z: 2
 
         // Soft drop shadow
         Rectangle {
             anchors.fill: parent
             anchors.margins: -12
             radius: parent.radius + 12
-            color: "#00000040"
+            color: "#00000060"
             z: -1
         }
 
-        // Slide-up animation
+        // Scale and fade-in animation
         NumberAnimation {
             target: modalContainer
-            property: "y"
-            from: parent.height
-            to: modalContainer.y
-            duration: 250
+            property: "scale"
+            from: 0.8
+            to: 1.0
+            duration: 200
             easing.type: Easing.OutCubic
+            running: true
+        }
+
+        OpacityAnimator {
+            target: modalContainer
+            from: 0.0
+            to: 1.0
+            duration: 200
             running: true
         }
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 32
+            anchors.margins: 24
             spacing: 0
 
             // Header Section
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
+                Layout.preferredHeight: 70
                 color: "transparent"
 
                 ColumnLayout {
@@ -137,7 +138,7 @@ Rectangle {
 
                         Text {
                             text: "Create Group"
-                            font.pixelSize: isDesktop ? 28 : 24
+                            font.pixelSize: 20
                             font.bold: true
                             color: "#FFFFFF"
                             Layout.alignment: Qt.AlignHCenter
@@ -146,17 +147,17 @@ Rectangle {
                         Item { Layout.fillWidth: true }
 
                         Button {
-                            width: 40
-                            height: 40
+                            width: 36
+                            height: 36
                             background: Rectangle {
                                 color: parent.hovered ? "#2A2A2A" : "transparent"
-                                radius: 20
+                                radius: 18
                                 border.color: "#666666"
                                 border.width: 1
                             }
                             contentItem: Text {
                                 text: "×"
-                                font.pixelSize: 24
+                                font.pixelSize: 20
                                 color: "#FFFFFF"
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
@@ -167,8 +168,8 @@ Rectangle {
 
                     // Subtext
                     Text {
-                        text: "Select channels to include in this group"
-                        font.pixelSize: 16
+                        text: "Select channels to include"
+                        font.pixelSize: 14
                         color: "#B3B3B3"
                         Layout.alignment: Qt.AlignHCenter
                     }
@@ -178,8 +179,8 @@ Rectangle {
             // Group Name Input
             ColumnLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                spacing: 12
+                Layout.preferredHeight: 70
+                spacing: 8
 
                 Text {
                     text: "Group Name"
@@ -191,13 +192,13 @@ Rectangle {
                 TextField {
                     id: nameField
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 52
+                    Layout.preferredHeight: 44
                     placeholderText: "Enter group name"
                     placeholderTextColor: "#888888"
                     color: "#FFFFFF"
                     font.pixelSize: 16
                     background: Rectangle {
-                        color: "#1B1B1B"
+                        color: "#171717"
                         radius: 12
                         border.color: nameField.activeFocus ? "#E50914" : "#333333"
                         border.width: 2
@@ -215,23 +216,23 @@ Rectangle {
                 // Sticky Filter Bar
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 60
+                    Layout.preferredHeight: 50
                     color: "transparent"
 
                     RowLayout {
                         anchors.fill: parent
-                        spacing: 16
+                        spacing: 12
 
                         TextField {
                             id: searchField
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 44
+                            Layout.preferredHeight: 36
                             placeholderText: "Search channels..."
                             placeholderTextColor: "#888888"
                             color: "#FFFFFF"
                             font.pixelSize: 14
                             background: Rectangle {
-                                color: "#1B1B1B"
+                                color: "#171717"
                                 radius: 12
                                 border.color: searchField.activeFocus ? "#E50914" : "#333333"
                                 border.width: 2
@@ -244,8 +245,8 @@ Rectangle {
 
                         Button {
                             text: selectedChannels.length === availableChannels.length ? "Deselect All" : "Select All"
-                            Layout.preferredHeight: 44
-                            Layout.preferredWidth: 120
+                            Layout.preferredHeight: 36
+                            Layout.preferredWidth: 110
                             padding: 0
                             background: Rectangle {
                                 color: parent.hovered ? "#2A2A2A" : "#444444"
@@ -275,7 +276,7 @@ Rectangle {
                 ScrollView {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.maximumHeight: 400
+                    Layout.maximumHeight: 300
                     clip: true
 
                     GridLayout {
@@ -288,34 +289,24 @@ Rectangle {
                             model: filteredChannels
                             delegate: Button {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 56
+                                Layout.preferredHeight: 48
                                 padding: 0
                                 background: Rectangle {
-                                    color: selectedChannels.includes(modelData) ? "#E50914" : "#333333"
+                                    color: selectedChannels.includes(modelData) ? "#E50914" : "#171717"
                                     radius: 12
                                     border.color: selectedChannels.includes(modelData) ? "#FFFFFF" : "#444444"
                                     border.width: selectedChannels.includes(modelData) ? 2 : 1
-                                    
-                                    // Subtle elevation for selected state
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        anchors.margins: -2
-                                        radius: parent.radius + 2
-                                        color: "#00000020"
-                                        z: -1
-                                        visible: selectedChannels.includes(modelData)
-                                    }
                                 }
                                 contentItem: RowLayout {
-                                    spacing: 12
+                                    spacing: 10
                                     anchors.centerIn: parent
-                                    anchors.margins: 16
+                                    anchors.margins: 12
 
                                     // Circular checkbox
                                     Rectangle {
-                                        width: 24
-                                        height: 24
-                                        radius: 12
+                                        width: 20
+                                        height: 20
+                                        radius: 10
                                         color: selectedChannels.includes(modelData) ? "#FFFFFF" : "transparent"
                                         border.color: "#FFFFFF"
                                         border.width: 2
@@ -323,7 +314,7 @@ Rectangle {
                                         Text {
                                             anchors.centerIn: parent
                                             text: "✓"
-                                            font.pixelSize: 14
+                                            font.pixelSize: 12
                                             color: "#E50914"
                                             visible: selectedChannels.includes(modelData)
                                         }
@@ -349,12 +340,9 @@ Rectangle {
                                 }
 
                                 // Hover animations
-                                scale: parent.hovered ? 1.02 : 1.0
+                                scale: parent.hovered ? 1.05 : 1.0
                                 Behavior on scale {
                                     NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
-                                }
-                                Behavior on opacity {
-                                    NumberAnimation { duration: 150 }
                                 }
                             }
                         }
@@ -365,12 +353,12 @@ Rectangle {
             // Sticky Footer Section
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
+                Layout.preferredHeight: 70
                 color: "transparent"
 
                 RowLayout {
                     anchors.fill: parent
-                    spacing: 20
+                    spacing: 16
 
                     Text {
                         text: selectedChannels.length + " channels selected"
@@ -382,11 +370,11 @@ Rectangle {
 
                     Button {
                         text: "Cancel"
-                        Layout.preferredWidth: 120
-                        Layout.preferredHeight: 48
+                        Layout.preferredWidth: 100
+                        Layout.preferredHeight: 44
                         background: Rectangle {
                             color: "transparent"
-                            radius: 24
+                            radius: 12
                             border.color: "#FFFFFF"
                             border.width: 2
                         }
@@ -402,12 +390,12 @@ Rectangle {
 
                     Button {
                         text: "Create Group"
-                        Layout.preferredWidth: 160
-                        Layout.preferredHeight: 48
+                        Layout.preferredWidth: 140
+                        Layout.preferredHeight: 44
                         enabled: groupName.trim() !== "" && selectedChannels.length > 0
                         background: Rectangle {
                             color: parent.hovered ? "#F5191F" : "#E50914"
-                            radius: 24
+                            radius: 12
                             opacity: parent.enabled ? 1.0 : 0.5
                             border.color: parent.activeFocus ? "#FFFFFF" : "transparent"
                             border.width: parent.activeFocus ? 2 : 0
