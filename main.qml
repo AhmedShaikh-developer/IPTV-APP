@@ -273,11 +273,11 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 48 // Main Application layout
-                case "/live/groups": return 48 // Main Application layout
+                case "/home": return 50 // Main Application layout
+                case "/live/groups": return 50 // Main Application layout
                 case "/inbox": return 28
-                case "/live": return 48 // Main Application layout
-                case "/guide": return 48 // Main Application layout
+                case "/live": return 50 // Main Application layout
+                case "/guide": return 50 // Main Application layout
                 case "/movies": return 32 // MoviesHub
                 case "/movies/genre": return 33 // MovieGrid
                 case "/movie": return 34 // MovieDetails
@@ -285,16 +285,18 @@ ApplicationWindow {
                 case "/series/details": return 36 // SeriesDetails
                 case "/series/season": return 37 // SeasonEpisodes
                 case "/lists": return 38 // UserLists
-                case "/catchup": return 48 // Main Application layout
-                case "/favorites": return 40 // Favorites placeholder
+                case "/catchup": return 50 // Main Application layout
+                case "/favorites": return 40 // Favorites
                 case "/search": return 42 // Search
                 case "/search/results": return 43 // Search Results  
                 case "/search/voice": return 44 // Voice Search
-                case "/settings": return 48 // Main Application layout
+                case "/live/custom-groups": return 45 // Custom Groups
+                case "/history": return 46 // History
+                case "/settings": return 50 // Main Application layout
                 case "/settings/storage": return 41 // Storage Settings
-                case "/account": return 48 // Main Application layout
-                case "/main": return 48 // Main Application layout
-                case "/player": return 45 // Player Loader
+                case "/account": return 50 // Main Application layout
+                case "/main": return 50 // Main Application layout
+                case "/player": return 47 // Player Loader
                 default: return 0
             }
         }
@@ -678,10 +680,10 @@ ApplicationWindow {
         CatchupBrowser {}
         
         // Favorites
-        PlaceholderScreen {
-            title: "⭐ Favorites"
-            description: "Your favorite channels and content"
-            icon: "⭐"
+        Favorites {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
         }
         
         // Storage Settings
@@ -707,6 +709,20 @@ ApplicationWindow {
 
         // Voice Search
         VoiceSearch {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Custom Groups
+        CustomGroups {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // History
+        History {
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
@@ -849,6 +865,16 @@ ApplicationWindow {
                                 NavItem {
                                     itemText: "📥 Downloads"
                                     onClicked: navigateTo("/downloads")
+                                }
+
+                                NavItem {
+                                    itemText: "📺 Custom Groups"
+                                    onClicked: navigateTo("/live/custom-groups")
+                                }
+
+                                NavItem {
+                                    itemText: "🕒 History"
+                                    onClicked: navigateTo("/history")
                                 }
                                 
                                 // Divider

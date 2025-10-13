@@ -63,6 +63,10 @@
            <file>Search.qml</file>
            <file>SearchResults.qml</file>
            <file>VoiceSearch.qml</file>
+           <file>Favorites.qml</file>
+           <file>CustomGroups.qml</file>
+           <file>CreateGroupSheet.qml</file>
+           <file>History.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>
