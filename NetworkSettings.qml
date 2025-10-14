@@ -19,7 +19,6 @@ Rectangle {
     property string proxyPassword: ""
     property string userAgentOverride: ""
     property bool httpsRelaxMode: false
-    property var customHeaders: []
 
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
@@ -35,285 +34,267 @@ Rectangle {
         showToast("Settings updated")
     }
 
-    function showCustomHeadersDialog() {
-        console.log("Show custom headers dialog")
-    }
-
     ScrollView {
         anchors.fill: parent
         clip: true
 
         ColumnLayout {
-            width: Math.min(1080, parent.width - 80)
+            width: Math.min(900, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: {
-                if (isDesktop) return 32
-                if (isTablet) return 20
-                return 16
-            }
-            spacing: 24
+            anchors.top: parent.top
+            anchors.topMargin: 32
+            anchors.bottomMargin: 40
+            spacing: 16
 
-            // Sticky Top Bar
-            Rectangle {
+            // Header Row
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                color: "#000000"
-                z: 100
+                Layout.preferredHeight: 60
+                spacing: 24
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 24
-
-                    Button {
-                        Layout.preferredWidth: 48
-                        Layout.preferredHeight: 48
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 24
-                            border.color: "#444444"
-                            border.width: 1
-                        }
-                        contentItem: Text {
-                            text: "←"
-                            font.pixelSize: 22
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: navigateTo("/settings")
+                // Back Button
+                Button {
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 48
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 24
+                        border.color: "#444444"
+                        border.width: 1
                     }
-
-                    Text {
-                        text: "Network"
-                        font.pixelSize: 28
-                        font.weight: Font.Bold
+                    contentItem: Text {
+                        text: "←"
+                        font.pixelSize: 22
                         color: "#FFFFFF"
-                        Layout.alignment: Qt.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: navigateTo("/settings")
+                }
 
-                    Item { Layout.fillWidth: true }
+                // Title
+                Text {
+                    text: "Network"
+                    font.pixelSize: 28
+                    font.weight: Font.Bold
+                    color: "#FFFFFF"
+                }
 
-                    Button {
-                        text: "Reset"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 18
-                            border.color: "#666666"
-                            border.width: 2
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Medium
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: {
-                            proxyEnabled = false
-                            proxyHost = ""
-                            proxyPort = ""
-                            proxyUsername = ""
-                            proxyPassword = ""
-                            userAgentOverride = ""
-                            httpsRelaxMode = false
-                            customHeaders = []
-                            showToast("Settings reset to defaults")
-                        }
+                // Spacer
+                Item { Layout.fillWidth: true }
+
+                // Reset Button
+                Button {
+                    text: "Reset"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 18
+                        border.color: "#666666"
+                        border.width: 2
                     }
-
-                    Button {
-                        text: "Apply"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#CC0810" : "#E50914"
-                            radius: 18
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: applySettings()
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Medium
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: {
+                        proxyEnabled = false
+                        proxyHost = ""
+                        proxyPort = ""
+                        proxyUsername = ""
+                        proxyPassword = ""
+                        userAgentOverride = ""
+                        httpsRelaxMode = false
+                        showToast("Settings reset to defaults")
+                    }
+                }
+
+                // Apply Button
+                Button {
+                    text: "Apply"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#CC0810" : "#E50914"
+                        radius: 18
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: applySettings()
                 }
             }
 
             // Settings Content
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 32
+                spacing: 16
 
                 // Proxy Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: proxyEnabled ? 280 : 100
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Proxy"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Proxy Enable Toggle
+                        // Header Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🔗"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
-                                    text: "Enable Proxy"
+                                    text: "Proxy"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: proxyEnabled
-                                        onCheckedChanged: proxyEnabled = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: proxyEnabled ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: proxyEnabled ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                 }
 
                                 Text {
                                     text: "Route network traffic through a proxy server"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
+                                }
+                            }
+
+                            // Toggle Switch
+                            RowLayout {
+                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+
+                                Switch {
+                                    checked: proxyEnabled
+                                    onCheckedChanged: proxyEnabled = checked
+                                    Layout.preferredWidth: 50
+                                    Layout.preferredHeight: 30
+
+                                    indicator: Rectangle {
+                                        implicitWidth: 48
+                                        implicitHeight: 28
+                                        x: parent.leftPadding
+                                        y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                                        radius: 14
+                                        color: parent.checked ? "#E50914" : "#666666"
+                                        border.color: parent.checked ? "#E50914" : "#999999"
+
+                                        Rectangle {
+                                            x: parent.checked ? parent.width - width : 0
+                                            width: 24
+                                            height: 24
+                                            radius: 12
+                                            color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.margins: 2
+
+                                            Behavior on x {
+                                                NumberAnimation { duration: 200 }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Text {
+                                    text: proxyEnabled ? "Enabled" : "Disabled"
+                                    font.pixelSize: 14
+                                    color: proxyEnabled ? "#E50914" : "#B3B3B3"
+                                    Layout.alignment: Qt.AlignVCenter
+                                    horizontalAlignment: Text.AlignLeft
                                 }
                             }
                         }
 
-                        // Proxy Configuration (shown when enabled)
+                        // Proxy Configuration Fields (stacked in right column)
                         ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 16
+                            spacing: 12
                             visible: proxyEnabled
 
-                            Rectangle {
+                            // Host and Port Row
+                            RowLayout {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: 1
-                                color: "#2A2A2A"
-                            }
-
-                            // Proxy Host
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Host"
-                                    font.pixelSize: 14
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
+                                spacing: 12
 
                                 TextField {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
+                                    Layout.preferredHeight: 36
                                     text: proxyHost
-                                    placeholderText: "proxy.example.com"
+                                    placeholderText: "Host"
+                                    enabled: proxyEnabled
                                     selectByMouse: true
 
                                     background: Rectangle {
-                                        color: "#171717"
-                                        radius: 8
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
+                                        color: proxyEnabled ? "#2A2A2A" : "#1A1A1A"
+                                        radius: 6
+                                        border.color: parent.activeFocus ? "#E50914" : "#444444"
                                         border.width: 1
+                                        opacity: proxyEnabled ? 1.0 : 0.5
                                     }
 
-                                    color: "#FFFFFF"
+                                    color: proxyEnabled ? "#FFFFFF" : "#666666"
                                     font.pixelSize: 14
                                     leftPadding: 12
                                     rightPadding: 12
 
                                     onTextChanged: proxyHost = text
                                 }
-                            }
-
-                            // Proxy Port
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Port"
-                                    font.pixelSize: 14
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
 
                                 TextField {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
+                                    Layout.preferredWidth: 80
+                                    Layout.preferredHeight: 36
                                     text: proxyPort
-                                    placeholderText: "8080"
+                                    placeholderText: "Port"
+                                    enabled: proxyEnabled
                                     selectByMouse: true
                                     inputMethodHints: Qt.ImhDigitsOnly
 
                                     background: Rectangle {
-                                        color: "#171717"
-                                        radius: 8
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
+                                        color: proxyEnabled ? "#2A2A2A" : "#1A1A1A"
+                                        radius: 6
+                                        border.color: parent.activeFocus ? "#E50914" : "#444444"
                                         border.width: 1
+                                        opacity: proxyEnabled ? 1.0 : 0.5
                                     }
 
-                                    color: "#FFFFFF"
+                                    color: proxyEnabled ? "#FFFFFF" : "#666666"
                                     font.pixelSize: 14
                                     leftPadding: 12
                                     rightPadding: 12
@@ -322,69 +303,53 @@ Rectangle {
                                 }
                             }
 
-                            // Proxy Username
-                            ColumnLayout {
+                            // Username and Password Row
+                            RowLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Username (Optional)"
-                                    font.pixelSize: 14
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
+                                spacing: 12
 
                                 TextField {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
+                                    Layout.preferredHeight: 36
                                     text: proxyUsername
-                                    placeholderText: "username"
+                                    placeholderText: "Username"
+                                    enabled: proxyEnabled
                                     selectByMouse: true
 
                                     background: Rectangle {
-                                        color: "#171717"
-                                        radius: 8
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
+                                        color: proxyEnabled ? "#2A2A2A" : "#1A1A1A"
+                                        radius: 6
+                                        border.color: parent.activeFocus ? "#E50914" : "#444444"
                                         border.width: 1
+                                        opacity: proxyEnabled ? 1.0 : 0.5
                                     }
 
-                                    color: "#FFFFFF"
+                                    color: proxyEnabled ? "#FFFFFF" : "#666666"
                                     font.pixelSize: 14
                                     leftPadding: 12
                                     rightPadding: 12
 
                                     onTextChanged: proxyUsername = text
                                 }
-                            }
-
-                            // Proxy Password
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Password (Optional)"
-                                    font.pixelSize: 14
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
 
                                 TextField {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
+                                    Layout.preferredHeight: 36
                                     text: proxyPassword
-                                    placeholderText: "password"
+                                    placeholderText: "Password"
                                     echoMode: TextInput.Password
+                                    enabled: proxyEnabled
                                     selectByMouse: true
 
                                     background: Rectangle {
-                                        color: "#171717"
-                                        radius: 8
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
+                                        color: proxyEnabled ? "#2A2A2A" : "#1A1A1A"
+                                        radius: 6
+                                        border.color: parent.activeFocus ? "#E50914" : "#444444"
                                         border.width: 1
+                                        opacity: proxyEnabled ? 1.0 : 0.5
                                     }
 
-                                    color: "#FFFFFF"
+                                    color: proxyEnabled ? "#FFFFFF" : "#666666"
                                     font.pixelSize: 14
                                     leftPadding: 12
                                     rightPadding: 12
@@ -396,201 +361,211 @@ Rectangle {
                     }
                 }
 
-                // Advanced Section
+                // Custom User-Agent Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 100
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Advanced"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Custom Headers
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 12
-
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 16
-
-                                Text {
-                                    text: "Custom Headers per Source"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                Item { Layout.fillWidth: true }
-
-                                Button {
-                                    text: "Manage..."
-                                    Layout.preferredHeight: 36
-                                    Layout.preferredWidth: 100
-                                    background: Rectangle {
-                                        color: parent.hovered ? "#2A2A2A" : "transparent"
-                                        radius: 18
-                                        border.color: "#666666"
-                                        border.width: 2
-                                    }
-                                    contentItem: Text {
-                                        text: parent.text
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 14
-                                        font.weight: Font.Medium
-                                        horizontalAlignment: Text.AlignHCenter
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-                                    onClicked: showCustomHeadersDialog()
-                                }
-                            }
-
-                            Text {
-                                text: "Add custom HTTP headers for specific sources"
-                                font.pixelSize: 13
-                                color: "#B3B3B3"
-                                wrapMode: Text.WordWrap
-                            }
-                        }
-
+                        // Icon
                         Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 1
-                            color: "#2A2A2A"
-                        }
-
-                        // User-Agent Override
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            color: "#E50914"
+                            radius: 20
 
                             Text {
-                                text: "User-Agent Override"
-                                font.pixelSize: 16
-                                font.weight: Font.Medium
-                                color: "#FFFFFF"
+                                anchors.centerIn: parent
+                                text: "🔧"
+                                font.pixelSize: 20
                             }
+                        }
 
-                            TextField {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 48
-                                text: userAgentOverride
-                                placeholderText: "Custom User-Agent string"
-                                selectByMouse: true
+                        // Text Content
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
 
-                                background: Rectangle {
-                                    color: "#171717"
-                                    radius: 12
-                                    border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                    border.width: 1
-                                }
-
+                            Text {
+                                text: "Custom User-Agent"
+                                font.pixelSize: 16
+                                font.weight: Font.SemiBold
                                 color: "#FFFFFF"
-                                font.pixelSize: 15
-                                leftPadding: 16
-                                rightPadding: 16
-
-                                onTextChanged: userAgentOverride = text
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
                             }
 
                             Text {
                                 text: "Override the default User-Agent header for HTTP requests"
                                 font.pixelSize: 13
-                                color: "#B3B3B3"
+                                color: "#CCCCCC"
                                 wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: 280
                             }
                         }
 
-                        // HTTPS Relax Mode Toggle
+                        // Text Field
+                        TextField {
+                            Layout.preferredWidth: 200
+                            Layout.preferredHeight: 40
+                            text: userAgentOverride
+                            placeholderText: "Custom User-Agent string"
+                            selectByMouse: true
+
+                            background: Rectangle {
+                                color: "#2A2A2A"
+                                radius: 6
+                                border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                border.width: 1
+                            }
+
+                            color: "#FFFFFF"
+                            font.pixelSize: 14
+                            leftPadding: 12
+                            rightPadding: 12
+
+                            onTextChanged: userAgentOverride = text
+                        }
+                    }
+                }
+
+                // Relax HTTPS Validation Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: httpsRelaxMode ? 140 : 100
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
+                    border.width: 1
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 20
+                        spacing: 16
+
+                        // Header Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🔒"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
-                                    text: "HTTPS Relax Mode"
+                                    text: "Relax HTTPS Validation"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: httpsRelaxMode
-                                        onCheckedChanged: httpsRelaxMode = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: httpsRelaxMode ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: httpsRelaxMode ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
-                                }
-
-                                Rectangle {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 40
-                                    color: httpsRelaxMode ? "#FF4D4F15" : "#171717"
-                                    radius: 8
-                                    border.color: httpsRelaxMode ? "#FF4D4F" : "#2A2A2A"
-                                    border.width: 1
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: "⚠️ Warning: This may reduce security by accepting invalid certificates"
-                                        font.pixelSize: 12
-                                        color: httpsRelaxMode ? "#FF4D4F" : "#B3B3B3"
-                                        horizontalAlignment: Text.AlignHCenter
-                                        wrapMode: Text.WordWrap
-                                    }
+                                    elide: Text.ElideRight
                                 }
 
                                 Text {
                                     text: "Relax HTTPS certificate validation (use with caution)"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
+                                }
+                            }
+
+                            // Toggle Switch
+                            RowLayout {
+                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+
+                                Switch {
+                                    checked: httpsRelaxMode
+                                    onCheckedChanged: httpsRelaxMode = checked
+                                    Layout.preferredWidth: 50
+                                    Layout.preferredHeight: 30
+
+                                    indicator: Rectangle {
+                                        implicitWidth: 48
+                                        implicitHeight: 28
+                                        x: parent.leftPadding
+                                        y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                                        radius: 14
+                                        color: parent.checked ? "#E50914" : "#666666"
+                                        border.color: parent.checked ? "#E50914" : "#999999"
+
+                                        Rectangle {
+                                            x: parent.checked ? parent.width - width : 0
+                                            width: 24
+                                            height: 24
+                                            radius: 12
+                                            color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.margins: 2
+
+                                            Behavior on x {
+                                                NumberAnimation { duration: 200 }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Text {
+                                    text: httpsRelaxMode ? "Enabled" : "Disabled"
+                                    font.pixelSize: 14
+                                    color: httpsRelaxMode ? "#E50914" : "#B3B3B3"
+                                    Layout.alignment: Qt.AlignVCenter
+                                    horizontalAlignment: Text.AlignLeft
+                                }
+                            }
+                        }
+
+                        // Warning Banner (full content width)
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 40
+                            color: httpsRelaxMode ? "#FF4D4F15" : "transparent"
+                            radius: 8
+                            border.color: httpsRelaxMode ? "#FF4D4F" : "transparent"
+                            border.width: 1
+                            visible: httpsRelaxMode
+
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 8
+
+                                Text {
+                                    text: "⚠️"
+                                    font.pixelSize: 16
+                                    color: "#FF4D4F"
+                                }
+
+                                Text {
+                                    text: "This may reduce security by accepting invalid certificates"
+                                    font.pixelSize: 12
+                                    color: "#FF4D4F"
+                                    Layout.fillWidth: true
                                     wrapMode: Text.WordWrap
                                 }
                             }
