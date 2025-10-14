@@ -58,6 +58,27 @@ Rectangle {
                         Layout.fillWidth: true
                         spacing: 16
 
+                        // Back Button
+                        Button {
+                            Layout.preferredWidth: 44
+                            Layout.preferredHeight: 44
+                            background: Rectangle {
+                                color: parent.hovered ? "#2A2A2A" : "transparent"
+                                radius: 22
+                                border.color: "#444444"
+                                border.width: 1
+                                Behavior on color { ColorAnimation { duration: 200 } }
+                            }
+                            contentItem: Text {
+                                text: "←"
+                                font.pixelSize: 20
+                                color: "#FFFFFF"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            onClicked: navigateTo("/home")
+                        }
+
                         Text {
                             text: "Settings"
                             font.pixelSize: 36
