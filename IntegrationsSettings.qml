@@ -14,10 +14,9 @@ Rectangle {
     // Mock settings state
     property bool chromecastEnabled: false
     property bool airplayEnabled: false
-    property bool dlnaEnabled: false
+    property bool autoDownloadSubs: false
     property string openSubtitlesUsername: ""
     property string openSubtitlesPassword: ""
-    property bool autoDownloadSubs: false
 
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
@@ -38,156 +37,175 @@ Rectangle {
         clip: true
 
         ColumnLayout {
-            width: Math.min(1080, parent.width - 80)
+            width: Math.min(900, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: {
-                if (isDesktop) return 32
-                if (isTablet) return 20
-                return 16
-            }
-            spacing: 24
+            anchors.top: parent.top
+            anchors.topMargin: 32
+            anchors.bottomMargin: 40
+            spacing: 16
 
-            // Sticky Top Bar
-            Rectangle {
+            // Header Row
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                color: "#000000"
-                z: 100
+                Layout.preferredHeight: 60
+                spacing: 24
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 24
-
-                    Button {
-                        Layout.preferredWidth: 48
-                        Layout.preferredHeight: 48
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 24
-                            border.color: "#444444"
-                            border.width: 1
-                        }
-                        contentItem: Text {
-                            text: "←"
-                            font.pixelSize: 22
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: navigateTo("/settings")
+                // Back Button
+                Button {
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 48
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 24
+                        border.color: "#444444"
+                        border.width: 1
                     }
-
-                    Text {
-                        text: "Integrations"
-                        font.pixelSize: 28
-                        font.weight: Font.Bold
+                    contentItem: Text {
+                        text: "←"
+                        font.pixelSize: 22
                         color: "#FFFFFF"
-                        Layout.alignment: Qt.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: navigateTo("/settings")
+                }
 
-                    Item { Layout.fillWidth: true }
+                // Title
+                Text {
+                    text: "Integrations"
+                    font.pixelSize: 28
+                    font.weight: Font.Bold
+                    color: "#FFFFFF"
+                }
 
-                    Button {
-                        text: "Reset"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 18
-                            border.color: "#666666"
-                            border.width: 2
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Medium
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: {
-                            chromecastEnabled = false
-                            airplayEnabled = false
-                            dlnaEnabled = false
-                            openSubtitlesUsername = ""
-                            openSubtitlesPassword = ""
-                            autoDownloadSubs = false
-                            showToast("Settings reset to defaults")
-                        }
+                // Spacer
+                Item { Layout.fillWidth: true }
+
+                // Reset Button
+                Button {
+                    text: "Reset"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 18
+                        border.color: "#666666"
+                        border.width: 2
                     }
-
-                    Button {
-                        text: "Apply"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#CC0810" : "#E50914"
-                            radius: 18
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: applySettings()
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Medium
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: {
+                        chromecastEnabled = false
+                        airplayEnabled = false
+                        autoDownloadSubs = false
+                        openSubtitlesUsername = ""
+                        openSubtitlesPassword = ""
+                        showToast("Settings reset to defaults")
+                    }
+                }
+
+                // Apply Button
+                Button {
+                    text: "Apply"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#CC0810" : "#E50914"
+                        radius: 18
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: applySettings()
                 }
             }
 
             // Settings Content
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 32
+                spacing: 16
 
-                // Casting Section
+                // Casting & Streaming Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 140
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Casting & Streaming"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Chromecast Toggle
+                        // Header Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "📺"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
-                                    text: "Chromecast"
+                                    text: "Casting & Streaming"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                 }
 
+                                Text {
+                                    text: "Stream content to external devices"
+                                    font.pixelSize: 13
+                                    color: "#CCCCCC"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
+                                }
+                            }
+
+                            // Stacked Toggles Column
+                            ColumnLayout {
+                                spacing: 12
+                                Layout.alignment: Qt.AlignVCenter
+
+                                // Chromecast Toggle
                                 RowLayout {
-                                    spacing: 12
+                                    spacing: 8
 
                                     Switch {
                                         checked: chromecastEnabled
                                         onCheckedChanged: chromecastEnabled = checked
+                                        Layout.preferredWidth: 50
+                                        Layout.preferredHeight: 30
 
                                         indicator: Rectangle {
                                             implicitWidth: 48
@@ -215,44 +233,22 @@ Rectangle {
                                     }
 
                                     Text {
-                                        text: chromecastEnabled ? "Enabled" : "Disabled"
+                                        text: "Chromecast"
                                         font.pixelSize: 14
                                         color: chromecastEnabled ? "#E50914" : "#B3B3B3"
                                         Layout.alignment: Qt.AlignVCenter
                                     }
                                 }
 
-                                Text {
-                                    text: "Cast content to Chromecast devices on your network"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
-                            }
-                        }
-
-                        // AirPlay Toggle
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 20
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "AirPlay"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
+                                // AirPlay Toggle
                                 RowLayout {
-                                    spacing: 12
+                                    spacing: 8
 
                                     Switch {
                                         checked: airplayEnabled
                                         onCheckedChanged: airplayEnabled = checked
+                                        Layout.preferredWidth: 50
+                                        Layout.preferredHeight: 30
 
                                         indicator: Rectangle {
                                             implicitWidth: 48
@@ -280,272 +276,172 @@ Rectangle {
                                     }
 
                                     Text {
-                                        text: airplayEnabled ? "Enabled" : "Disabled"
+                                        text: "AirPlay"
                                         font.pixelSize: 14
                                         color: airplayEnabled ? "#E50914" : "#B3B3B3"
                                         Layout.alignment: Qt.AlignVCenter
                                     }
-                                }
-
-                                Text {
-                                    text: "Stream content to Apple TV and AirPlay-compatible devices"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
-                            }
-                        }
-
-                        // DLNA/UPnP Toggle
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 20
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "DLNA/UPnP"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: dlnaEnabled
-                                        onCheckedChanged: dlnaEnabled = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: dlnaEnabled ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: dlnaEnabled ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
-                                }
-
-                                Text {
-                                    text: "Stream content to DLNA/UPnP compatible devices"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
                                 }
                             }
                         }
                     }
                 }
 
-                // OpenSubtitles Section
+                // Auto-Matching Subtitles Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 140
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "OpenSubtitles"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Username Field
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
-
-                            Text {
-                                text: "Username"
-                                font.pixelSize: 16
-                                font.weight: Font.Medium
-                                color: "#FFFFFF"
-                            }
-
-                            TextField {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 48
-                                text: openSubtitlesUsername
-                                placeholderText: "Enter your OpenSubtitles username"
-                                selectByMouse: true
-
-                                background: Rectangle {
-                                    color: "#171717"
-                                    radius: 12
-                                    border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                    border.width: 1
-                                }
-
-                                color: "#FFFFFF"
-                                font.pixelSize: 15
-                                leftPadding: 16
-                                rightPadding: 16
-
-                                onTextChanged: openSubtitlesUsername = text
-                            }
-                        }
-
-                        // Password Field
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
-
-                            Text {
-                                text: "Password"
-                                font.pixelSize: 16
-                                font.weight: Font.Medium
-                                color: "#FFFFFF"
-                            }
-
-                            TextField {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 48
-                                text: openSubtitlesPassword
-                                placeholderText: "Enter your password"
-                                echoMode: TextInput.Password
-                                selectByMouse: true
-
-                                background: Rectangle {
-                                    color: "#171717"
-                                    radius: 12
-                                    border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                    border.width: 1
-                                }
-
-                                color: "#FFFFFF"
-                                font.pixelSize: 15
-                                leftPadding: 16
-                                rightPadding: 16
-
-                                onTextChanged: openSubtitlesPassword = text
-                            }
-                        }
-
-                        // Sign In Button
-                        Button {
-                            text: "Sign In"
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 48
-                            enabled: openSubtitlesUsername.length > 0 && openSubtitlesPassword.length > 0
-
-                            background: Rectangle {
-                                color: parent.enabled && parent.hovered ? "#CC0810" : "#E50914"
-                                opacity: parent.enabled ? 1.0 : 0.5
-                                radius: 12
-                            }
-
-                            contentItem: Text {
-                                text: parent.text
-                                color: "#FFFFFF"
-                                font.pixelSize: 15
-                                font.weight: Font.Bold
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            onClicked: {
-                                if (openSubtitlesUsername.length > 0 && openSubtitlesPassword.length > 0) {
-                                    showToast("Successfully signed in to OpenSubtitles")
-                                }
-                            }
-                        }
-
-                        // Auto Download Toggle
+                        // Header Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "📝"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
-                                    text: "Auto-download Matching Subs"
+                                    text: "Auto-Matching Subtitles"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: autoDownloadSubs
-                                        onCheckedChanged: autoDownloadSubs = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: autoDownloadSubs ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: autoDownloadSubs ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                 }
 
                                 Text {
                                     text: "Automatically download matching subtitles when available"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
                                 }
+                            }
+
+                            // Toggle Switch
+                            RowLayout {
+                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+
+                                Switch {
+                                    checked: autoDownloadSubs
+                                    onCheckedChanged: autoDownloadSubs = checked
+                                    Layout.preferredWidth: 50
+                                    Layout.preferredHeight: 30
+
+                                    indicator: Rectangle {
+                                        implicitWidth: 48
+                                        implicitHeight: 28
+                                        x: parent.leftPadding
+                                        y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                                        radius: 14
+                                        color: parent.checked ? "#E50914" : "#666666"
+                                        border.color: parent.checked ? "#E50914" : "#999999"
+
+                                        Rectangle {
+                                            x: parent.checked ? parent.width - width : 0
+                                            width: 24
+                                            height: 24
+                                            radius: 12
+                                            color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.margins: 2
+
+                                            Behavior on x {
+                                                NumberAnimation { duration: 200 }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Text {
+                                    text: autoDownloadSubs ? "Enabled" : "Disabled"
+                                    font.pixelSize: 14
+                                    color: autoDownloadSubs ? "#E50914" : "#B3B3B3"
+                                    Layout.alignment: Qt.AlignVCenter
+                                    horizontalAlignment: Text.AlignLeft
+                                }
+                            }
+                        }
+
+                        // Credentials Fields (when enabled)
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 12
+                            visible: autoDownloadSubs
+
+                            TextField {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 36
+                                text: openSubtitlesUsername
+                                placeholderText: "Username"
+                                enabled: autoDownloadSubs
+                                selectByMouse: true
+
+                                background: Rectangle {
+                                    color: autoDownloadSubs ? "#2A2A2A" : "#1A1A1A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                    opacity: autoDownloadSubs ? 1.0 : 0.5
+                                }
+
+                                color: autoDownloadSubs ? "#FFFFFF" : "#666666"
+                                font.pixelSize: 14
+                                leftPadding: 12
+                                rightPadding: 12
+
+                                onTextChanged: openSubtitlesUsername = text
+                            }
+
+                            TextField {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 36
+                                text: openSubtitlesPassword
+                                placeholderText: "Password"
+                                echoMode: TextInput.Password
+                                enabled: autoDownloadSubs
+                                selectByMouse: true
+
+                                background: Rectangle {
+                                    color: autoDownloadSubs ? "#2A2A2A" : "#1A1A1A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                    opacity: autoDownloadSubs ? 1.0 : 0.5
+                                }
+
+                                color: autoDownloadSubs ? "#FFFFFF" : "#666666"
+                                font.pixelSize: 14
+                                leftPadding: 12
+                                rightPadding: 12
+
+                                onTextChanged: openSubtitlesPassword = text
                             }
                         }
                     }
