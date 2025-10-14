@@ -82,6 +82,9 @@
            <file>AccountSettings.qml</file>
            <file>AboutDiagnostics.qml</file>
     <file>SettingsRow.qml</file>
+    <file>HelpCenter.qml</file>
+    <file>ReportIssue.qml</file>
+    <file>LegalDocs.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>

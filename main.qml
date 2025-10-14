@@ -273,11 +273,11 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 64 // Main Application layout
-                case "/live/groups": return 64 // Main Application layout
+                case "/home": return 67 // Main Application layout
+                case "/live/groups": return 67 // Main Application layout
                 case "/inbox": return 28
-                case "/live": return 64 // Main Application layout
-                case "/guide": return 64 // Main Application layout
+                case "/live": return 67 // Main Application layout
+                case "/guide": return 67 // Main Application layout
                 case "/movies": return 32 // MoviesHub
                 case "/movies/genre": return 33 // MovieGrid
                 case "/movie": return 34 // MovieDetails
@@ -285,7 +285,7 @@ ApplicationWindow {
                 case "/series/details": return 36 // SeriesDetails
                 case "/series/season": return 37 // SeasonEpisodes
                 case "/lists": return 38 // UserLists
-                case "/catchup": return 64 // Main Application layout
+                case "/catchup": return 67 // Main Application layout
                 case "/favorites": return 40 // Favorites
                 case "/search": return 42 // Search
                 case "/search/results": return 43 // Search Results  
@@ -306,10 +306,13 @@ ApplicationWindow {
                 case "/settings/notifications": return 58 // Notification Settings
                 case "/settings/account": return 59 // Account Settings
                 case "/settings/about": return 60 // About & Diagnostics
+                case "/help": return 61 // Help Center
+                case "/help/report": return 62 // Report Issue
+                case "/legal": return 63 // Legal Docs
                 case "/settings/storage": return 41 // Storage Settings
-                case "/account": return 62 // Account PlaceholderScreen
-                case "/main": return 64 // Main Application layout
-                case "/player": return 63 // Player Loader
+                case "/account": return 64 // Account PlaceholderScreen
+                case "/main": return 67 // Main Application layout
+                case "/player": return 66 // Player Loader
                 default: return 0
             }
         }
@@ -838,6 +841,27 @@ ApplicationWindow {
                 mainWindow.navigateTo(route)
             }
         }
+
+        // Help Center
+        HelpCenter {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Report Issue
+        ReportIssue {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Legal Docs
+        LegalDocs {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
         
         // Settings (Legacy placeholder)
         PlaceholderScreen {
@@ -1018,6 +1042,22 @@ ApplicationWindow {
                                 NavItem {
                                     itemText: "👤 Account"
                                     onClicked: navigateTo("/account")
+                                }
+
+                                // Help & Support
+                                NavItem {
+                                    itemText: "❓ Help Center"
+                                    onClicked: navigateTo("/help")
+                                }
+                                
+                                NavItem {
+                                    itemText: "📝 Report Issue"
+                                    onClicked: navigateTo("/help/report")
+                                }
+                                
+                                NavItem {
+                                    itemText: "📄 Legal Docs"
+                                    onClicked: navigateTo("/legal")
                                 }
                                 
                                 NavItem {
