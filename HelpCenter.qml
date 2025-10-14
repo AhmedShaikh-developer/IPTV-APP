@@ -5,6 +5,21 @@ import QtQuick.Layouts 1.15
 Rectangle {
     id: helpCenter
     color: "#0E0E0E"
+    
+    // Fade-in animation
+    opacity: 0
+    Component.onCompleted: {
+        fadeInAnimation.start()
+    }
+    
+    OpacityAnimator {
+        id: fadeInAnimation
+        target: helpCenter
+        from: 0
+        to: 1
+        duration: 150
+        easing.type: Easing.OutCubic
+    }
 
     property var screenWidth: parent.width
     property bool isDesktop: screenWidth >= 1080
@@ -38,8 +53,8 @@ Rectangle {
             width: Math.min(1080, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: 40
-            anchors.bottomMargin: 80
+            anchors.topMargin: isMobile ? 20 : 40
+            anchors.bottomMargin: isMobile ? 40 : 80
             spacing: 24
 
             // Header Row
@@ -73,7 +88,7 @@ Rectangle {
                 Text {
                     text: "Help Center"
                     font.pixelSize: 28
-                    font.weight: Font.SemiBold
+                    font.weight: Font.Bold
                     color: "#FFFFFF"
                 }
 
@@ -84,9 +99,9 @@ Rectangle {
             // Search Bar
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 48
+                Layout.preferredHeight: 44
                 color: "#171717"
-                radius: 16
+                radius: 12
                 border.color: "#2A2A2A"
                 border.width: 1
 
@@ -98,26 +113,38 @@ Rectangle {
                     Text {
                         text: "🔍"
                         font.pixelSize: 16
-                        color: "#B3B3B3"
+                        color: "#E50914"
                     }
 
                     Text {
                         text: "Search help articles..."
                         font.pixelSize: 14
-                        color: "#B3B3B3"
+                        color: "#A0A0A0"
                         Layout.fillWidth: true
                     }
                 }
             }
 
             // General Usage Section
-            Text {
-                text: "General Usage"
-                font.pixelSize: 20
-                font.weight: Font.Bold
-                color: "#FFFFFF"
+            ColumnLayout {
                 Layout.fillWidth: true
-                Layout.topMargin: 8
+                Layout.topMargin: 32
+                spacing: 8
+
+                Text {
+                    text: "General Usage"
+                    font.pixelSize: 18
+                    font.weight: Font.DemiBold
+                    color: "#FFFFFF"
+                    Layout.fillWidth: true
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "#2A2A2A"
+                    opacity: 0.6
+                }
             }
 
             // FAQ Cards
@@ -143,65 +170,103 @@ Rectangle {
 
                     delegate: Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: expanded ? questionHeight + answerHeight + 40 : questionHeight + 20
-                        color: "#171717"
+                        Layout.preferredHeight: expanded ? generalQuestionText.height + generalAnswerText.height + 60 : generalQuestionText.height + 40
+                        Layout.bottomMargin: 14
+                        color: hovered ? "#1E1E1E" : "#171717"
                         radius: 16
                         border.color: "#2A2A2A"
                         border.width: 1
 
                         property bool expanded: false
-                        property int questionHeight: 60
-                        property int answerHeight: 80
+                        property bool hovered: false
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
                         }
 
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
+
+                        // Shadow effect on hover
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.topMargin: hovered ? 2 : 0
+                            color: "transparent"
+                            border.color: Qt.rgba(0, 0, 0, 0.4)
+                            border.width: hovered ? 1 : 0
+                            radius: 16
+                            opacity: hovered ? 0.3 : 0
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+                            Behavior on anchors.topMargin {
+                                NumberAnimation { duration: 200 }
+                            }
+                        }
+
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 20
-                            spacing: 12
+                            spacing: 8
 
                             // Question Row
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: 16
+                                spacing: 12
 
-                                Text {
-                                    text: "❓"
-                                    font.pixelSize: 20
+                                // Accent Icon
+                                Rectangle {
+                                    Layout.preferredWidth: 24
+                                    Layout.preferredHeight: 24
                                     color: "#E50914"
-                                    Layout.alignment: Qt.AlignVCenter
+                                    radius: 12
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "?"
+                                        font.pixelSize: 14
+                                        font.weight: Font.Bold
+                                        color: "#FFFFFF"
+                                    }
                                 }
 
                                 Text {
+                                    id: generalQuestionText
                                     text: modelData.question
-                                    font.pixelSize: 18
-                                    font.weight: Font.Bold
+                                    font.pixelSize: 16
+                                    font.weight: Font.DemiBold
                                     color: "#FFFFFF"
                                     Layout.fillWidth: true
                                     wrapMode: Text.WordWrap
+                                    Layout.maximumWidth: parent.width * 0.85
                                 }
 
                                 Text {
-                                    text: parent.parent.parent.expanded ? "▲" : "▼"
+                                    text: "▼"
                                     font.pixelSize: 16
-                                    color: "#B3B3B3"
-                                    Layout.alignment: Qt.AlignVCenter
+                                    color: "#E50914"
+                                    Layout.alignment: Qt.AlignRight
+
+                                    Behavior on rotation {
+                                        NumberAnimation { duration: 200 }
+                                    }
+                                    rotation: parent.parent.expanded ? 90 : 0
                                 }
                             }
 
                             // Answer (when expanded)
                             Text {
+                                id: generalAnswerText
                                 text: modelData.answer
-                                font.pixelSize: 14
+                                font.pixelSize: 15
                                 color: "#B3B3B3"
                                 Layout.fillWidth: true
                                 wrapMode: Text.WordWrap
                                 lineHeight: 1.5
                                 visible: parent.parent.expanded
-                                opacity: parent.parent.expanded ? 1 : 0
-                                
+                                Layout.topMargin: 8
+
                                 Behavior on opacity {
                                     NumberAnimation { duration: 200 }
                                 }
@@ -210,20 +275,36 @@ Rectangle {
 
                         MouseArea {
                             anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: parent.hovered = true
+                            onExited: parent.hovered = false
                             onClicked: parent.expanded = !parent.expanded
+                            cursorShape: Qt.PointingHandCursor
                         }
                     }
                 }
             }
 
             // Playback Issues Section
-            Text {
-                text: "Playback Issues"
-                font.pixelSize: 20
-                font.weight: Font.Bold
-                color: "#FFFFFF"
+            ColumnLayout {
                 Layout.fillWidth: true
-                Layout.topMargin: 16
+                Layout.topMargin: 32
+                spacing: 8
+
+                Text {
+                    text: "Playback Issues"
+                    font.pixelSize: 18
+                    font.weight: Font.DemiBold
+                    color: "#FFFFFF"
+                    Layout.fillWidth: true
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "#2A2A2A"
+                    opacity: 0.6
+                }
             }
 
             ColumnLayout {
@@ -248,63 +329,100 @@ Rectangle {
 
                     delegate: Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: expanded ? questionHeight + answerHeight + 40 : questionHeight + 20
-                        color: "#171717"
+                        Layout.preferredHeight: expanded ? playbackQuestionText.height + playbackAnswerText.height + 60 : playbackQuestionText.height + 40
+                        Layout.bottomMargin: 14
+                        color: hovered ? "#1E1E1E" : "#171717"
                         radius: 16
                         border.color: "#2A2A2A"
                         border.width: 1
 
                         property bool expanded: false
-                        property int questionHeight: 60
-                        property int answerHeight: 80
+                        property bool hovered: false
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
                         }
 
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
+
+                        // Shadow effect on hover
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.topMargin: hovered ? 2 : 0
+                            color: "transparent"
+                            border.color: Qt.rgba(0, 0, 0, 0.4)
+                            border.width: hovered ? 1 : 0
+                            radius: 16
+                            opacity: hovered ? 0.3 : 0
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+                            Behavior on anchors.topMargin {
+                                NumberAnimation { duration: 200 }
+                            }
+                        }
+
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 20
-                            spacing: 12
+                            spacing: 8
 
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: 16
+                                spacing: 12
 
-                                Text {
-                                    text: "🔧"
-                                    font.pixelSize: 20
+                                // Accent Icon
+                                Rectangle {
+                                    Layout.preferredWidth: 24
+                                    Layout.preferredHeight: 24
                                     color: "#E50914"
-                                    Layout.alignment: Qt.AlignVCenter
+                                    radius: 12
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "🔧"
+                                        font.pixelSize: 14
+                                        color: "#FFFFFF"
+                                    }
                                 }
 
                                 Text {
+                                    id: playbackQuestionText
                                     text: modelData.question
-                                    font.pixelSize: 18
-                                    font.weight: Font.Bold
+                                    font.pixelSize: 16
+                                    font.weight: Font.DemiBold
                                     color: "#FFFFFF"
                                     Layout.fillWidth: true
                                     wrapMode: Text.WordWrap
+                                    Layout.maximumWidth: parent.width * 0.85
                                 }
 
                                 Text {
-                                    text: parent.parent.parent.expanded ? "▲" : "▼"
+                                    text: "▼"
                                     font.pixelSize: 16
-                                    color: "#B3B3B3"
-                                    Layout.alignment: Qt.AlignVCenter
+                                    color: "#E50914"
+                                    Layout.alignment: Qt.AlignRight
+
+                                    Behavior on rotation {
+                                        NumberAnimation { duration: 200 }
+                                    }
+                                    rotation: parent.parent.expanded ? 90 : 0
                                 }
                             }
 
                             Text {
+                                id: playbackAnswerText
                                 text: modelData.answer
-                                font.pixelSize: 14
+                                font.pixelSize: 15
                                 color: "#B3B3B3"
                                 Layout.fillWidth: true
                                 wrapMode: Text.WordWrap
                                 lineHeight: 1.5
                                 visible: parent.parent.expanded
-                                opacity: parent.parent.expanded ? 1 : 0
-                                
+                                Layout.topMargin: 8
+
                                 Behavior on opacity {
                                     NumberAnimation { duration: 200 }
                                 }
@@ -313,20 +431,36 @@ Rectangle {
 
                         MouseArea {
                             anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: parent.hovered = true
+                            onExited: parent.hovered = false
                             onClicked: parent.expanded = !parent.expanded
+                            cursorShape: Qt.PointingHandCursor
                         }
                     }
                 }
             }
 
             // Account & Billing Section
-            Text {
-                text: "Account & Billing"
-                font.pixelSize: 20
-                font.weight: Font.Bold
-                color: "#FFFFFF"
+            ColumnLayout {
                 Layout.fillWidth: true
-                Layout.topMargin: 16
+                Layout.topMargin: 32
+                spacing: 8
+
+                Text {
+                    text: "Account & Billing"
+                    font.pixelSize: 18
+                    font.weight: Font.DemiBold
+                    color: "#FFFFFF"
+                    Layout.fillWidth: true
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: "#2A2A2A"
+                    opacity: 0.6
+                }
             }
 
             ColumnLayout {
@@ -347,63 +481,100 @@ Rectangle {
 
                     delegate: Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: expanded ? questionHeight + answerHeight + 40 : questionHeight + 20
-                        color: "#171717"
+                        Layout.preferredHeight: expanded ? accountQuestionText.height + accountAnswerText.height + 60 : accountQuestionText.height + 40
+                        Layout.bottomMargin: 14
+                        color: hovered ? "#1E1E1E" : "#171717"
                         radius: 16
                         border.color: "#2A2A2A"
                         border.width: 1
 
                         property bool expanded: false
-                        property int questionHeight: 60
-                        property int answerHeight: 80
+                        property bool hovered: false
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
                         }
 
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
+
+                        // Shadow effect on hover
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.topMargin: hovered ? 2 : 0
+                            color: "transparent"
+                            border.color: Qt.rgba(0, 0, 0, 0.4)
+                            border.width: hovered ? 1 : 0
+                            radius: 16
+                            opacity: hovered ? 0.3 : 0
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+                            Behavior on anchors.topMargin {
+                                NumberAnimation { duration: 200 }
+                            }
+                        }
+
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 20
-                            spacing: 12
+                            spacing: 8
 
                             RowLayout {
                                 Layout.fillWidth: true
-                                spacing: 16
+                                spacing: 12
 
-                                Text {
-                                    text: "👤"
-                                    font.pixelSize: 20
+                                // Accent Icon
+                                Rectangle {
+                                    Layout.preferredWidth: 24
+                                    Layout.preferredHeight: 24
                                     color: "#E50914"
-                                    Layout.alignment: Qt.AlignVCenter
+                                    radius: 12
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "💳"
+                                        font.pixelSize: 14
+                                        color: "#FFFFFF"
+                                    }
                                 }
 
                                 Text {
+                                    id: accountQuestionText
                                     text: modelData.question
-                                    font.pixelSize: 18
-                                    font.weight: Font.Bold
+                                    font.pixelSize: 16
+                                    font.weight: Font.DemiBold
                                     color: "#FFFFFF"
                                     Layout.fillWidth: true
                                     wrapMode: Text.WordWrap
+                                    Layout.maximumWidth: parent.width * 0.85
                                 }
 
                                 Text {
-                                    text: parent.parent.parent.expanded ? "▲" : "▼"
+                                    text: "▼"
                                     font.pixelSize: 16
-                                    color: "#B3B3B3"
-                                    Layout.alignment: Qt.AlignVCenter
+                                    color: "#E50914"
+                                    Layout.alignment: Qt.AlignRight
+
+                                    Behavior on rotation {
+                                        NumberAnimation { duration: 200 }
+                                    }
+                                    rotation: parent.parent.expanded ? 90 : 0
                                 }
                             }
 
                             Text {
+                                id: accountAnswerText
                                 text: modelData.answer
-                                font.pixelSize: 14
+                                font.pixelSize: 15
                                 color: "#B3B3B3"
                                 Layout.fillWidth: true
                                 wrapMode: Text.WordWrap
                                 lineHeight: 1.5
                                 visible: parent.parent.expanded
-                                opacity: parent.parent.expanded ? 1 : 0
-                                
+                                Layout.topMargin: 8
+
                                 Behavior on opacity {
                                     NumberAnimation { duration: 200 }
                                 }
@@ -412,11 +583,51 @@ Rectangle {
 
                         MouseArea {
                             anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: parent.hovered = true
+                            onExited: parent.hovered = false
                             onClicked: parent.expanded = !parent.expanded
+                            cursorShape: Qt.PointingHandCursor
                         }
                     }
                 }
             }
+        }
+    }
+
+    // Floating Contact Support Button
+    Button {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.bottomMargin: 24
+        anchors.rightMargin: 24
+        width: 140
+        height: 40
+        
+        background: Rectangle {
+            color: "#E50914"
+            radius: 20
+            border.width: 0
+            
+            Behavior on color {
+                ColorAnimation { duration: 200 }
+            }
+        }
+        
+        contentItem: Text {
+            text: "Contact Support"
+            font.pixelSize: 14
+            font.weight: Font.Medium
+            color: "#FFFFFF"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        
+        onClicked: navigateTo("/help/report")
+        
+        // Hover effect
+        onHoveredChanged: {
+            background.color = hovered ? "#FF1E1E" : "#E50914"
         }
     }
 }
