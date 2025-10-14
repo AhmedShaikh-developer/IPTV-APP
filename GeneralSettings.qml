@@ -37,180 +37,180 @@ Rectangle {
         clip: true
 
         ColumnLayout {
-            width: Math.min(1080, parent.width - 80)
+            width: Math.min(900, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: {
-                if (isDesktop) return 32
-                if (isTablet) return 20
-                return 16
-            }
-            spacing: 24
+            anchors.top: parent.top
+            anchors.topMargin: 32
+            anchors.bottomMargin: 32
+            spacing: 20
 
-            // Sticky Top Bar
-            Rectangle {
+            // Header Row
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                color: "#000000"
-                z: 100
+                Layout.preferredHeight: 60
+                spacing: 24
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 24
-
-                    Button {
-                        Layout.preferredWidth: 48
-                        Layout.preferredHeight: 48
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 24
-                            border.color: "#444444"
-                            border.width: 1
-                        }
-                        contentItem: Text {
-                            text: "←"
-                            font.pixelSize: 22
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: navigateTo("/settings")
+                // Back Button
+                Button {
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 48
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 24
+                        border.color: "#444444"
+                        border.width: 1
                     }
-
-                    Text {
-                        text: "General"
-                        font.pixelSize: 28
-                        font.weight: Font.Bold
+                    contentItem: Text {
+                        text: "←"
+                        font.pixelSize: 22
                         color: "#FFFFFF"
-                        Layout.alignment: Qt.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: navigateTo("/settings")
+                }
 
-                    Item { Layout.fillWidth: true }
+                // Title
+                Text {
+                    text: "General"
+                    font.pixelSize: 28
+                    font.weight: Font.Bold
+                    color: "#FFFFFF"
+                }
 
-                    Button {
-                        text: "Reset"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 18
-                            border.color: "#666666"
-                            border.width: 2
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Medium
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: {
-                            startupPage = "Home"
-                            language = "English"
-                            region = "United States"
-                            use24HourFormat = false
-                            contentRatingSystem = "MPAA"
-                            showToast("Settings reset to defaults")
-                        }
+                // Spacer
+                Item { Layout.fillWidth: true }
+
+                // Reset Button
+                Button {
+                    text: "Reset"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 18
+                        border.color: "#666666"
+                        border.width: 2
                     }
-
-                    Button {
-                        text: "Apply"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#CC0810" : "#E50914"
-                            radius: 18
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: applySettings()
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Medium
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: {
+                        startupPage = "Home"
+                        language = "English"
+                        region = "United States"
+                        use24HourFormat = false
+                        contentRatingSystem = "MPAA"
+                        showToast("Settings reset to defaults")
+                    }
+                }
+
+                // Apply Button
+                Button {
+                    text: "Apply"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#CC0810" : "#E50914"
+                        radius: 18
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: applySettings()
                 }
             }
 
             // Settings Content
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 32
+                spacing: 20
 
                 // Startup Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 100
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Startup"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
+                        // Icon
+                        Rectangle {
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            color: "#E50914"
+                            radius: 20
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "🏠"
+                                font.pixelSize: 20
+                            }
                         }
 
-                        // Startup Page Setting
-                        RowLayout {
+                        // Text Content
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
 
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Startup Page"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                ComboBox {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["Home", "Live TV", "TV Guide", "Movies", "Series"]
-                                    currentIndex: model.indexOf(startupPage)
-                                    
-                                    background: Rectangle {
-                                        color: "#171717"
-                                        radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
-                                    }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: startupPage = model[currentIndex]
-                                }
-
-                                Text {
-                                    text: "Choose which page to show when the app starts"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
+                            Text {
+                                text: "Start Page"
+                                font.pixelSize: 16
+                                font.weight: Font.SemiBold
+                                color: "#FFFFFF"
                             }
+
+                            Text {
+                                text: "Choose which page to show when the app starts"
+                                font.pixelSize: 13
+                                color: "#CCCCCC"
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: 300
+                            }
+                        }
+
+                        // Control
+                        ComboBox {
+                            Layout.preferredWidth: 180
+                            Layout.preferredHeight: 40
+                            Layout.alignment: Qt.AlignVCenter
+                            model: ["Home", "Live TV", "TV Guide", "Movies", "Series"]
+                            currentIndex: model.indexOf(startupPage)
+                            
+                            background: Rectangle {
+                                color: "#2A2A2A"
+                                radius: 6
+                                border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                border.width: 1
+                            }
+
+                            contentItem: Text {
+                                text: model[currentIndex]
+                                color: "#FFFFFF"
+                                font.pixelSize: 14
+                                leftPadding: 12
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            onCurrentIndexChanged: startupPage = model[currentIndex]
                         }
                     }
                 }
@@ -218,119 +218,154 @@ Rectangle {
                 // Language & Region Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 240
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
                         Text {
                             text: "Language & Region"
-                            font.pixelSize: 20
+                            font.pixelSize: 18
                             font.weight: Font.Bold
                             color: "#FFFFFF"
+                            Layout.bottomMargin: 8
                         }
 
                         // Language Setting
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🌐"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
-                                    text: "Language"
+                                    text: "App Language"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                ComboBox {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Chinese", "Japanese", "Korean"]
-                                    currentIndex: model.indexOf(language)
-                                    
-                                    background: Rectangle {
-                                        color: "#171717"
-                                        radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
-                                    }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: language = model[currentIndex]
                                 }
 
                                 Text {
                                     text: "Interface language for menus and navigation"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 300
                                 }
+                            }
+
+                            ComboBox {
+                                Layout.preferredWidth: 180
+                                Layout.preferredHeight: 40
+                                Layout.alignment: Qt.AlignVCenter
+                                model: ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Chinese", "Japanese", "Korean"]
+                                currentIndex: model.indexOf(language)
+                                
+                                background: Rectangle {
+                                    color: "#2A2A2A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                }
+
+                                contentItem: Text {
+                                    text: model[currentIndex]
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 14
+                                    leftPadding: 12
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+
+                                onCurrentIndexChanged: language = model[currentIndex]
                             }
                         }
 
                         // Region Setting
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🗺️"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Region"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                ComboBox {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Brazil", "Mexico"]
-                                    currentIndex: model.indexOf(region)
-                                    
-                                    background: Rectangle {
-                                        color: "#171717"
-                                        radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
-                                    }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: region = model[currentIndex]
                                 }
 
                                 Text {
                                     text: "Regional settings for content and formatting"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 300
                                 }
+                            }
+
+                            ComboBox {
+                                Layout.preferredWidth: 180
+                                Layout.preferredHeight: 40
+                                Layout.alignment: Qt.AlignVCenter
+                                model: ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Brazil", "Mexico"]
+                                currentIndex: model.indexOf(region)
+                                
+                                background: Rectangle {
+                                    color: "#2A2A2A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                }
+
+                                contentItem: Text {
+                                    text: model[currentIndex]
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 14
+                                    leftPadding: 12
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+
+                                onCurrentIndexChanged: region = model[currentIndex]
                             }
                         }
                     }
@@ -339,91 +374,109 @@ Rectangle {
                 // Time & Content Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 240
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
                         Text {
                             text: "Time & Content"
-                            font.pixelSize: 20
+                            font.pixelSize: 18
                             font.weight: Font.Bold
                             color: "#FFFFFF"
+                            Layout.bottomMargin: 8
                         }
 
                         // Time Format Setting
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🕐"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Time Format"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 16
-
-                                    Button {
-                                        text: "12 Hour"
-                                        Layout.preferredHeight: 40
-                                        Layout.preferredWidth: 100
-                                        background: Rectangle {
-                                            color: !use24HourFormat ? "#E50914" : "transparent"
-                                            radius: 20
-                                            border.color: !use24HourFormat ? "#E50914" : "#666666"
-                                            border.width: 2
-                                        }
-                                        contentItem: Text {
-                                            text: parent.text
-                                            color: "#FFFFFF"
-                                            font.pixelSize: 14
-                                            font.weight: Font.Medium
-                                            horizontalAlignment: Text.AlignHCenter
-                                            verticalAlignment: Text.AlignVCenter
-                                        }
-                                        onClicked: use24HourFormat = false
-                                    }
-
-                                    Button {
-                                        text: "24 Hour"
-                                        Layout.preferredHeight: 40
-                                        Layout.preferredWidth: 100
-                                        background: Rectangle {
-                                            color: use24HourFormat ? "#E50914" : "transparent"
-                                            radius: 20
-                                            border.color: use24HourFormat ? "#E50914" : "#666666"
-                                            border.width: 2
-                                        }
-                                        contentItem: Text {
-                                            text: parent.text
-                                            color: "#FFFFFF"
-                                            font.pixelSize: 14
-                                            font.weight: Font.Medium
-                                            horizontalAlignment: Text.AlignHCenter
-                                            verticalAlignment: Text.AlignVCenter
-                                        }
-                                        onClicked: use24HourFormat = true
-                                    }
                                 }
 
                                 Text {
                                     text: "Display time in 12-hour (AM/PM) or 24-hour format"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 300
+                                }
+                            }
+
+                            RowLayout {
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 6
+
+                                Button {
+                                    text: "12 Hour"
+                                    Layout.preferredHeight: 36
+                                    Layout.preferredWidth: 80
+                                    background: Rectangle {
+                                        color: !use24HourFormat ? "#E50914" : "transparent"
+                                        radius: 18
+                                        border.color: !use24HourFormat ? "#E50914" : "#666666"
+                                        border.width: 1
+                                    }
+                                    contentItem: Text {
+                                        text: parent.text
+                                        color: "#FFFFFF"
+                                        font.pixelSize: 12
+                                        font.weight: Font.Medium
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    onClicked: use24HourFormat = false
+                                }
+
+                                Button {
+                                    text: "24 Hour"
+                                    Layout.preferredHeight: 36
+                                    Layout.preferredWidth: 80
+                                    background: Rectangle {
+                                        color: use24HourFormat ? "#E50914" : "transparent"
+                                        radius: 18
+                                        border.color: use24HourFormat ? "#E50914" : "#666666"
+                                        border.width: 1
+                                    }
+                                    contentItem: Text {
+                                        text: parent.text
+                                        color: "#FFFFFF"
+                                        font.pixelSize: 12
+                                        font.weight: Font.Medium
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    onClicked: use24HourFormat = true
                                 }
                             }
                         }
@@ -431,49 +484,66 @@ Rectangle {
                         // Content Rating System Setting
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🎭"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Content Rating System"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                ComboBox {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["MPAA", "BBFC", "PEGI", "ESRB", "CERO", "USK"]
-                                    currentIndex: model.indexOf(contentRatingSystem)
-                                    
-                                    background: Rectangle {
-                                        color: "#171717"
-                                        radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
-                                    }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: contentRatingSystem = model[currentIndex]
                                 }
 
                                 Text {
                                     text: "Rating system used for parental controls (UI-only)"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 300
                                 }
+                            }
+
+                            ComboBox {
+                                Layout.preferredWidth: 180
+                                Layout.preferredHeight: 40
+                                Layout.alignment: Qt.AlignVCenter
+                                model: ["MPAA", "BBFC", "PEGI", "ESRB", "CERO", "USK"]
+                                currentIndex: model.indexOf(contentRatingSystem)
+                                
+                                background: Rectangle {
+                                    color: "#2A2A2A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                }
+
+                                contentItem: Text {
+                                    text: model[currentIndex]
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 14
+                                    leftPadding: 12
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+
+                                onCurrentIndexChanged: contentRatingSystem = model[currentIndex]
                             }
                         }
                     }
