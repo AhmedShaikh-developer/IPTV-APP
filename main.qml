@@ -310,7 +310,7 @@ ApplicationWindow {
                 case "/help/report": return 62 // Report Issue
                 case "/legal": return 63 // Legal Docs
                 case "/settings/storage": return 41 // Storage Settings
-                case "/account": return 64 // Account PlaceholderScreen
+                case "/account": return 5 // Sign In Screen
                 case "/main": return 67 // Main Application layout
                 case "/player": return 66 // Player Loader
                 default: return 0
