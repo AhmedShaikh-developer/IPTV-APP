@@ -4,16 +4,17 @@ import QtQuick.Layouts 1.15
 
 Rectangle {
     id: aboutDiagnostics
-    color: "#000000"
+    color: "#0E0E0E"
 
     property var screenWidth: parent.width
-    property bool isDesktop: screenWidth >= 1920
-    property bool isTablet: screenWidth >= 1366 && screenWidth < 1920
-    property bool isMobile: screenWidth < 1366
+    property bool isDesktop: screenWidth >= 1080
+    property bool isTablet: screenWidth >= 768 && screenWidth < 1080
+    property bool isMobile: screenWidth < 768
 
     // Mock diagnostic data
     property bool pingTestRunning: false
     property var pingResults: null
+    property bool licensesExpanded: false
 
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
@@ -52,6 +53,15 @@ Rectangle {
         }
     }
 
+    // Background gradient
+    Rectangle {
+        anchors.fill: parent
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#0E0E0E" }
+            GradientStop { position: 1.0; color: "#151515" }
+        }
+    }
+
     ScrollView {
         anchors.fill: parent
         clip: true
@@ -59,200 +69,196 @@ Rectangle {
         ColumnLayout {
             width: Math.min(1080, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: {
-                if (isDesktop) return 32
-                if (isTablet) return 20
-                return 16
-            }
-            spacing: 24
+            anchors.top: parent.top
+            anchors.topMargin: 40
+            anchors.bottomMargin: 80
+            spacing: 22
 
-            // Sticky Top Bar
+            // Fixed Header Row
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 60
+                spacing: 20
+
+                // Back Button
+                Button {
+                    Layout.preferredWidth: 44
+                    Layout.preferredHeight: 44
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 22
+                        border.color: "#444444"
+                        border.width: 1
+                        Behavior on color { ColorAnimation { duration: 200 } }
+                    }
+                    contentItem: Text {
+                        text: "←"
+                        font.pixelSize: 20
+                        color: "#FFFFFF"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: navigateTo("/settings")
+                }
+
+                // Title
+                Text {
+                    text: "About & Diagnostics"
+                    font.pixelSize: 32
+                    font.weight: Font.Bold
+                    color: "#FFFFFF"
+                }
+
+                // Spacer
+                Item { Layout.fillWidth: true }
+            }
+
+            // App Information Card
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                color: "#000000"
-                z: 100
+                Layout.preferredHeight: 160
+                color: "#171717"
+                radius: 16
+                border.color: "#2A2A2A"
+                border.width: 1
 
-                RowLayout {
+                // Subtle shadow effect
+                Rectangle {
                     anchors.fill: parent
-                    spacing: 24
+                    anchors.margins: 2
+                    color: "transparent"
+                    radius: 14
+                    border.color: "#333333"
+                    border.width: 0.5
+                    opacity: 0.3
+                }
 
-                    Button {
-                        Layout.preferredWidth: 48
-                        Layout.preferredHeight: 48
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 24
-                            border.color: "#444444"
-                            border.width: 1
-                        }
-                        contentItem: Text {
-                            text: "←"
-                            font.pixelSize: 22
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: navigateTo("/settings")
-                    }
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 24
+                    spacing: 20
 
                     Text {
-                        text: "About & Diagnostics"
-                        font.pixelSize: 28
-                        font.weight: Font.Bold
+                        text: "App Information"
+                        font.pixelSize: 18
+                        font.weight: Font.SemiBold
                         color: "#FFFFFF"
-                        Layout.alignment: Qt.AlignVCenter
                     }
 
-                    Item { Layout.fillWidth: true }
-                }
-            }
-
-            // Settings Content
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 32
-
-                // App Information Section
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
-                    border.width: 1
-
+                    // App Information Grid
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        Layout.fillWidth: true
+                        spacing: 16
 
-                        Text {
-                            text: "App Information"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // App Version
+                        // App Version Row
                         RowLayout {
                             Layout.fillWidth: true
                             spacing: 16
 
                             Text {
                                 text: "App Version"
-                                font.pixelSize: 16
+                                font.pixelSize: 15
                                 font.weight: Font.Medium
                                 color: "#FFFFFF"
+                                Layout.preferredWidth: 140
                             }
-
-                            Item { Layout.fillWidth: true }
 
                             Text {
                                 text: "2.1.4 (Build 214)"
-                                font.pixelSize: 16
+                                font.pixelSize: 15
                                 color: "#B3B3B3"
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
                             }
                         }
 
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 1
-                            color: "#2A2A2A"
-                        }
-
-                        // Qt Version
+                        // Qt Version Row
                         RowLayout {
                             Layout.fillWidth: true
                             spacing: 16
 
                             Text {
                                 text: "Qt Version"
-                                font.pixelSize: 16
+                                font.pixelSize: 15
                                 font.weight: Font.Medium
                                 color: "#FFFFFF"
+                                Layout.preferredWidth: 140
                             }
-
-                            Item { Layout.fillWidth: true }
 
                             Text {
                                 text: "6.9.2"
-                                font.pixelSize: 16
+                                font.pixelSize: 15
                                 color: "#B3B3B3"
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
                             }
                         }
 
-                        Rectangle {
+                        // Supported Codecs Row
+                        RowLayout {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 1
-                            color: "#2A2A2A"
-                        }
-
-                        // Codecs
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
+                            spacing: 16
 
                             Text {
                                 text: "Supported Codecs"
-                                font.pixelSize: 16
+                                font.pixelSize: 15
                                 font.weight: Font.Medium
                                 color: "#FFFFFF"
+                                Layout.preferredWidth: 140
                             }
 
                             Text {
                                 text: "H.264, H.265/HEVC, VP9, AV1, AAC, MP3, AC-3, DTS"
-                                font.pixelSize: 14
+                                font.pixelSize: 15
                                 color: "#B3B3B3"
-                                wrapMode: Text.WordWrap
                                 Layout.fillWidth: true
+                                wrapMode: Text.WordWrap
                             }
                         }
                     }
                 }
+            }
 
-                // CDN/Edge Section
+            // Run Test Card
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 120
+                color: "#171717"
+                radius: 16
+                border.color: "#2A2A2A"
+                border.width: 1
+
+                // Subtle shadow effect
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
-                    border.width: 1
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    color: "transparent"
+                    radius: 14
+                    border.color: "#333333"
+                    border.width: 0.5
+                    opacity: 0.3
+                }
 
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 24
+                    spacing: 16
+
+                    RowLayout {
+                        Layout.fillWidth: true
 
                         Text {
-                            text: "CDN/Edge"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
+                            text: "Connectivity Test"
+                            font.pixelSize: 18
+                            font.weight: Font.SemiBold
                             color: "#FFFFFF"
-                        }
-
-                        Text {
-                            text: "Primary CDN: edge-us-west.iptvpro.com"
-                            font.pixelSize: 14
-                            color: "#B3B3B3"
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                        }
-
-                        Text {
-                            text: "Backup CDN: edge-us-east.iptvpro.com"
-                            font.pixelSize: 14
-                            color: "#B3B3B3"
-                            wrapMode: Text.WordWrap
                             Layout.fillWidth: true
                         }
 
                         Button {
                             text: pingTestRunning ? "Testing..." : "Run Test"
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 48
+                            Layout.preferredHeight: 40
+                            Layout.preferredWidth: 120
                             enabled: !pingTestRunning
 
                             background: Rectangle {
@@ -264,7 +270,7 @@ Rectangle {
                             contentItem: Text {
                                 text: parent.text
                                 color: "#FFFFFF"
-                                font.pixelSize: 15
+                                font.pixelSize: 14
                                 font.weight: Font.Bold
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
@@ -272,150 +278,226 @@ Rectangle {
 
                             onClicked: runPingTest()
                         }
+                    }
 
-                        // Ping Results
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 12
-                            visible: pingResults !== null && pingResults.length > 0
+                    Text {
+                        text: "Test connectivity to CDN and edge servers"
+                        font.pixelSize: 14
+                        color: "#B3B3B3"
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        Layout.topMargin: 4
+                    }
 
-                            Repeater {
-                                model: pingResults
+                    // Ping Results
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+                        visible: pingResults !== null && pingResults.length > 0
+                        Layout.topMargin: 12
 
-                                delegate: Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 60
-                                    color: "#171717"
-                                    radius: 8
-                                    border.color: "#2A2A2A"
-                                    border.width: 1
+                        Repeater {
+                            model: pingResults
 
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        anchors.margins: 12
-                                        spacing: 12
+                            delegate: Rectangle {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 32
+                                color: "#0F0F0F"
+                                radius: 8
+                                border.color: "#2A2A2A"
+                                border.width: 1
 
-                                        Rectangle {
-                                            Layout.preferredWidth: 8
-                                            Layout.preferredHeight: 8
-                                            radius: 4
-                                            color: "#12B886"
-                                        }
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.margins: 12
+                                    spacing: 12
 
-                                        ColumnLayout {
-                                            Layout.fillWidth: true
-                                            spacing: 2
+                                    Rectangle {
+                                        Layout.preferredWidth: 6
+                                        Layout.preferredHeight: 6
+                                        radius: 3
+                                        color: "#12B886"
+                                        Layout.alignment: Qt.AlignVCenter
+                                    }
 
-                                            Text {
-                                                text: modelData.name
-                                                font.pixelSize: 14
-                                                font.weight: Font.Medium
-                                                color: "#FFFFFF"
-                                            }
-
-                                            Text {
-                                                text: modelData.status + " • " + modelData.latency
-                                                font.pixelSize: 12
-                                                color: "#B3B3B3"
-                                            }
-                                        }
+                                    Text {
+                                        text: modelData.name + ": " + modelData.status + " • " + modelData.latency
+                                        font.pixelSize: 13
+                                        color: "#B3B3B3"
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                // Diagnostics Section
+            // Diagnostics Card
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+                color: "#171717"
+                radius: 16
+                border.color: "#2A2A2A"
+                border.width: 1
+
+                // Subtle shadow effect
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
-                    border.width: 1
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    color: "transparent"
+                    radius: 14
+                    border.color: "#333333"
+                    border.width: 0.5
+                    opacity: 0.3
+                }
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 24
+                    spacing: 16
+
+                    Text {
+                        text: "Diagnostics"
+                        font.pixelSize: 18
+                        font.weight: Font.SemiBold
+                        color: "#FFFFFF"
+                    }
 
                     ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        Layout.fillWidth: true
+                        spacing: 12
 
-                        Text {
-                            text: "Diagnostics"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Export Logs Button
-                        Button {
-                            text: "Export Logs"
+                        RowLayout {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 48
 
-                            background: Rectangle {
-                                color: parent.hovered ? "#2A2A2A" : "transparent"
-                                radius: 12
-                                border.color: "#666666"
-                                border.width: 2
+                            Button {
+                                text: "Export Logs"
+                                Layout.preferredHeight: 36
+                                Layout.preferredWidth: 120
+
+                                background: Rectangle {
+                                    color: parent.hovered ? "#2A2A2A" : "transparent"
+                                    radius: 12
+                                    border.color: "#666666"
+                                    border.width: 1
+                                    Behavior on color { ColorAnimation { duration: 200 } }
+                                }
+
+                                contentItem: Text {
+                                    text: parent.text
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 14
+                                    font.weight: Font.Medium
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+
+                                onClicked: exportLogs()
                             }
 
-                            contentItem: Text {
-                                text: parent.text
-                                color: "#FFFFFF"
-                                font.pixelSize: 15
-                                font.weight: Font.Medium
-                                horizontalAlignment: Text.AlignHCenter
-                                verticalAlignment: Text.AlignVCenter
-                            }
-
-                            onClicked: exportLogs()
+                            Item { Layout.fillWidth: true }
                         }
 
                         Text {
                             text: "Export application logs for troubleshooting and support"
                             font.pixelSize: 13
                             color: "#B3B3B3"
-                            wrapMode: Text.WordWrap
                             Layout.fillWidth: true
+                            wrapMode: Text.WordWrap
+                            Layout.maximumWidth: 400
+                            Layout.alignment: Qt.AlignLeft
                         }
                     }
                 }
+            }
 
-                // Open Source Licenses Section
+            // Open Source Licenses Card
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: licensesExpanded ? 400 : 80
+                color: "#171717"
+                radius: 16
+                border.color: "#2A2A2A"
+                border.width: 1
+
+                // Subtle shadow effect
                 Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
-                    border.width: 1
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    color: "transparent"
+                    radius: 14
+                    border.color: "#333333"
+                    border.width: 0.5
+                    opacity: 0.3
+                }
 
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                Behavior on Layout.preferredHeight {
+                    NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                }
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 24
+                    spacing: 20
+
+                    RowLayout {
+                        Layout.fillWidth: true
 
                         Text {
                             text: "Open Source Licenses"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
+                            font.pixelSize: 18
+                            font.weight: Font.SemiBold
                             color: "#FFFFFF"
+                            Layout.fillWidth: true
                         }
 
-                        ScrollView {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 200
-                            clip: true
+                        Button {
+                            text: licensesExpanded ? "Collapse" : "Expand"
+                            Layout.preferredHeight: 32
+                            Layout.preferredWidth: 80
 
-                            Text {
-                                width: parent.width
-                                text: "Qt Framework\nCopyright (C) 2024 The Qt Company Ltd.\nLicensed under the GNU Lesser General Public License (LGPL) version 3.\n\nFFmpeg\nCopyright (c) 2000-2024 the FFmpeg developers\nLicensed under the GNU Lesser General Public License (LGPL) version 2.1 or later.\n\nOpenSSL\nCopyright (c) 1998-2024 The OpenSSL Project\nLicensed under the OpenSSL License.\n\nSQLite\nPublic domain software.\n\nJSON for Modern C++\nCopyright (c) 2013-2024 Niels Lohmann\nLicensed under the MIT License.\n\nThis application uses various open source libraries. Full license texts are available in the application bundle."
-                                font.pixelSize: 12
-                                color: "#B3B3B3"
-                                wrapMode: Text.WordWrap
-                                lineHeight: 1.4
+                            background: Rectangle {
+                                color: parent.hovered ? "#2A2A2A" : "transparent"
+                                radius: 10
+                                border.color: "#666666"
+                                border.width: 1
+                                Behavior on color { ColorAnimation { duration: 200 } }
                             }
+
+                            contentItem: Text {
+                                text: parent.text
+                                color: "#FFFFFF"
+                                font.pixelSize: 12
+                                font.weight: Font.Medium
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            onClicked: licensesExpanded = !licensesExpanded
+                        }
+                    }
+
+                    ScrollView {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.preferredHeight: licensesExpanded ? 280 : 0
+                        clip: true
+                        visible: licensesExpanded
+
+                        Behavior on Layout.preferredHeight {
+                            NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                        }
+
+                        Text {
+                            width: parent.width
+                            text: "Qt Framework\nCopyright (C) 2024 The Qt Company Ltd.\nLicensed under the GNU Lesser General Public License (LGPL) version 3.\n\nFFmpeg\nCopyright (c) 2000-2024 the FFmpeg developers\nLicensed under the GNU Lesser General Public License (LGPL) version 2.1 or later.\n\nOpenSSL\nCopyright (c) 1998-2024 The OpenSSL Project\nLicensed under the OpenSSL License.\n\nSQLite\nPublic domain software.\n\nJSON for Modern C++\nCopyright (c) 2013-2024 Niels Lohmann\nLicensed under the MIT License.\n\nThis application uses various open source libraries. Full license texts are available in the application bundle."
+                            font.pixelSize: 12
+                            color: "#B3B3B3"
+                            wrapMode: Text.WordWrap
+                            lineHeight: 1.4
                         }
                     }
                 }
