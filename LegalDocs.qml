@@ -31,7 +31,7 @@ Rectangle {
         clip: true
 
         ColumnLayout {
-            width: Math.min(1080, parent.width - 80)
+            width: Math.min(1200, parent.width - 60)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 40
@@ -69,7 +69,7 @@ Rectangle {
                 Text {
                     text: "Legal Information"
                     font.pixelSize: 28
-                    font.weight: Font.SemiBold
+                    font.weight: Font.DemiBold
                     color: "#FFFFFF"
                 }
 
@@ -80,7 +80,7 @@ Rectangle {
             // Terms of Service Card
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 300
+                Layout.preferredHeight: 350
                 color: "#171717"
                 radius: 16
                 border.color: "#2A2A2A"
@@ -88,7 +88,7 @@ Rectangle {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 20
+                    anchors.margins: 28
                     spacing: 16
 
                     Text {
@@ -108,8 +108,8 @@ Rectangle {
                         Text {
                             width: parent.width
                             text: "Last updated: January 1, 2025\n\n1. Acceptance of Terms\nBy using IPTV Pro, you agree to be bound by these Terms of Service and all applicable laws and regulations.\n\n2. Use License\nPermission is granted to temporarily download one copy of IPTV Pro for personal, non-commercial transitory viewing only.\n\n3. Disclaimer\nThe materials on IPTV Pro are provided on an 'as is' basis. IPTV Pro makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties.\n\n4. Limitations\nIn no event shall IPTV Pro or its suppliers be liable for any damages arising out of the use or inability to use the materials on IPTV Pro.\n\n5. Accuracy of Materials\nThe materials appearing on IPTV Pro could include technical, typographical, or photographic errors.\n\n6. Links\nIPTV Pro has not reviewed all of the sites linked to our application and is not responsible for the contents of any such linked site."
-                            font.pixelSize: 14
-                            color: "#B3B3B3"
+                            font.pixelSize: 15
+                            color: "#CCCCCC"
                             wrapMode: Text.WordWrap
                             lineHeight: 1.5
                         }
@@ -120,7 +120,7 @@ Rectangle {
             // Privacy Policy Card
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 300
+                Layout.preferredHeight: 350
                 color: "#171717"
                 radius: 16
                 border.color: "#2A2A2A"
@@ -128,7 +128,7 @@ Rectangle {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 20
+                    anchors.margins: 28
                     spacing: 16
 
                     Text {
@@ -148,8 +148,8 @@ Rectangle {
                         Text {
                             width: parent.width
                             text: "Last updated: January 1, 2025\n\n1. Information We Collect\nWe may collect information you provide directly to us, such as when you create an account, contact us, or use our services.\n\n2. How We Use Your Information\nWe use the information we collect to provide, maintain, and improve our services, process transactions, and communicate with you.\n\n3. Information Sharing\nWe do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy.\n\n4. Data Security\nWe implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.\n\n5. Cookies and Tracking\nWe may use cookies and similar tracking technologies to collect and use personal information about you.\n\n6. Your Rights\nYou have the right to access, update, or delete the information we have on you. You may also opt out of certain communications from us.\n\n7. Changes to This Policy\nWe may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page."
-                            font.pixelSize: 14
-                            color: "#B3B3B3"
+                            font.pixelSize: 15
+                            color: "#CCCCCC"
                             wrapMode: Text.WordWrap
                             lineHeight: 1.5
                         }
@@ -160,7 +160,7 @@ Rectangle {
             // Disclaimer Card
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 200
+                Layout.preferredHeight: 250
                 color: "#171717"
                 radius: 16
                 border.color: "#2A2A2A"
@@ -168,7 +168,7 @@ Rectangle {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 20
+                    anchors.margins: 28
                     spacing: 16
 
                     Text {

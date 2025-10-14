@@ -71,7 +71,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
-                    onClicked: navigateTo("/help")
+                    onClicked: navigateTo("/home")
                 }
 
                 // Title
