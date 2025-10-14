@@ -39,460 +39,538 @@ Rectangle {
         clip: true
 
         ColumnLayout {
-            width: Math.min(1080, parent.width - 80)
+            width: Math.min(900, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: {
-                if (isDesktop) return 32
-                if (isTablet) return 20
-                return 16
-            }
-            spacing: 24
+            anchors.top: parent.top
+            anchors.topMargin: 32
+            anchors.bottomMargin: 40
+            spacing: 16
 
-            // Sticky Top Bar
-            Rectangle {
+            // Header Row
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                color: "#000000"
-                z: 100
+                Layout.preferredHeight: 60
+                spacing: 24
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 24
-
-                    Button {
-                        Layout.preferredWidth: 48
-                        Layout.preferredHeight: 48
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 24
-                            border.color: "#444444"
-                            border.width: 1
-                        }
-                        contentItem: Text {
-                            text: "←"
-                            font.pixelSize: 22
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: navigateTo("/settings")
+                // Back Button
+                Button {
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 48
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 24
+                        border.color: "#444444"
+                        border.width: 1
                     }
-
-                    Text {
-                        text: "Playback"
-                        font.pixelSize: 28
-                        font.weight: Font.Bold
+                    contentItem: Text {
+                        text: "←"
+                        font.pixelSize: 22
                         color: "#FFFFFF"
-                        Layout.alignment: Qt.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: navigateTo("/settings")
+                }
 
-                    Item { Layout.fillWidth: true }
+                // Title
+                Text {
+                    text: "Playback"
+                    font.pixelSize: 28
+                    font.weight: Font.Bold
+                    color: "#FFFFFF"
+                }
 
-                    Button {
-                        text: "Reset"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 18
-                            border.color: "#666666"
-                            border.width: 2
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Medium
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: {
-                            hardwareDecode = true
-                            autoFrameRate = false
-                            bufferSize = "Medium"
-                            defaultAudioLanguage = "English"
-                            defaultSubtitles = "Off"
-                            useExternalPlayer = false
-                            externalPlayer = "VLC"
-                            showToast("Settings reset to defaults")
-                        }
+                // Spacer
+                Item { Layout.fillWidth: true }
+
+                // Reset Button
+                Button {
+                    text: "Reset"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 18
+                        border.color: "#666666"
+                        border.width: 2
                     }
-
-                    Button {
-                        text: "Apply"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#CC0810" : "#E50914"
-                            radius: 18
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: applySettings()
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Medium
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: {
+                        hardwareDecode = true
+                        autoFrameRate = false
+                        bufferSize = "Medium"
+                        defaultAudioLanguage = "English"
+                        defaultSubtitles = "Off"
+                        useExternalPlayer = false
+                        externalPlayer = "VLC"
+                        showToast("Settings reset to defaults")
+                    }
+                }
+
+                // Apply Button
+                Button {
+                    text: "Apply"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#CC0810" : "#E50914"
+                        radius: 18
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: applySettings()
                 }
             }
 
             // Settings Content
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 32
+                spacing: 16
 
-                // Hardware Section
+                // Hardware & AFR Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 140
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Hardware"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Hardware Decode Toggle
+                        // Hardware Decode Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "⚙️"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Hardware Decode"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                 }
 
-                                RowLayout {
-                                    spacing: 12
+                                Text {
+                                    text: "Use hardware acceleration for video decoding"
+                                    font.pixelSize: 13
+                                    color: "#CCCCCC"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
+                                }
+                            }
 
-                                    Switch {
-                                        checked: hardwareDecode
-                                        onCheckedChanged: hardwareDecode = checked
+                            RowLayout {
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.preferredWidth: 140
+                                spacing: 8
 
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
+                                Switch {
+                                    checked: hardwareDecode
+                                    onCheckedChanged: hardwareDecode = checked
 
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
+                                    indicator: Rectangle {
+                                        implicitWidth: 48
+                                        implicitHeight: 28
+                                        radius: 14
+                                        color: parent.checked ? "#E50914" : "#666666"
+                                        border.color: parent.checked ? "#E50914" : "#999999"
 
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
+                                        Rectangle {
+                                            x: parent.checked ? parent.width - width - 2 : 2
+                                            width: 24
+                                            height: 24
+                                            radius: 12
+                                            color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
+                                            anchors.verticalCenter: parent.verticalCenter
+
+                                            Behavior on x {
+                                                NumberAnimation { duration: 200 }
                                             }
                                         }
-                                    }
-
-                                    Text {
-                                        text: hardwareDecode ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: hardwareDecode ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
                                     }
                                 }
 
                                 Text {
-                                    text: "Use hardware acceleration for video decoding when available"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
+                                    text: hardwareDecode ? "Enabled" : "Disabled"
+                                    font.pixelSize: 14
+                                    color: hardwareDecode ? "#E50914" : "#B3B3B3"
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
                                 }
                             }
                         }
 
-                        // Auto Frame Rate Toggle
+                        // Auto Frame Rate Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🔄"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Auto Frame Rate (AFR)"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                 }
 
-                                RowLayout {
-                                    spacing: 12
+                                Text {
+                                    text: "Match video frame rate to display refresh rate"
+                                    font.pixelSize: 13
+                                    color: "#CCCCCC"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
+                                }
+                            }
 
-                                    Switch {
-                                        checked: autoFrameRate
-                                        onCheckedChanged: autoFrameRate = checked
+                            RowLayout {
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.preferredWidth: 140
+                                spacing: 8
 
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
+                                Switch {
+                                    checked: autoFrameRate
+                                    onCheckedChanged: autoFrameRate = checked
 
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
+                                    indicator: Rectangle {
+                                        implicitWidth: 48
+                                        implicitHeight: 28
+                                        radius: 14
+                                        color: parent.checked ? "#E50914" : "#666666"
+                                        border.color: parent.checked ? "#E50914" : "#999999"
 
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
+                                        Rectangle {
+                                            x: parent.checked ? parent.width - width - 2 : 2
+                                            width: 24
+                                            height: 24
+                                            radius: 12
+                                            color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
+                                            anchors.verticalCenter: parent.verticalCenter
+
+                                            Behavior on x {
+                                                NumberAnimation { duration: 200 }
                                             }
                                         }
-                                    }
-
-                                    Text {
-                                        text: autoFrameRate ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: autoFrameRate ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
                                     }
                                 }
 
                                 Text {
-                                    text: "Automatically match video frame rate to display refresh rate (requires device support)"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
+                                    text: autoFrameRate ? "Enabled" : "Disabled"
+                                    font.pixelSize: 14
+                                    color: autoFrameRate ? "#E50914" : "#B3B3B3"
+                                    Layout.fillWidth: true
+                                    horizontalAlignment: Text.AlignLeft
                                 }
                             }
                         }
                     }
                 }
 
-                // Buffer Section
+                // Buffer Size Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 120
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Buffering"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
+                        // Icon
+                        Rectangle {
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            color: "#E50914"
+                            radius: 20
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "📊"
+                                font.pixelSize: 20
+                            }
                         }
 
-                        // Buffer Size Setting
-                        RowLayout {
+                        // Text Content
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
 
-                            ColumnLayout {
+                            Text {
+                                text: "Buffer Size"
+                                font.pixelSize: 16
+                                font.weight: Font.SemiBold
+                                color: "#FFFFFF"
                                 Layout.fillWidth: true
-                                spacing: 8
+                                elide: Text.ElideRight
+                            }
 
-                                Text {
-                                    text: "Buffer Size"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
+                            Text {
+                                text: "Low: Faster start, more buffering. High: Slower start, smoother playback."
+                                font.pixelSize: 13
+                                color: "#CCCCCC"
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: 280
+                            }
+                        }
 
-                                RowLayout {
-                                    spacing: 12
+                        // SegmentedControl
+                        ColumnLayout {
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.preferredWidth: 160
+                            spacing: 4
 
-                                    Repeater {
-                                        model: ["Low", "Medium", "High"]
+                            RowLayout {
+                                spacing: 6
+                                Layout.alignment: Qt.AlignHCenter
 
-                                        delegate: Button {
-                                            text: modelData
-                                            Layout.preferredHeight: 40
-                                            Layout.preferredWidth: 80
-                                            background: Rectangle {
-                                                color: bufferSize === modelData ? "#E50914" : "transparent"
-                                                radius: 20
-                                                border.color: bufferSize === modelData ? "#E50914" : "#666666"
-                                                border.width: 2
-                                            }
-                                            contentItem: Text {
-                                                text: parent.text
-                                                color: "#FFFFFF"
-                                                font.pixelSize: 14
-                                                font.weight: Font.Medium
-                                                horizontalAlignment: Text.AlignHCenter
-                                                verticalAlignment: Text.AlignVCenter
-                                            }
-                                            onClicked: bufferSize = modelData
+                                Repeater {
+                                    model: ["Low", "Medium", "High"]
+
+                                    Button {
+                                        text: modelData
+                                        Layout.preferredHeight: 32
+                                        Layout.preferredWidth: 50
+                                        background: Rectangle {
+                                            color: bufferSize === modelData ? "#E50914" : "transparent"
+                                            radius: 16
+                                            border.color: bufferSize === modelData ? "#E50914" : "#666666"
+                                            border.width: 1
                                         }
+                                        contentItem: Text {
+                                            text: parent.text
+                                            color: "#FFFFFF"
+                                            font.pixelSize: 12
+                                            font.weight: Font.Medium
+                                            horizontalAlignment: Text.AlignHCenter
+                                            verticalAlignment: Text.AlignVCenter
+                                        }
+                                        onClicked: bufferSize = modelData
                                     }
                                 }
+                            }
 
-                                Text {
-                                    text: "Low: Faster start, more buffering. High: Slower start, smoother playback."
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
+                            Text {
+                                text: bufferSize
+                                font.pixelSize: 12
+                                color: "#E50914"
+                                font.weight: Font.Medium
+                                Layout.alignment: Qt.AlignHCenter
                             }
                         }
                     }
                 }
 
-                // Audio Section
+                // Audio & Subtitles Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 160
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Audio & Subtitles"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Default Audio Language
+                        // Default Audio Language Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "🔊"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Default Audio Language"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                ComboBox {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Chinese", "Japanese", "Korean", "Auto"]
-                                    currentIndex: model.indexOf(defaultAudioLanguage)
-                                    
-                                    background: Rectangle {
-                                        color: "#171717"
-                                        radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
-                                    }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: defaultAudioLanguage = model[currentIndex]
+                                    elide: Text.ElideRight
                                 }
 
                                 Text {
                                     text: "Preferred audio language for multi-language content"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
                                 }
+                            }
+
+                            ComboBox {
+                                Layout.preferredWidth: 160
+                                Layout.preferredHeight: 40
+                                Layout.alignment: Qt.AlignVCenter
+                                model: ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Chinese", "Japanese", "Korean", "Auto"]
+                                currentIndex: model.indexOf(defaultAudioLanguage)
+                                
+                                background: Rectangle {
+                                    color: "#2A2A2A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                }
+
+                                contentItem: Text {
+                                    text: model[currentIndex]
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 14
+                                    leftPadding: 12
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+
+                                onCurrentIndexChanged: defaultAudioLanguage = model[currentIndex]
                             }
                         }
 
-                        // Default Subtitles
+                        // Default Subtitles Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "💬"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 Text {
                                     text: "Default Subtitles"
                                     font.pixelSize: 16
-                                    font.weight: Font.Medium
+                                    font.weight: Font.SemiBold
                                     color: "#FFFFFF"
-                                }
-
-                                ComboBox {
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["Off", "Auto", "English", "Spanish", "French", "German", "Italian", "Portuguese", "Chinese", "Japanese", "Korean"]
-                                    currentIndex: model.indexOf(defaultSubtitles)
-                                    
-                                    background: Rectangle {
-                                        color: "#171717"
-                                        radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
-                                    }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: "#FFFFFF"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: defaultSubtitles = model[currentIndex]
+                                    elide: Text.ElideRight
                                 }
 
                                 Text {
                                     text: "Default subtitle language or disable subtitles"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
                                 }
+                            }
+
+                            ComboBox {
+                                Layout.preferredWidth: 160
+                                Layout.preferredHeight: 40
+                                Layout.alignment: Qt.AlignVCenter
+                                model: ["Off", "Auto", "English", "Spanish", "French", "German", "Italian", "Portuguese", "Chinese", "Japanese", "Korean"]
+                                currentIndex: model.indexOf(defaultSubtitles)
+                                
+                                background: Rectangle {
+                                    color: "#2A2A2A"
+                                    radius: 6
+                                    border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                    border.width: 1
+                                }
+
+                                contentItem: Text {
+                                    text: model[currentIndex]
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 14
+                                    leftPadding: 12
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+
+                                onCurrentIndexChanged: defaultSubtitles = model[currentIndex]
                             }
                         }
                     }
@@ -501,137 +579,94 @@ Rectangle {
                 // External Player Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 100
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "External Player"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
+                        // Icon
+                        Rectangle {
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            color: "#E50914"
+                            radius: 20
 
-                        // Use External Player Toggle
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 20
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Use External Player"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: useExternalPlayer
-                                        onCheckedChanged: useExternalPlayer = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: useExternalPlayer ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: useExternalPlayer ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
-                                }
-
-                                Text {
-                                    text: "Use external media player for video playback"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "▶️"
+                                font.pixelSize: 20
                             }
                         }
 
-                        // External Player Selection
-                        RowLayout {
+                        // Text Content
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 20
-                            visible: useExternalPlayer
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
 
-                            ColumnLayout {
+                            Text {
+                                text: "External Player"
+                                font.pixelSize: 16
+                                font.weight: Font.SemiBold
+                                color: "#FFFFFF"
                                 Layout.fillWidth: true
-                                spacing: 8
+                                elide: Text.ElideRight
+                            }
 
-                                Text {
-                                    text: "Choose Default Player"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
+                            Text {
+                                text: "Use external media player for video playback"
+                                font.pixelSize: 13
+                                color: "#CCCCCC"
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: 280
+                            }
+                        }
 
-                                ComboBox {
-                                    Layout.fillWidth: true
-                                    Layout.preferredHeight: 48
-                                    model: ["VLC", "MPV", "Kodi", "Plex", "Custom"]
-                                    currentIndex: model.indexOf(externalPlayer)
-                                    enabled: useExternalPlayer
-                                    
-                                    background: Rectangle {
-                                        color: parent.enabled ? "#171717" : "#0A0A0A"
+                        // Toggle
+                        RowLayout {
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.preferredWidth: 140
+                            spacing: 8
+
+                            Switch {
+                                checked: useExternalPlayer
+                                onCheckedChanged: useExternalPlayer = checked
+
+                                indicator: Rectangle {
+                                    implicitWidth: 48
+                                    implicitHeight: 28
+                                    radius: 14
+                                    color: parent.checked ? "#E50914" : "#666666"
+                                    border.color: parent.checked ? "#E50914" : "#999999"
+
+                                    Rectangle {
+                                        x: parent.checked ? parent.width - width - 2 : 2
+                                        width: 24
+                                        height: 24
                                         radius: 12
-                                        border.color: parent.activeFocus ? "#E50914" : "#2A2A2A"
-                                        border.width: 1
+                                        color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        Behavior on x {
+                                            NumberAnimation { duration: 200 }
+                                        }
                                     }
-
-                                    contentItem: Text {
-                                        text: model[currentIndex]
-                                        color: parent.parent.enabled ? "#FFFFFF" : "#666666"
-                                        font.pixelSize: 15
-                                        leftPadding: 16
-                                        verticalAlignment: Text.AlignVCenter
-                                    }
-
-                                    onCurrentIndexChanged: externalPlayer = model[currentIndex]
                                 }
+                            }
 
-                                Text {
-                                    text: "Select your preferred external media player"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
+                            Text {
+                                text: useExternalPlayer ? "Enabled" : "Disabled"
+                                font.pixelSize: 14
+                                color: useExternalPlayer ? "#E50914" : "#B3B3B3"
+                                Layout.fillWidth: true
+                                horizontalAlignment: Text.AlignLeft
                             }
                         }
                     }
