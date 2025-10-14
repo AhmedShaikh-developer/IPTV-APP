@@ -273,11 +273,11 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 53 // Main Application layout
-                case "/live/groups": return 53 // Main Application layout
+                case "/home": return 64 // Main Application layout
+                case "/live/groups": return 64 // Main Application layout
                 case "/inbox": return 28
-                case "/live": return 53 // Main Application layout
-                case "/guide": return 53 // Main Application layout
+                case "/live": return 64 // Main Application layout
+                case "/guide": return 64 // Main Application layout
                 case "/movies": return 32 // MoviesHub
                 case "/movies/genre": return 33 // MovieGrid
                 case "/movie": return 34 // MovieDetails
@@ -285,7 +285,7 @@ ApplicationWindow {
                 case "/series/details": return 36 // SeriesDetails
                 case "/series/season": return 37 // SeasonEpisodes
                 case "/lists": return 38 // UserLists
-                case "/catchup": return 53 // Main Application layout
+                case "/catchup": return 64 // Main Application layout
                 case "/favorites": return 40 // Favorites
                 case "/search": return 42 // Search
                 case "/search/results": return 43 // Search Results  
@@ -295,11 +295,21 @@ ApplicationWindow {
                 case "/record/schedule": return 47 // Record Schedule Form
                 case "/record/scheduled": return 48 // Scheduled Recordings
                 case "/record/library": return 49 // Recorded Library
-                case "/settings": return 53 // Main Application layout
+                case "/settings": return 50 // Settings Home
+                case "/settings/general": return 51 // General Settings
+                case "/settings/appearance": return 52 // Appearance Settings
+                case "/settings/playback": return 53 // Playback Settings
+                case "/settings/live": return 54 // Live TV Settings
+                case "/settings/epg": return 55 // EPG Settings
+                case "/settings/integrations": return 56 // Integrations Settings
+                case "/settings/network": return 57 // Network Settings
+                case "/settings/notifications": return 58 // Notification Settings
+                case "/settings/account": return 59 // Account Settings
+                case "/settings/about": return 60 // About & Diagnostics
                 case "/settings/storage": return 41 // Storage Settings
-                case "/account": return 53 // Main Application layout
-                case "/main": return 53 // Main Application layout
-                case "/player": return 47 // Player Loader
+                case "/account": return 62 // Account PlaceholderScreen
+                case "/main": return 64 // Main Application layout
+                case "/player": return 63 // Player Loader
                 default: return 0
             }
         }
@@ -752,7 +762,84 @@ ApplicationWindow {
             }
         }
         
-        // Settings
+        // Settings Home
+        SettingsHome {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // General Settings
+        GeneralSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Appearance Settings
+        AppearanceSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Playback Settings
+        PlaybackSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Live TV Settings
+        LiveTvSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // EPG Settings
+        EpgSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Integrations Settings
+        IntegrationsSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Network Settings
+        NetworkSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Notification Settings
+        NotificationSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // Account Settings
+        AccountSettings {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+
+        // About & Diagnostics
+        AboutDiagnostics {
+            function navigateTo(route) {
+                mainWindow.navigateTo(route)
+            }
+        }
+        
+        // Settings (Legacy placeholder)
         PlaceholderScreen {
             title: "⚙️ Settings"
             description: "Configure your IPTV experience"

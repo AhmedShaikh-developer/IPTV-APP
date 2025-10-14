@@ -70,6 +70,17 @@
            <file>RecordScheduleForm.qml</file>
            <file>RecordingsSchedule.qml</file>
            <file>RecordingsLibrary.qml</file>
+           <file>SettingsHome.qml</file>
+           <file>GeneralSettings.qml</file>
+           <file>AppearanceSettings.qml</file>
+           <file>PlaybackSettings.qml</file>
+           <file>LiveTvSettings.qml</file>
+           <file>EpgSettings.qml</file>
+           <file>IntegrationsSettings.qml</file>
+           <file>NetworkSettings.qml</file>
+           <file>NotificationSettings.qml</file>
+           <file>AccountSettings.qml</file>
+           <file>AboutDiagnostics.qml</file>
            <file>src/IPTV Pro.mp4</file>
 </qresource>
 </RCC>
