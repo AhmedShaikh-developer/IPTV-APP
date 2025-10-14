@@ -12,10 +12,9 @@ Rectangle {
     property bool isMobile: screenWidth < 1366
 
     // Mock settings state
-    property bool miniEpgOnZap: true
-    property bool startOverByDefault: false
-    property string channelLogoSize: "Medium"
+    property string navigation: "Default"
     property real channelNumberTimeout: 3.0
+    property string channelLogoSize: "Medium"
 
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
@@ -36,443 +35,382 @@ Rectangle {
         clip: true
 
         ColumnLayout {
-            width: Math.min(1080, parent.width - 80)
+            width: Math.min(900, parent.width - 80)
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.margins: {
-                if (isDesktop) return 32
-                if (isTablet) return 20
-                return 16
-            }
-            spacing: 24
+            anchors.top: parent.top
+            anchors.topMargin: 32
+            anchors.bottomMargin: 40
+            spacing: 16
 
-            // Sticky Top Bar
-            Rectangle {
+            // Header Row
+            RowLayout {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 80
-                color: "#000000"
-                z: 100
+                Layout.preferredHeight: 60
+                spacing: 24
 
-                RowLayout {
-                    anchors.fill: parent
-                    spacing: 24
-
-                    Button {
-                        Layout.preferredWidth: 48
-                        Layout.preferredHeight: 48
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 24
-                            border.color: "#444444"
-                            border.width: 1
-                        }
-                        contentItem: Text {
-                            text: "←"
-                            font.pixelSize: 22
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: navigateTo("/settings")
+                // Back Button
+                Button {
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 48
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 24
+                        border.color: "#444444"
+                        border.width: 1
                     }
-
-                    Text {
-                        text: "Live TV"
-                        font.pixelSize: 28
-                        font.weight: Font.Bold
+                    contentItem: Text {
+                        text: "←"
+                        font.pixelSize: 22
                         color: "#FFFFFF"
-                        Layout.alignment: Qt.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: navigateTo("/settings")
+                }
 
-                    Item { Layout.fillWidth: true }
+                // Title
+                Text {
+                    text: "Live TV"
+                    font.pixelSize: 28
+                    font.weight: Font.Bold
+                    color: "#FFFFFF"
+                }
 
-                    Button {
-                        text: "Reset"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#2A2A2A" : "transparent"
-                            radius: 18
-                            border.color: "#666666"
-                            border.width: 2
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Medium
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: {
-                            miniEpgOnZap = true
-                            startOverByDefault = false
-                            channelLogoSize = "Medium"
-                            channelNumberTimeout = 3.0
-                            showToast("Settings reset to defaults")
-                        }
+                // Spacer
+                Item { Layout.fillWidth: true }
+
+                // Reset Button
+                Button {
+                    text: "Reset"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#2A2A2A" : "transparent"
+                        radius: 18
+                        border.color: "#666666"
+                        border.width: 2
                     }
-
-                    Button {
-                        text: "Apply"
-                        Layout.preferredHeight: 36
-                        Layout.preferredWidth: 80
-                        Layout.alignment: Qt.AlignVCenter
-                        background: Rectangle {
-                            color: parent.hovered ? "#CC0810" : "#E50914"
-                            radius: 18
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: "#FFFFFF"
-                            font.pixelSize: 14
-                            font.weight: Font.Bold
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        onClicked: applySettings()
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Medium
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: {
+                        navigation = "Default"
+                        channelNumberTimeout = 3.0
+                        channelLogoSize = "Medium"
+                        showToast("Settings reset to defaults")
+                    }
+                }
+
+                // Apply Button
+                Button {
+                    text: "Apply"
+                    Layout.preferredHeight: 36
+                    Layout.preferredWidth: 80
+                    background: Rectangle {
+                        color: parent.hovered ? "#CC0810" : "#E50914"
+                        radius: 18
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#FFFFFF"
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: applySettings()
                 }
             }
 
             // Settings Content
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 32
+                spacing: 16
 
                 // Navigation Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 100
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
-                    ColumnLayout {
+                    RowLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Navigation"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
+                        // Icon
+                        Rectangle {
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            color: "#E50914"
+                            radius: 20
 
-                        // Mini-EPG on Zap Toggle
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 20
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Mini-EPG on Zap"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: miniEpgOnZap
-                                        onCheckedChanged: miniEpgOnZap = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: miniEpgOnZap ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: miniEpgOnZap ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
-                                }
-
-                                Text {
-                                    text: "Show mini electronic program guide when changing channels"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
+                            Text {
+                                anchors.centerIn: parent
+                                text: "🧭"
+                                font.pixelSize: 20
                             }
                         }
 
-                        // Start-Over by Default Toggle
-                        RowLayout {
+                        // Text Content
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
 
-                            ColumnLayout {
+                            Text {
+                                text: "Navigation"
+                                font.pixelSize: 16
+                                font.weight: Font.SemiBold
+                                color: "#FFFFFF"
                                 Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Start-Over by Default"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                RowLayout {
-                                    spacing: 12
-
-                                    Switch {
-                                        checked: startOverByDefault
-                                        onCheckedChanged: startOverByDefault = checked
-
-                                        indicator: Rectangle {
-                                            implicitWidth: 48
-                                            implicitHeight: 28
-                                            x: parent.leftPadding
-                                            y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                            radius: 14
-                                            color: parent.checked ? "#E50914" : "#666666"
-                                            border.color: parent.checked ? "#E50914" : "#999999"
-
-                                            Rectangle {
-                                                x: parent.checked ? parent.width - width : 0
-                                                width: 24
-                                                height: 24
-                                                radius: 12
-                                                color: parent.parent.checked ? "#FFFFFF" : "#CCCCCC"
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                anchors.margins: 2
-
-                                                Behavior on x {
-                                                    NumberAnimation { duration: 200 }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        text: startOverByDefault ? "Enabled" : "Disabled"
-                                        font.pixelSize: 14
-                                        color: startOverByDefault ? "#E50914" : "#B3B3B3"
-                                        Layout.alignment: Qt.AlignVCenter
-                                    }
-                                }
-
-                                Text {
-                                    text: "Automatically start programs from the beginning when available"
-                                    font.pixelSize: 13
-                                    color: "#B3B3B3"
-                                    wrapMode: Text.WordWrap
-                                }
+                                elide: Text.ElideRight
                             }
+
+                            Text {
+                                text: "Start EPG on channel enter / Return behavior"
+                                font.pixelSize: 13
+                                color: "#CCCCCC"
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: 280
+                            }
+                        }
+
+                        // ComboBox
+                        ComboBox {
+                            Layout.preferredWidth: 160
+                            Layout.preferredHeight: 40
+                            Layout.alignment: Qt.AlignVCenter
+                            model: ["Default", "Start EPG on Enter", "Return to Previous", "Stay on Channel"]
+                            currentIndex: model.indexOf(navigation)
+                            
+                            background: Rectangle {
+                                color: "#2A2A2A"
+                                radius: 6
+                                border.color: parent.activeFocus ? "#E50914" : "#444444"
+                                border.width: 1
+                            }
+
+                            contentItem: Text {
+                                text: model[currentIndex]
+                                color: "#FFFFFF"
+                                font.pixelSize: 14
+                                leftPadding: 12
+                                verticalAlignment: Text.AlignVCenter
+                                elide: Text.ElideRight
+                            }
+
+                            onCurrentIndexChanged: navigation = model[currentIndex]
                         }
                     }
                 }
 
-                // Display Section
+                // Channel Number Entry Timeout Section
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + 32
-                    color: "#111111"
-                    radius: 16
-                    border.color: "#2A2A2A"
+                    Layout.preferredHeight: 140
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
                     border.width: 1
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.margins: 24
-                        spacing: 20
+                        anchors.margins: 20
+                        spacing: 16
 
-                        Text {
-                            text: "Display"
-                            font.pixelSize: 20
-                            font.weight: Font.Bold
-                            color: "#FFFFFF"
-                        }
-
-                        // Channel Logo Size
+                        // Header Row
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 20
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "⏱️"
+                                    font.pixelSize: 20
+                                }
+                            }
 
                             ColumnLayout {
                                 Layout.fillWidth: true
-                                spacing: 8
-
-                                Text {
-                                    text: "Channel Logo Size"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
 
                                 RowLayout {
-                                    spacing: 12
+                                    spacing: 8
 
-                                    Repeater {
-                                        model: ["Small", "Medium", "Large"]
+                                    Text {
+                                        text: "Channel Number Entry Timeout"
+                                        font.pixelSize: 16
+                                        font.weight: Font.SemiBold
+                                        color: "#FFFFFF"
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
+                                    }
 
-                                        delegate: Button {
-                                            text: modelData
-                                            Layout.preferredHeight: 40
-                                            Layout.preferredWidth: 80
-                                            background: Rectangle {
-                                                color: channelLogoSize === modelData ? "#E50914" : "transparent"
-                                                radius: 20
-                                                border.color: channelLogoSize === modelData ? "#E50914" : "#666666"
-                                                border.width: 2
-                                            }
-                                            contentItem: Text {
-                                                text: parent.text
-                                                color: "#FFFFFF"
-                                                font.pixelSize: 14
-                                                font.weight: Font.Medium
-                                                horizontalAlignment: Text.AlignHCenter
-                                                verticalAlignment: Text.AlignVCenter
-                                            }
-                                            onClicked: channelLogoSize = modelData
-                                        }
+                                    Text {
+                                        text: Math.round(channelNumberTimeout) + "s"
+                                        font.pixelSize: 16
+                                        font.weight: Font.Bold
+                                        color: "#E50914"
                                     }
                                 }
 
-                                // Live Preview
-                                Rectangle {
+                                Text {
+                                    text: "How long to wait before processing channel number input"
+                                    font.pixelSize: 13
+                                    color: "#CCCCCC"
+                                    wrapMode: Text.WordWrap
                                     Layout.fillWidth: true
-                                    Layout.preferredHeight: 60
-                                    color: "#171717"
-                                    radius: 8
-                                    border.color: "#2A2A2A"
-                                    border.width: 1
+                                    Layout.maximumWidth: 280
+                                }
+                            }
+                        }
 
-                                    RowLayout {
-                                        anchors.centerIn: parent
-                                        spacing: 12
+                        // Slider
+                        Slider {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 40
+                            from: 1
+                            to: 5
+                            stepSize: 0.5
+                            value: channelNumberTimeout
 
-                                        Rectangle {
-                                            Layout.preferredWidth: channelLogoSize === "Small" ? 24 : channelLogoSize === "Medium" ? 32 : 40
-                                            Layout.preferredHeight: channelLogoSize === "Small" ? 24 : channelLogoSize === "Medium" ? 32 : 40
-                                            color: "#E50914"
-                                            radius: 4
+                            background: Rectangle {
+                                x: parent.leftPadding
+                                y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                                implicitWidth: 200
+                                implicitHeight: 4
+                                width: parent.availableWidth
+                                height: implicitHeight
+                                radius: 2
+                                color: "#2A2A2A"
 
-                                            Text {
-                                                anchors.centerIn: parent
-                                                text: "📺"
-                                                font.pixelSize: channelLogoSize === "Small" ? 12 : channelLogoSize === "Medium" ? 16 : 20
-                                            }
-                                        }
+                                Rectangle {
+                                    width: parent.parent.visualPosition * parent.width
+                                    height: parent.height
+                                    color: "#E50914"
+                                    radius: 2
+                                }
+                            }
 
-                                        Text {
-                                            text: "BBC One"
-                                            font.pixelSize: 14
-                                            color: "#FFFFFF"
-                                        }
-                                    }
+                            handle: Rectangle {
+                                x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
+                                y: parent.topPadding + parent.availableHeight / 2 - height / 2
+                                implicitWidth: 20
+                                implicitHeight: 20
+                                radius: 10
+                                color: "#E50914"
+                                border.color: "#FFFFFF"
+                                border.width: 2
+                            }
+
+                            onValueChanged: channelNumberTimeout = value
+                        }
+                    }
+                }
+
+                // Logo Size Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 140
+                    color: "#1A1A1A"
+                    radius: 12
+                    border.color: "#333333"
+                    border.width: 1
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 20
+                        spacing: 16
+
+                        // Header Row
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 16
+
+                            Rectangle {
+                                Layout.preferredWidth: 40
+                                Layout.preferredHeight: 40
+                                color: "#E50914"
+                                radius: 20
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "📺"
+                                    font.pixelSize: 20
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
+
+                                Text {
+                                    text: "Logo Size"
+                                    font.pixelSize: 16
+                                    font.weight: Font.SemiBold
+                                    color: "#FFFFFF"
+                                    Layout.fillWidth: true
+                                    elide: Text.ElideRight
                                 }
 
                                 Text {
                                     text: "Size of channel logos in the channel list and guide"
                                     font.pixelSize: 13
-                                    color: "#B3B3B3"
+                                    color: "#CCCCCC"
                                     wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.maximumWidth: 280
                                 }
                             }
                         }
 
-                        // Channel Number Timeout
-                        ColumnLayout {
+                        // SegmentedControl
+                        RowLayout {
                             Layout.fillWidth: true
-                            spacing: 12
+                            spacing: 8
+                            Layout.alignment: Qt.AlignHCenter
 
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 16
+                            Repeater {
+                                model: ["Small", "Medium", "Large"]
 
-                                Text {
-                                    text: "Channel Number Entry Timeout"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Medium
-                                    color: "#FFFFFF"
-                                }
-
-                                Text {
-                                    text: channelNumberTimeout + "s"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Bold
-                                    color: "#E50914"
-                                }
-
-                                Item { Layout.fillWidth: true }
-                            }
-
-                            Slider {
-                                Layout.fillWidth: true
-                                from: 1
-                                to: 5
-                                stepSize: 0.5
-                                value: channelNumberTimeout
-
-                                background: Rectangle {
-                                    x: parent.leftPadding
-                                    y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                    implicitWidth: 200
-                                    implicitHeight: 4
-                                    width: parent.availableWidth
-                                    height: implicitHeight
-                                    radius: 2
-                                    color: "#2A2A2A"
-
-                                    Rectangle {
-                                        width: parent.parent.visualPosition * parent.width
-                                        height: parent.height
-                                        color: "#E50914"
-                                        radius: 2
+                                Button {
+                                    text: modelData
+                                    Layout.preferredHeight: 36
+                                    Layout.preferredWidth: 80
+                                    background: Rectangle {
+                                        color: channelLogoSize === modelData ? "#E50914" : "transparent"
+                                        radius: 18
+                                        border.color: channelLogoSize === modelData ? "#E50914" : "#666666"
+                                        border.width: 1
                                     }
+                                    contentItem: Text {
+                                        text: parent.text
+                                        color: "#FFFFFF"
+                                        font.pixelSize: 14
+                                        font.weight: Font.Medium
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    onClicked: channelLogoSize = modelData
                                 }
-
-                                handle: Rectangle {
-                                    x: parent.leftPadding + parent.visualPosition * (parent.availableWidth - width)
-                                    y: parent.topPadding + parent.availableHeight / 2 - height / 2
-                                    implicitWidth: 20
-                                    implicitHeight: 20
-                                    radius: 10
-                                    color: "#E50914"
-                                    border.color: "#FFFFFF"
-                                    border.width: 2
-                                }
-
-                                onValueChanged: channelNumberTimeout = value
-                            }
-
-                            Text {
-                                text: "How long to wait before processing channel number input"
-                                font.pixelSize: 13
-                                color: "#B3B3B3"
-                                wrapMode: Text.WordWrap
                             }
                         }
                     }
