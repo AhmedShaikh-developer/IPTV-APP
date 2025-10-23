@@ -78,6 +78,25 @@ Rectangle {
             onPlaybackStateChanged: {
                 if (playbackState === MediaPlayer.StoppedState) {
                     placeholderDelayTimer.start()
+                    
+                    // Add to history when playback stops
+                    var history = parent.parent.parent.parent.readJson("historyJson", [])
+                    var historyEntry = {
+                        type: "video",
+                        id: currentSource.toString(),
+                        progress: playbackPosition,
+                        ts: Date.now()
+                    }
+                    
+                    // Add to beginning of history
+                    history.unshift(historyEntry)
+                    
+                    // Truncate to max 50 items
+                    if (history.length > 50) {
+                        history = history.slice(0, 50)
+                    }
+                    
+                    parent.parent.parent.parent.writeJson("historyJson", history)
                 } else if (playbackState === MediaPlayer.PlayingState) {
                     fallbackRect.visible = false
                     placeholderDelayTimer.stop()

@@ -2,9 +2,26 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
+import Qt.labs.settings 1.0
 
 ApplicationWindow {
     id: mainWindow
+    
+    // Persistent Settings Store
+    Settings {
+        id: appSettings
+        property string theme: "system"
+        property string language: "en"
+        property string startupRoute: "/home"
+        property string lastRoute: "/home"
+        
+        property bool playbackHwDecode: true
+        property bool playbackAfr: false
+        property string playbackBuffer: "medium"
+        
+        property string favoritesJson: '{"channels":[],"movies":[],"series":[]}'
+        property string historyJson: '[]'
+    }
     
     // UI Components (defined early so they can be used throughout)
     component SectionGroup: ColumnLayout {
@@ -189,7 +206,7 @@ ApplicationWindow {
     title: "IPTV Pro"
     color: backgroundColor
     
-    property string currentRoute: "/home"
+    property string currentRoute: appSettings.startupRoute
     property bool isOnline: true
     property bool hasValidAuth: false
     property bool requiresUpdate: false
@@ -225,6 +242,26 @@ ApplicationWindow {
     function showError(message) {
         errorMessage = message
         navigateTo("/error")
+    }
+    
+    // JSON helper functions
+    function readJson(key, fallback) {
+        try {
+            var jsonString = appSettings[key]
+            if (!jsonString || jsonString === "") return fallback
+            return JSON.parse(jsonString)
+        } catch (e) {
+            console.log("JSON parse error for", key, ":", e)
+            return fallback
+        }
+    }
+    
+    function writeJson(key, object) {
+        try {
+            appSettings[key] = JSON.stringify(object)
+        } catch (e) {
+            console.log("JSON stringify error for", key, ":", e)
+        }
     }
     
     // Bootstrap checks simulation
@@ -774,6 +811,7 @@ ApplicationWindow {
 
         // General Settings
         GeneralSettings {
+            property var appSettings: mainWindow.appSettings
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
@@ -781,6 +819,7 @@ ApplicationWindow {
 
         // Appearance Settings
         AppearanceSettings {
+            property var appSettings: mainWindow.appSettings
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
@@ -788,6 +827,7 @@ ApplicationWindow {
 
         // Playback Settings
         PlaybackSettings {
+            property var appSettings: mainWindow.appSettings
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }

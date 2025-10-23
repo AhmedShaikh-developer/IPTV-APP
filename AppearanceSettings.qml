@@ -11,8 +11,8 @@ Rectangle {
     property bool isTablet: screenWidth >= 1366 && screenWidth < 1920
     property bool isMobile: screenWidth < 1366
 
-    // Mock settings state
-    property string theme: "Dark"
+    // Settings state
+    property string theme: appSettings ? appSettings.theme : "system"
     property string density: "Comfortable"
     property real overscanPercentage: 5.0
     property real accentIntensity: 80.0
@@ -29,6 +29,36 @@ Rectangle {
 
     function applySettings() {
         showToast("Settings updated")
+    }
+
+    // Debouncing for settings writes
+    property var writeTimers: ({})
+    
+    function writeSetting(key, value) {
+        if (!appSettings) return
+        
+        // Only update if value actually changed
+        if (appSettings[key] === value) return
+        
+        // Debounce rapid writes
+        if (writeTimers[key]) {
+            writeTimers[key].stop()
+        }
+        
+        writeTimers[key] = Qt.createQmlObject('
+            import QtQuick 2.15
+            Timer {
+                interval: 300
+                repeat: false
+                onTriggered: {
+                    if (appSettings) {
+                        appSettings.' + key + ' = "' + value + '"
+                    }
+                }
+            }
+        ', appearanceSettings)
+        
+        writeTimers[key].start()
     }
 
     ScrollView {
@@ -211,7 +241,10 @@ Rectangle {
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
                                     }
-                                    onClicked: theme = modelData
+                                    onClicked: {
+                                        theme = modelData
+                                        writeSetting("theme", modelData)
+                                    }
                                 }
                             }
                         }

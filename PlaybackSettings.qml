@@ -11,10 +11,10 @@ Rectangle {
     property bool isTablet: screenWidth >= 1366 && screenWidth < 1920
     property bool isMobile: screenWidth < 1366
 
-    // Mock settings state
-    property bool hardwareDecode: true
-    property bool autoFrameRate: false
-    property string bufferSize: "Medium"
+    // Settings state
+    property bool hardwareDecode: appSettings ? appSettings.playbackHwDecode : true
+    property bool autoFrameRate: appSettings ? appSettings.playbackAfr : false
+    property string bufferSize: appSettings ? appSettings.playbackBuffer : "medium"
     property string defaultAudioLanguage: "English"
     property string defaultSubtitles: "Off"
     property bool useExternalPlayer: false
@@ -32,6 +32,36 @@ Rectangle {
 
     function applySettings() {
         showToast("Settings updated")
+    }
+
+    // Debouncing for settings writes
+    property var writeTimers: ({})
+    
+    function writeSetting(key, value) {
+        if (!appSettings) return
+        
+        // Only update if value actually changed
+        if (appSettings[key] === value) return
+        
+        // Debounce rapid writes
+        if (writeTimers[key]) {
+            writeTimers[key].stop()
+        }
+        
+        writeTimers[key] = Qt.createQmlObject('
+            import QtQuick 2.15
+            Timer {
+                interval: 300
+                repeat: false
+                onTriggered: {
+                    if (appSettings) {
+                        appSettings.' + key + ' = ' + (typeof value === 'string' ? '"' + value + '"' : value) + '
+                    }
+                }
+            }
+        ', playbackSettings)
+        
+        writeTimers[key].start()
     }
 
     ScrollView {
@@ -203,7 +233,10 @@ Rectangle {
 
                                 Switch {
                                     checked: hardwareDecode
-                                    onCheckedChanged: hardwareDecode = checked
+                                    onCheckedChanged: {
+                                        hardwareDecode = checked
+                                        writeSetting("playbackHwDecode", checked)
+                                    }
 
                                     indicator: Rectangle {
                                         implicitWidth: 48
@@ -286,7 +319,10 @@ Rectangle {
 
                                 Switch {
                                     checked: autoFrameRate
-                                    onCheckedChanged: autoFrameRate = checked
+                                    onCheckedChanged: {
+                                        autoFrameRate = checked
+                                        writeSetting("playbackAfr", checked)
+                                    }
 
                                     indicator: Rectangle {
                                         implicitWidth: 48
@@ -406,7 +442,10 @@ Rectangle {
                                             horizontalAlignment: Text.AlignHCenter
                                             verticalAlignment: Text.AlignVCenter
                                         }
-                                        onClicked: bufferSize = modelData
+                                        onClicked: {
+                                            bufferSize = modelData
+                                            writeSetting("playbackBuffer", modelData)
+                                        }
                                     }
                                 }
                             }

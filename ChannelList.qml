@@ -339,6 +339,22 @@ Rectangle {
                                             onClicked: {
                                                 // Toggle favorite
                                                 model.setProperty(index, "favorite", !modelData.favorite)
+                                                
+                                                // Update JSON persistence
+                                                var favorites = parent.parent.parent.parent.readJson("favoritesJson", {"channels":[],"movies":[],"series":[]})
+                                                var channelId = modelData.name
+                                                
+                                                if (modelData.favorite) {
+                                                    // Add to favorites
+                                                    if (!favorites.channels.includes(channelId)) {
+                                                        favorites.channels.push(channelId)
+                                                    }
+                                                } else {
+                                                    // Remove from favorites
+                                                    favorites.channels = favorites.channels.filter(id => id !== channelId)
+                                                }
+                                                
+                                                parent.parent.parent.parent.writeJson("favoritesJson", favorites)
                                             }
                                         }
                                     }

@@ -11,9 +11,9 @@ Rectangle {
     property bool isTablet: screenWidth >= 768 && screenWidth < 1080
     property bool isMobile: screenWidth < 768
 
-    // Mock settings state
-    property string startupPage: "Home"
-    property string language: "English"
+    // Settings state
+    property string startupPage: appSettings ? appSettings.startupRoute : "Home"
+    property string language: appSettings ? appSettings.language : "en"
     property string region: "United States"
     property bool use24HourFormat: false
     property string contentRatingSystem: "MPAA"
@@ -30,6 +30,36 @@ Rectangle {
 
     function applySettings() {
         showToast("Settings updated")
+    }
+
+    // Debouncing for settings writes
+    property var writeTimers: ({})
+    
+    function writeSetting(key, value) {
+        if (!appSettings) return
+        
+        // Only update if value actually changed
+        if (appSettings[key] === value) return
+        
+        // Debounce rapid writes
+        if (writeTimers[key]) {
+            writeTimers[key].stop()
+        }
+        
+        writeTimers[key] = Qt.createQmlObject('
+            import QtQuick 2.15
+            Timer {
+                interval: 300
+                repeat: false
+                onTriggered: {
+                    if (appSettings) {
+                        appSettings.' + key + ' = "' + value + '"
+                    }
+                }
+            }
+        ', generalSettings)
+        
+        writeTimers[key].start()
     }
 
     // Background gradient
@@ -176,7 +206,10 @@ Rectangle {
                             verticalAlignment: Text.AlignVCenter
                         }
 
-                        onCurrentIndexChanged: startupPage = model[currentIndex]
+                        onCurrentIndexChanged: {
+                            startupPage = model[currentIndex]
+                            writeSetting("startupRoute", model[currentIndex])
+                        }
                     }
                 }
 
@@ -208,7 +241,10 @@ Rectangle {
                             verticalAlignment: Text.AlignVCenter
                         }
 
-                        onCurrentIndexChanged: language = model[currentIndex]
+                        onCurrentIndexChanged: {
+                            language = model[currentIndex]
+                            writeSetting("language", model[currentIndex])
+                        }
                     }
                 }
 
