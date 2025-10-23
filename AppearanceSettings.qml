@@ -13,19 +13,35 @@ Rectangle {
     property bool isMobile: screenWidth < 1366
 
     // Settings state
-    property string theme: AppState.get("theme", appSettings ? appSettings.theme : "system")
+    property string theme: "system" // Start with default, will be updated by signal
     property string density: "Comfortable"
     property real overscanPercentage: 5.0
     property real accentIntensity: 80.0
 
+    // Initialize theme from AppState on component creation
+    Component.onCompleted: {
+        theme = AppState.get("theme", appSettings ? appSettings.theme : "system")
+        console.log("AppearanceSettings initialized with theme:", theme)
+    }
+
     // Listen for live updates from AppState and refresh bindings
     Connections {
-        target: settingsChanged
-        function onSettingsChanged(key, value) {
+        target: AppState
+        function onValueChanged(key, value) {
+            console.log("AppearanceSettings received AppState change:", key, "=", value)
             if (key === "theme") {
-                // Force property refresh by reassigning
-                theme = AppState.get("theme", appSettings ? appSettings.theme : "system")
+                console.log("Updating theme from", theme, "to", value)
+                theme = value
+                console.log("Theme property updated to:", theme)
             }
+        }
+        
+        // Test if connection is working
+        Component.onCompleted: {
+            console.log("AppearanceSettings Connections component completed")
+            // Test the signal connection
+            console.log("Testing AppState signal connection...")
+            AppState.set("test_key", "test_value")
         }
     }
 

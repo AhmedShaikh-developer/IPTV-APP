@@ -23,8 +23,8 @@ Rectangle {
 
     // Listen for live updates from AppState and refresh bindings
     Connections {
-        target: settingsChanged
-        function onSettingsChanged(key, value) {
+        target: AppState
+        function onValueChanged(key, value) {
             if (key === "playback.hwDecode") {
                 // Force property refresh by reassigning
                 hardwareDecode = AppState.get("playback.hwDecode", appSettings ? appSettings.playbackHwDecode : true)

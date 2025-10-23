@@ -1,4 +1,5 @@
 #include "AppState.h"
+#include <QDebug>
 
 AppState::AppState(QObject *parent)
     : QObject(parent)
@@ -13,7 +14,9 @@ QVariant AppState::get(const QString& key, const QVariant& def) const
 
 void AppState::set(const QString& key, const QVariant& value)
 {
+    qDebug() << "AppState::set called with key:" << key << "value:" << value;
     m_settings.setValue(key, value);
+    qDebug() << "AppState::set emitting valueChanged signal";
     emit valueChanged(key, value);
 }
 

@@ -21,8 +21,8 @@ Rectangle {
 
     // Listen for live updates from AppState and refresh bindings
     Connections {
-        target: settingsChanged
-        function onSettingsChanged(key, value) {
+        target: AppState
+        function onValueChanged(key, value) {
             if (key === "language") {
                 // Force property refresh by reassigning
                 language = AppState.get("language", appSettings ? appSettings.language : "en")
