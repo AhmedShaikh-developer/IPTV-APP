@@ -18,6 +18,17 @@ Rectangle {
     property real overscanPercentage: 5.0
     property real accentIntensity: 80.0
 
+    // Listen for live updates from AppState and refresh bindings
+    Connections {
+        target: settingsChanged
+        function onSettingsChanged(key, value) {
+            if (key === "theme") {
+                // Force property refresh by reassigning
+                theme = AppState.get("theme", appSettings ? appSettings.theme : "system")
+            }
+        }
+    }
+
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
             parent.navigateTo(route)

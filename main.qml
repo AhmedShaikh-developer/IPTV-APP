@@ -294,6 +294,20 @@ ApplicationWindow {
         console.log("Route changed to:", currentRoute)
     }
     
+    // Connect to AppState value changes for live updates
+    Connections {
+        target: AppState
+        function onValueChanged(key, value) {
+            console.log("AppState value changed:", key, "=", value)
+            
+            // Emit signal to notify settings pages of changes
+            settingsChanged(key, value)
+        }
+    }
+    
+    // Signal to notify settings pages of AppState changes
+    signal settingsChanged(string key, variant value)
+    
     // Main content area with routing
     StackLayout {
         id: mainStack
@@ -839,6 +853,7 @@ ApplicationWindow {
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
+            property var settingsChanged: mainWindow.settingsChanged
         }
 
         // Appearance Settings
@@ -847,6 +862,7 @@ ApplicationWindow {
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
+            property var settingsChanged: mainWindow.settingsChanged
         }
 
         // Playback Settings
@@ -855,6 +871,7 @@ ApplicationWindow {
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
+            property var settingsChanged: mainWindow.settingsChanged
         }
 
         // Live TV Settings

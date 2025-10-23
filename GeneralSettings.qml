@@ -19,6 +19,20 @@ Rectangle {
     property bool use24HourFormat: false
     property string contentRatingSystem: "MPAA"
 
+    // Listen for live updates from AppState and refresh bindings
+    Connections {
+        target: settingsChanged
+        function onSettingsChanged(key, value) {
+            if (key === "language") {
+                // Force property refresh by reassigning
+                language = AppState.get("language", appSettings ? appSettings.language : "en")
+            } else if (key === "startupRoute") {
+                // Force property refresh by reassigning
+                startupPage = AppState.get("startupRoute", appSettings ? appSettings.startupRoute : "Home")
+            }
+        }
+    }
+
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
             parent.navigateTo(route)

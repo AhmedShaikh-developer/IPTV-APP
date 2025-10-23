@@ -21,6 +21,17 @@ Rectangle {
     property bool useExternalPlayer: false
     property string externalPlayer: "VLC"
 
+    // Listen for live updates from AppState and refresh bindings
+    Connections {
+        target: settingsChanged
+        function onSettingsChanged(key, value) {
+            if (key === "playback.hwDecode") {
+                // Force property refresh by reassigning
+                hardwareDecode = AppState.get("playback.hwDecode", appSettings ? appSettings.playbackHwDecode : true)
+            }
+        }
+    }
+
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
             parent.navigateTo(route)
