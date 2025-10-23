@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Backend 1.0
 
 Rectangle {
     id: appearanceSettings
@@ -12,7 +13,7 @@ Rectangle {
     property bool isMobile: screenWidth < 1366
 
     // Settings state
-    property string theme: appSettings ? appSettings.theme : "system"
+    property string theme: AppState.get("theme", appSettings ? appSettings.theme : "system")
     property string density: "Comfortable"
     property real overscanPercentage: 5.0
     property real accentIntensity: 80.0
@@ -243,6 +244,7 @@ Rectangle {
                                     }
                                     onClicked: {
                                         theme = modelData
+                                        AppState.set("theme", modelData)
                                         writeSetting("theme", modelData)
                                     }
                                 }

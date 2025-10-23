@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 import Qt.labs.settings 1.0
+import Backend 1.0
 
 ApplicationWindow {
     id: mainWindow
@@ -206,7 +207,7 @@ ApplicationWindow {
     title: "IPTV Pro"
     color: backgroundColor
     
-    property string currentRoute: appSettings.startupRoute
+    property string currentRoute: "/main" // Force start with main screen
     property bool isOnline: true
     property bool hasValidAuth: false
     property bool requiresUpdate: false
@@ -275,6 +276,24 @@ ApplicationWindow {
         }
     }
     
+    // Force app to start with main screen
+    Timer {
+        id: initTimer
+        interval: 100
+        running: true
+        repeat: false
+        onTriggered: {
+            console.log("Init timer triggered, currentRoute:", currentRoute)
+            console.log("Forcing route to /main")
+            navigateTo("/main")
+        }
+    }
+    
+    // Debug route changes
+    onCurrentRouteChanged: {
+        console.log("Route changed to:", currentRoute)
+    }
+    
     // Main content area with routing
     StackLayout {
         id: mainStack
@@ -282,6 +301,7 @@ ApplicationWindow {
         currentIndex: getCurrentIndex()
         
         function getCurrentIndex() {
+            console.log("getCurrentIndex called with route:", currentRoute)
             switch(currentRoute) {
                 case "/boot": return 0
                 case "/update-required": return 1
@@ -310,7 +330,9 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 67 // Main Application layout
+                case "/home": 
+                    console.log("Returning index 67 for /home")
+                    return 67 // Main Application layout
                 case "/live/groups": return 67 // Main Application layout
                 case "/inbox": return 28
                 case "/live": return 67 // Main Application layout
@@ -350,7 +372,9 @@ ApplicationWindow {
                 case "/account": return 5 // Sign In Screen
                 case "/main": return 67 // Main Application layout
                 case "/player": return 66 // Player Loader
-                default: return 0
+                default: 
+                    console.log("Unknown route:", currentRoute, "returning index 0")
+                    return 0
             }
         }
         

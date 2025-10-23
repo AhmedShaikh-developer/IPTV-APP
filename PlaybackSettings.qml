@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Backend 1.0
 
 Rectangle {
     id: playbackSettings
@@ -12,7 +13,7 @@ Rectangle {
     property bool isMobile: screenWidth < 1366
 
     // Settings state
-    property bool hardwareDecode: appSettings ? appSettings.playbackHwDecode : true
+    property bool hardwareDecode: AppState.get("playback.hwDecode", appSettings ? appSettings.playbackHwDecode : true)
     property bool autoFrameRate: appSettings ? appSettings.playbackAfr : false
     property string bufferSize: appSettings ? appSettings.playbackBuffer : "medium"
     property string defaultAudioLanguage: "English"
@@ -235,6 +236,7 @@ Rectangle {
                                     checked: hardwareDecode
                                     onCheckedChanged: {
                                         hardwareDecode = checked
+                                        AppState.set("playback.hwDecode", checked)
                                         writeSetting("playbackHwDecode", checked)
                                     }
 

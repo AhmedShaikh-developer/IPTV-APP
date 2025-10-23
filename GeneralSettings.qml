@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Backend 1.0
 
 Rectangle {
     id: generalSettings
@@ -12,8 +13,8 @@ Rectangle {
     property bool isMobile: screenWidth < 768
 
     // Settings state
-    property string startupPage: appSettings ? appSettings.startupRoute : "Home"
-    property string language: appSettings ? appSettings.language : "en"
+    property string startupPage: AppState.get("startupRoute", appSettings ? appSettings.startupRoute : "Home")
+    property string language: AppState.get("language", appSettings ? appSettings.language : "en")
     property string region: "United States"
     property bool use24HourFormat: false
     property string contentRatingSystem: "MPAA"
@@ -208,6 +209,7 @@ Rectangle {
 
                         onCurrentIndexChanged: {
                             startupPage = model[currentIndex]
+                            AppState.set("startupRoute", model[currentIndex])
                             writeSetting("startupRoute", model[currentIndex])
                         }
                     }
@@ -243,6 +245,7 @@ Rectangle {
 
                         onCurrentIndexChanged: {
                             language = model[currentIndex]
+                            AppState.set("language", model[currentIndex])
                             writeSetting("language", model[currentIndex])
                         }
                     }

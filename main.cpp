@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QQmlEngine>
+#include "AppState.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,6 +11,14 @@ int main(int argc, char *argv[])
     
     // Set Qt Quick Controls 2 style to support customization
     QQuickStyle::setStyle("Basic");
+    
+    // Register AppState as QML singleton
+    qmlRegisterSingletonType<AppState>("Backend", 1, 0, "AppState",
+        [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject * {
+            Q_UNUSED(engine)
+            Q_UNUSED(scriptEngine)
+            return new AppState();
+        });
     
     QQmlApplicationEngine engine;
     
