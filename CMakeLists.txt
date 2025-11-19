@@ -9,12 +9,26 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Quick)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Quick Qml QuickControls2)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Quick Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Quick Qml QuickControls2 Network)
 
 set(PROJECT_SOURCES
         main.cpp
         qml.qrc
+        src/PlaylistManager.cpp
+        src/PlaylistManager.h
+        src/M3UParser.cpp
+        src/M3UParser.h
+        src/ChannelModel.cpp
+        src/ChannelModel.h
+        src/VodModel.cpp
+        src/VodModel.h
+        src/LiveChannel.cpp
+        src/LiveChannel.h
+        src/VodItem.cpp
+        src/VodItem.h
+        src/FilePicker.cpp
+        src/FilePicker.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -40,7 +54,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::QuickControls2)
+target_link_libraries(untitled PRIVATE Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::QuickControls2 Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

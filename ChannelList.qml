@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import IPTVBackend 1.0
 
 Rectangle {
     color: "#000000"
@@ -239,7 +240,8 @@ Rectangle {
                         columnSpacing: 20
                         
                         Repeater {
-                            model: [
+                            // Use backend model if available, otherwise fall back to demo data
+                            model: PlaylistManager.liveChannelsModel.count > 0 ? PlaylistManager.liveChannelsModel : [
                                 { name: "BBC One", logo: "📺", now: "BBC News", next: "EastEnders", hd: true, catchup: true, favorite: false },
                                 { name: "ITV", logo: "📺", now: "Coronation Street", next: "ITV News", hd: true, catchup: true, favorite: true },
                                 { name: "Channel 4", logo: "📺", now: "The Great British Bake Off", next: "Channel 4 News", hd: true, catchup: false, favorite: false },
@@ -285,7 +287,7 @@ Rectangle {
                                             spacing: 2
                                             
                                             Text {
-                                                text: modelData.name
+                                                text: (PlaylistManager.liveChannelsModel.count > 0 && model.name) ? model.name : (modelData ? modelData.name : "Unknown")
                                                 font.pixelSize: 16
                                                 font.bold: true
                                                 color: "#ffffff"
@@ -385,7 +387,13 @@ Rectangle {
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: navigateTo("/player")
+                                    onClicked: {
+                                        // If using backend model, play the channel URL
+                                        if (PlaylistManager.liveChannelsModel.count > 0 && model && model.url) {
+                                            PlaylistManager.playSingleStream(model.url)
+                                        }
+                                        navigateTo("/player")
+                                    }
                                 }
                             }
                         }

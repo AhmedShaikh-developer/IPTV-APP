@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import IPTVBackend 1.0
 
 Rectangle {
     color: "#000000"
@@ -176,6 +177,11 @@ Rectangle {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
+                    onClicked: {
+                        if (urlField.text.trim() !== "") {
+                            PlaylistManager.playSingleStream(urlField.text.trim())
+                        }
+                    }
                 }
                 
                 Button {
@@ -196,6 +202,20 @@ Rectangle {
                     }
                     onClicked: navigateTo("/sources/manage")
                 }
+            }
+        }
+    }
+    
+    Connections {
+        target: PlaylistManager
+        function onPlayStream(url) {
+            // Navigate to player with URL
+            // The player will need to be updated to accept URL parameter
+            navigateTo("/player")
+        }
+        function onErrorMessageChanged() {
+            if (PlaylistManager.errorMessage !== "") {
+                console.log("Error:", PlaylistManager.errorMessage)
             }
         }
     }

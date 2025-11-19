@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/IPTVPro">
-    <file alias="qmldir">D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/IPTVPro/qmldir</file>
-  </qresource>
-</RCC>
-

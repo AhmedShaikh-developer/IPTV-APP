@@ -2,12 +2,14 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtMultimedia 6.0
+import IPTVBackend 1.0
 
 Rectangle {
     id: playerPage
     color: "#000000"
     
     property url currentSource: "qrc:/src/IPTV Pro.mp4"
+    property string streamUrl: ""
     property bool isPlaying: false
     property bool showControls: true
     property bool showMiniPlayer: false
@@ -15,6 +17,14 @@ Rectangle {
     property real bufferedPosition: 0.7
     property bool isSeeking: false
     property bool isPaused: videoPlayer.playbackState === MediaPlayer.PausedState
+    
+    onStreamUrlChanged: {
+        if (streamUrl !== "") {
+            currentSource = streamUrl
+            videoPlayer.source = streamUrl
+            videoPlayer.play()
+        }
+    }
     
     
     Timer {
@@ -42,9 +52,17 @@ Rectangle {
     }
     
     function retryPlayback() {
-        videoPlayer.source = currentSource
+        var source = streamUrl !== "" ? streamUrl : currentSource
+        videoPlayer.source = source
         videoPlayer.play()
         fallbackRect.visible = false
+    }
+    
+    Connections {
+        target: PlaylistManager
+        function onPlayStream(url) {
+            streamUrl = url
+        }
     }
     
     Rectangle {
@@ -55,8 +73,8 @@ Rectangle {
         Video {
             id: videoPlayer
             anchors.fill: parent
-            source: currentSource
-            autoPlay: true
+            source: streamUrl !== "" ? streamUrl : currentSource
+            autoPlay: streamUrl !== ""
             loops: MediaPlayer.Once
             focus: false
             

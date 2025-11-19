@@ -1,11 +1,31 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import IPTVBackend 1.0
 
 Rectangle {
     color: "#000000"
     
     property bool isFileMode: false
+    property bool saving: false
+    
+    FilePicker {
+        id: filePicker
+        Component.onCompleted: {
+            console.log("=== FilePicker Component.onCompleted ===")
+            console.log("FilePicker object:", filePicker)
+            console.log("FilePicker has openFileDialog:", typeof filePicker.openFileDialog)
+        }
+        Component.onDestruction: {
+            console.log("FilePicker component destroyed")
+        }
+        onFileSelected: function(filePath) {
+            console.log("=== FilePicker signal received ===")
+            console.log("filePath:", filePath)
+            playlistField.text = filePath
+            console.log("File selected and set to field:", filePath)
+        }
+    }
     
     ScrollView {
         anchors.fill: parent
@@ -106,6 +126,39 @@ Rectangle {
                 }
             }
             
+            // Playlist Name
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 70
+                color: "#181818"
+                radius: 4
+                border.color: "#2f2f2f"
+                border.width: 1
+                
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 15
+                    spacing: 5
+                    
+                    Text {
+                        text: "Playlist Name"
+                        font.pixelSize: 12
+                        color: "#b3b3b3"
+                    }
+                    
+                    TextField {
+                        id: nameField
+                        placeholderText: "My M3U Playlist"
+                        font.pixelSize: 16
+                        color: "#ffffff"
+                        Layout.fillWidth: true
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+                    }
+                }
+            }
+            
             // Playlist URL/File
             Rectangle {
                 Layout.fillWidth: true
@@ -146,8 +199,9 @@ Rectangle {
                             visible: isFileMode
                             text: "Browse"
                             height: 35
+                            enabled: true
                             background: Rectangle {
-                                color: "#2f2f2f"
+                                color: parent.enabled ? "#2f2f2f" : "#564d4d"
                                 radius: 4
                             }
                             contentItem: Text {
@@ -156,6 +210,31 @@ Rectangle {
                                 font.pixelSize: 12
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
+                            }
+                            onClicked: {
+                                console.log("=== Browse button clicked ===")
+                                console.log("isFileMode:", isFileMode)
+                                console.log("filePicker object:", filePicker)
+                                console.log("filePicker type:", typeof filePicker)
+                                
+                                if (!filePicker) {
+                                    console.error("ERROR: filePicker is null or undefined!")
+                                    return
+                                }
+                                
+                                if (typeof filePicker.openFileDialog !== "function") {
+                                    console.error("ERROR: openFileDialog is not a function!")
+                                    console.log("filePicker methods:", Object.keys(filePicker))
+                                    return
+                                }
+                                
+                                console.log("Calling filePicker.openFileDialog...")
+                                try {
+                                    filePicker.openFileDialog("Select M3U File", "M3U Files (*.m3u *.m3u8);;All Files (*)")
+                                    console.log("openFileDialog call completed")
+                                } catch(e) {
+                                    console.error("ERROR calling openFileDialog:", e.toString())
+                                }
                             }
                         }
                     }
@@ -262,17 +341,36 @@ Rectangle {
                 }
             }
             
+            // Error Message
+            Rectangle {
+                id: errorRect
+                Layout.fillWidth: true
+                Layout.preferredHeight: 50
+                color: "#e50914"
+                radius: 4
+                visible: PlaylistManager.errorMessage !== ""
+                
+                Text {
+                    anchors.centerIn: parent
+                    text: PlaylistManager.errorMessage
+                    font.pixelSize: 14
+                    color: "white"
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+            
             // Save Buttons
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 15
                 
                 Button {
-                    text: "💾 Save"
+                    text: saving ? "Saving..." : "💾 Save"
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
+                    enabled: !saving
                     background: Rectangle {
-                        color: "#e50914"
+                        color: saving ? "#564d4d" : "#e50914"
                         radius: 4
                     }
                     contentItem: Text {
@@ -283,15 +381,33 @@ Rectangle {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
-                    onClicked: navigateTo("/sources/manage")
+                    onClicked: {
+                        if (nameField.text.trim() === "" || playlistField.text.trim() === "") {
+                            errorRect.visible = true
+                            return
+                        }
+                        saving = true
+                        if (isFileMode) {
+                            PlaylistManager.addM3UFilePlaylist(
+                                nameField.text.trim(),
+                                playlistField.text.trim()
+                            )
+                        } else {
+                            PlaylistManager.addM3UUrlPlaylist(
+                                nameField.text.trim(),
+                                playlistField.text.trim()
+                            )
+                        }
+                    }
                 }
                 
                 Button {
-                    text: "💾 Save & Sync"
+                    text: saving ? "Saving..." : "💾 Save & Sync"
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
+                    enabled: !saving
                     background: Rectangle {
-                        color: "#27ae60"
+                        color: saving ? "#564d4d" : "#27ae60"
                         radius: 4
                     }
                     contentItem: Text {
@@ -302,8 +418,39 @@ Rectangle {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
-                    onClicked: navigateTo("/sources/sync")
+                    onClicked: {
+                        if (nameField.text.trim() === "" || playlistField.text.trim() === "") {
+                            errorRect.visible = true
+                            return
+                        }
+                        saving = true
+                        if (isFileMode) {
+                            PlaylistManager.addM3UFilePlaylist(
+                                nameField.text.trim(),
+                                playlistField.text.trim()
+                            )
+                        } else {
+                            PlaylistManager.addM3UUrlPlaylist(
+                                nameField.text.trim(),
+                                playlistField.text.trim()
+                            )
+                        }
+                    }
                 }
+            }
+        }
+    }
+    
+    Connections {
+        target: PlaylistManager
+        function onPlaylistAdded(id) {
+            saving = false
+            navigateTo("/sources/manage")
+        }
+        function onErrorMessageChanged() {
+            if (PlaylistManager.errorMessage !== "") {
+                errorRect.visible = true
+                saving = false
             }
         }
     }

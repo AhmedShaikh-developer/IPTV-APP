@@ -1,11 +1,28 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import IPTVBackend 1.0
 
 Rectangle {
     color: "#000000"
     
     property bool mergeView: false
+    
+    function loadPlaylists() {
+        var playlists = PlaylistManager.getPlaylists()
+        playlistModel.clear()
+        for (var i = 0; i < playlists.length; i++) {
+            playlistModel.append(playlists[i])
+        }
+    }
+    
+    Component.onCompleted: {
+        loadPlaylists()
+    }
+    
+    ListModel {
+        id: playlistModel
+    }
     
     ScrollView {
         anchors.fill: parent
@@ -130,11 +147,7 @@ Rectangle {
             
             // Source List
             Repeater {
-                model: [
-                    { name: "Premium IPTV", type: "Xtream Codes", channels: 5247, enabled: true },
-                    { name: "Sports HD", type: "M3U", channels: 842, enabled: true },
-                    { name: "Local Channels", type: "Stalker", channels: 156, enabled: false }
-                ]
+                model: playlistModel
                 
                 Rectangle {
                     Layout.fillWidth: true
@@ -179,7 +192,7 @@ Rectangle {
                                 spacing: 10
                                 
                                 Text {
-                                    text: modelData.name
+                                    text: model.name || "Unnamed Playlist"
                                     font.pixelSize: 20
                                     font.bold: true
                                     color: "#ffffff"
@@ -189,11 +202,11 @@ Rectangle {
                                     width: 80
                                     height: 25
                                     radius: 12
-                                    color: modelData.enabled ? "#27ae60" : "#564d4d"
+                                    color: "#27ae60"
                                     
                                     Text {
                                         anchors.centerIn: parent
-                                        text: modelData.enabled ? "ACTIVE" : "DISABLED"
+                                        text: "ACTIVE"
                                         font.pixelSize: 10
                                         font.bold: true
                                         color: "white"
@@ -202,13 +215,13 @@ Rectangle {
                             }
                             
                             Text {
-                                text: modelData.type + " • " + modelData.channels + " channels"
+                                text: (model.type || "Unknown") + " • " + (model.channels || 0) + " channels"
                                 font.pixelSize: 14
                                 color: "#b3b3b3"
                             }
                             
                             Text {
-                                text: "Last synced: 2 hours ago"
+                                text: "Last synced: " + (model.lastSynced || "Never")
                                 font.pixelSize: 12
                                 color: "#564d4d"
                             }
@@ -232,11 +245,15 @@ Rectangle {
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
-                                onClicked: navigateTo("/sources/sync")
+                                onClicked: {
+                                    PlaylistManager.setActivePlaylist(model.id)
+                                    PlaylistManager.refreshActivePlaylist()
+                                    navigateTo("/home")
+                                }
                             }
                             
                             Button {
-                                text: "✏️"
+                                text: "▶️"
                                 Layout.preferredWidth: 45
                                 Layout.preferredHeight: 45
                                 background: Rectangle {
@@ -249,10 +266,10 @@ Rectangle {
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
-                            }
-                            
-                            Switch {
-                                checked: modelData.enabled
+                                onClicked: {
+                                    PlaylistManager.setActivePlaylist(model.id)
+                                    navigateTo("/home")
+                                }
                             }
                             
                             Button {
@@ -268,6 +285,10 @@ Rectangle {
                                     font.pixelSize: 20
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
+                                }
+                                onClicked: {
+                                    PlaylistManager.removePlaylist(model.id)
+                                    loadPlaylists()
                                 }
                             }
                         }
@@ -296,6 +317,16 @@ Rectangle {
                 }
                 onClicked: navigateTo("/sources/metadata")
             }
+        }
+    }
+    
+    Connections {
+        target: PlaylistManager
+        function onPlaylistAdded(id) {
+            loadPlaylists()
+        }
+        function onPlaylistRemoved(id) {
+            loadPlaylists()
         }
     }
 }

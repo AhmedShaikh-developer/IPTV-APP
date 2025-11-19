@@ -1,4 +1,4 @@
-# Install script for directory: D:/IPTV
+# Install script for directory: D:/Documents/QT/IPTV-APP
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
