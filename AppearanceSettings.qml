@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Backend 1.0
 
 Rectangle {
     id: appearanceSettings
@@ -11,11 +12,38 @@ Rectangle {
     property bool isTablet: screenWidth >= 1366 && screenWidth < 1920
     property bool isMobile: screenWidth < 1366
 
-    // Mock settings state
-    property string theme: "Dark"
+    // Settings state
+    property string theme: "system" // Start with default, will be updated by signal
     property string density: "Comfortable"
     property real overscanPercentage: 5.0
     property real accentIntensity: 80.0
+
+    // Initialize theme from AppState on component creation
+    Component.onCompleted: {
+        theme = AppState.get("theme", appSettings ? appSettings.theme : "system")
+        console.log("AppearanceSettings initialized with theme:", theme)
+    }
+
+    // Listen for live updates from AppState and refresh bindings
+    Connections {
+        target: AppState
+        function onValueChanged(key, value) {
+            console.log("AppearanceSettings received AppState change:", key, "=", value)
+            if (key === "theme") {
+                console.log("Updating theme from", theme, "to", value)
+                theme = value
+                console.log("Theme property updated to:", theme)
+            }
+        }
+        
+        // Test if connection is working
+        Component.onCompleted: {
+            console.log("AppearanceSettings Connections component completed")
+            // Test the signal connection
+            console.log("Testing AppState signal connection...")
+            AppState.set("test_key", "test_value")
+        }
+    }
 
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
@@ -29,6 +57,36 @@ Rectangle {
 
     function applySettings() {
         showToast("Settings updated")
+    }
+
+    // Debouncing for settings writes
+    property var writeTimers: ({})
+    
+    function writeSetting(key, value) {
+        if (!appSettings) return
+        
+        // Only update if value actually changed
+        if (appSettings[key] === value) return
+        
+        // Debounce rapid writes
+        if (writeTimers[key]) {
+            writeTimers[key].stop()
+        }
+        
+        writeTimers[key] = Qt.createQmlObject('
+            import QtQuick 2.15
+            Timer {
+                interval: 300
+                repeat: false
+                onTriggered: {
+                    if (appSettings) {
+                        appSettings.' + key + ' = "' + value + '"
+                    }
+                }
+            }
+        ', appearanceSettings)
+        
+        writeTimers[key].start()
     }
 
     ScrollView {
@@ -211,7 +269,11 @@ Rectangle {
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
                                     }
-                                    onClicked: theme = modelData
+                                    onClicked: {
+                                        theme = modelData
+                                        AppState.set("theme", modelData)
+                                        writeSetting("theme", modelData)
+                                    }
                                 }
                             }
                         }

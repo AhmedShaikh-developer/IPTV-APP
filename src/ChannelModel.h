@@ -26,6 +26,7 @@ public:
     void addChannel(LiveChannel *channel);
     void clear();
     LiveChannel* get(int index) const;
+    Q_INVOKABLE LiveChannel* getChannel(int index) const;
 
 private:
     QList<LiveChannel*> m_channels;

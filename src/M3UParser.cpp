@@ -40,7 +40,7 @@ M3UParser::ParseResult M3UParser::parse(const QString &m3uContent)
 
             // If group-title is not found, try to extract from the line
             if (currentGroup.isEmpty()) {
-                QRegularExpression groupRegex(R"(group-title="([^"]+)")");
+                QRegularExpression groupRegex(QStringLiteral("group-title=\"([^\"]+)\""));
                 QRegularExpressionMatch match = groupRegex.match(line);
                 if (match.hasMatch()) {
                     currentGroup = match.captured(1);
@@ -96,7 +96,7 @@ bool M3UParser::isVodGroup(const QString &groupTitle) const
 
 QString M3UParser::extractAttribute(const QString &line, const QString &attrName) const
 {
-    QRegularExpression regex(QString(R"(%1="([^"]+)")").arg(attrName));
+    QRegularExpression regex(QString(QStringLiteral("%1=\"([^\"]+)\"")).arg(attrName));
     QRegularExpressionMatch match = regex.match(line);
     if (match.hasMatch()) {
         return match.captured(1);

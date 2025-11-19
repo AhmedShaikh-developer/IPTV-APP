@@ -19,10 +19,59 @@ Rectangle {
     property bool isPaused: videoPlayer.playbackState === MediaPlayer.PausedState
     
     onStreamUrlChanged: {
-        if (streamUrl !== "") {
-            currentSource = streamUrl
-            videoPlayer.source = streamUrl
-            videoPlayer.play()
+        console.log("=== PlayerPage: streamUrl changed ===")
+        console.log("New streamUrl:", streamUrl)
+        console.log("streamUrl type:", typeof streamUrl)
+        if (streamUrl !== "" && streamUrl !== undefined && streamUrl !== null) {
+            console.log("Setting video source to:", streamUrl)
+            
+            // Ensure URL has proper format
+            var urlString = streamUrl
+            if (!urlString.startsWith("http://") && !urlString.startsWith("https://") && !urlString.startsWith("qrc:/") && !urlString.startsWith("file://")) {
+                urlString = "http://" + urlString
+            }
+            console.log("Formatted URL string:", urlString)
+            
+            // Stop current playback first
+            videoPlayer.stop()
+            
+            // Convert string to QUrl - this ensures proper URL handling
+            // For M3U8/HLS streams, Qt needs a proper QUrl object
+            var urlObj = Qt.resolvedUrl(urlString)
+            // If Qt.resolvedUrl doesn't work for HTTP URLs, create URL directly
+            if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
+                // For HTTP URLs, we must use the string directly as QUrl
+                // But ensure it's treated as a proper URL
+                console.log("Using HTTP URL string directly:", urlString)
+                currentSource = urlString  // Keep as string for HTTP URLs
+            } else {
+                currentSource = urlObj
+            }
+            
+            console.log("currentSource set to:", currentSource)
+            console.log("currentSource type:", typeof currentSource)
+            
+            // The source binding will automatically update since currentSource changed
+            // But also explicitly set it to ensure it updates
+            Qt.callLater(function() {
+                console.log("Video player source before update:", videoPlayer.source)
+                // Force source update - use the string directly for HTTP URLs
+                if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
+                    videoPlayer.source = urlString
+                } else {
+                    videoPlayer.source = urlObj
+                }
+                console.log("Video player source after update:", videoPlayer.source)
+                console.log("Video player source toString:", videoPlayer.source.toString())
+                
+                // Wait a bit more for the source to be fully loaded before playing
+                Qt.callLater(function() {
+                    console.log("Calling videoPlayer.play() with source:", videoPlayer.source.toString())
+                    videoPlayer.play()
+                })
+            })
+        } else {
+            console.log("streamUrl is empty, not changing source")
         }
     }
     
@@ -61,7 +110,27 @@ Rectangle {
     Connections {
         target: PlaylistManager
         function onPlayStream(url) {
-            streamUrl = url
+            console.log("=== PlayerPage: Received playStream signal ===")
+            console.log("URL from signal:", url)
+            console.log("URL type:", typeof url)
+            console.log("URL string:", url.toString ? url.toString() : url)
+            
+            // Convert QVariant/QString to string if needed
+            var urlString = url
+            if (typeof url === "object" && url.toString) {
+                urlString = url.toString()
+            }
+            console.log("URL string value:", urlString)
+            
+            // Set streamUrl - this will trigger onStreamUrlChanged
+            streamUrl = urlString
+            console.log("streamUrl property set to:", streamUrl)
+        }
+        
+        Component.onCompleted: {
+            console.log("=== PlayerPage: Connections to PlaylistManager completed ===")
+            console.log("PlaylistManager object:", PlaylistManager)
+            console.log("PlaylistManager type:", typeof PlaylistManager)
         }
     }
     
@@ -73,12 +142,39 @@ Rectangle {
         Video {
             id: videoPlayer
             anchors.fill: parent
-            source: streamUrl !== "" ? streamUrl : currentSource
-            autoPlay: streamUrl !== ""
+            // For HTTP/HTTPS URLs, prefer currentSource (which is set from streamUrl)
+            // This ensures we use the properly formatted URL
+            source: (streamUrl !== "" && streamUrl !== undefined) ? streamUrl : currentSource
+            autoPlay: false  // We'll call play() explicitly in onSourceChanged
             loops: MediaPlayer.Once
-            focus: false
+            focus: true  // Allow focus for keyboard controls
             
             property bool mockPlaying: isPlaying && !isPaused
+            
+            onSourceChanged: {
+                console.log("=== Video source changed ===")
+                console.log("New source:", source)
+                console.log("Source URL string:", source.toString())
+                console.log("Source type:", typeof source)
+                var sourceStr = source.toString()
+                // Only auto-play if it's a valid URL (not empty and not the default resource)
+                if (sourceStr !== "" && sourceStr !== "qrc:/src/IPTV Pro.mp4" && sourceStr !== "undefined") {
+                    console.log("New source detected:", sourceStr)
+                    // Check if it's an HTTP/HTTPS URL
+                    if (sourceStr.startsWith("http://") || sourceStr.startsWith("https://")) {
+                        console.log("HTTP URL detected, calling play()...")
+                        // Use a small delay to ensure source is fully set and loaded
+                        Qt.callLater(function() {
+                            console.log("Calling videoPlayer.play() with source:", videoPlayer.source.toString())
+                            videoPlayer.play()
+                        })
+                    } else {
+                        console.log("Not an HTTP URL, skipping auto-play")
+                    }
+                } else {
+                    console.log("Source is default or empty, not playing")
+                }
+            }
             
             onMockPlayingChanged: {
                 if (mockPlaying) {
@@ -89,18 +185,47 @@ Rectangle {
             }
             
             onErrorOccurred: function(error, errorString) {
-                console.log("Video error:", errorString)
-                playerError.showError("network", "Playback Error", errorString)
+                console.error("=== Video error ===")
+                console.error("Error code:", error)
+                console.error("Error string:", errorString)
+                console.error("Source URL:", source)
+                playerError.showError("network", "Playback Error", errorString || "Failed to play stream")
             }
             
             onPlaybackStateChanged: {
-                if (playbackState === MediaPlayer.StoppedState) {
-                    placeholderDelayTimer.start()
-                } else if (playbackState === MediaPlayer.PlayingState) {
+                console.log("=== Video playback state changed ===")
+                console.log("State:", playbackState)
+                console.log("Source:", source)
+                
+                if (playbackState === MediaPlayer.PlayingState) {
+                    console.log("✓ Video is now playing!")
                     fallbackRect.visible = false
                     placeholderDelayTimer.stop()
                     isPlaying = true
+                } else if (playbackState === MediaPlayer.StoppedState) {
+                    console.log("Video stopped")
+                    placeholderDelayTimer.start()
+                    
+                    // Add to history when playback stops
+                    var history = parent.parent.parent.parent.readJson("historyJson", [])
+                    var historyEntry = {
+                        type: "video",
+                        id: currentSource.toString(),
+                        progress: playbackPosition,
+                        ts: Date.now()
+                    }
+                    
+                    // Add to beginning of history
+                    history.unshift(historyEntry)
+                    
+                    // Truncate to max 50 items
+                    if (history.length > 50) {
+                        history = history.slice(0, 50)
+                    }
+                    
+                    parent.parent.parent.parent.writeJson("historyJson", history)
                 } else if (playbackState === MediaPlayer.PausedState) {
+                    console.log("Video paused")
                     isPlaying = false
                 }
             }

@@ -8,6 +8,16 @@ Rectangle {
     
     property string currentCategory: ""
     
+    Component.onCompleted: {
+        console.log("=== ChannelList loaded ===")
+        console.log("PlaylistManager.liveChannelsModel.count:", PlaylistManager.liveChannelsModel.count)
+        console.log("Current category:", currentCategory)
+    }
+    
+    // Note: QAbstractListModel doesn't have a countChanged signal
+    // Instead, we rely on the model's rowCount() property which is bound automatically
+    // The Repeater will update when items are added/removed from the model
+    
     RowLayout {
         anchors.fill: parent
         spacing: 0
@@ -240,25 +250,39 @@ Rectangle {
                         columnSpacing: 20
                         
                         Repeater {
-                            // Use backend model if available, otherwise fall back to demo data
-                            model: PlaylistManager.liveChannelsModel.count > 0 ? PlaylistManager.liveChannelsModel : [
-                                { name: "BBC One", logo: "📺", now: "BBC News", next: "EastEnders", hd: true, catchup: true, favorite: false },
-                                { name: "ITV", logo: "📺", now: "Coronation Street", next: "ITV News", hd: true, catchup: true, favorite: true },
-                                { name: "Channel 4", logo: "📺", now: "The Great British Bake Off", next: "Channel 4 News", hd: true, catchup: false, favorite: false },
-                                { name: "Sky Sports", logo: "⚽", now: "Premier League", next: "Championship", hd: true, catchup: true, favorite: true },
-                                { name: "ESPN", logo: "🏀", now: "NBA Live", next: "NFL Highlights", hd: true, catchup: false, favorite: false },
-                                { name: "CNN", logo: "📰", now: "Breaking News", next: "Anderson Cooper", hd: true, catchup: true, favorite: false },
-                                { name: "Discovery", logo: "🌍", now: "Planet Earth", next: "Blue Planet", hd: true, catchup: true, favorite: true },
-                                { name: "Cartoon Network", logo: "🧒", now: "Adventure Time", next: "Regular Show", hd: false, catchup: true, favorite: false }
-                            ]
+                            // Always try to use backend model first
+                            id: channelRepeater
+                            model: PlaylistManager.liveChannelsModel
+                            
+                            onModelChanged: {
+                                console.log("=== ChannelList Repeater model changed ===")
+                                console.log("Model count:", PlaylistManager.liveChannelsModel.count)
+                            }
+                            
+                            Component.onCompleted: {
+                                console.log("=== ChannelList Repeater component completed ===")
+                                console.log("Model type:", typeof PlaylistManager.liveChannelsModel)
+                                console.log("Model count:", PlaylistManager.liveChannelsModel.count)
+                                if (PlaylistManager.liveChannelsModel.count === 0) {
+                                    console.warn("WARNING: No channels in model! Showing empty list.")
+                                    console.log("If you expected channels, make sure you clicked 'Play' on a playlist first.")
+                                }
+                            }
                             
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 200
-                                color: "#181818"
+                                color: channelMouseArea.containsMouse ? "#2f2f2f" : "#181818"
                                 radius: 12
-                                border.color: "#2f2f2f"
-                                border.width: 1
+                                border.color: channelMouseArea.containsMouse ? "#e50914" : "#2f2f2f"
+                                border.width: channelMouseArea.containsMouse ? 2 : 1
+                                
+                                Behavior on color {
+                                    ColorAnimation { duration: 200 }
+                                }
+                                Behavior on border.color {
+                                    ColorAnimation { duration: 200 }
+                                }
                                 
                                 ColumnLayout {
                                     anchors.fill: parent
@@ -277,7 +301,7 @@ Rectangle {
                                             
                                             Text {
                                                 anchors.centerIn: parent
-                                                text: modelData.logo
+                                                text: model.logo ? model.logo : "📺"
                                                 font.pixelSize: 24
                                             }
                                         }
@@ -287,7 +311,7 @@ Rectangle {
                                             spacing: 2
                                             
                                             Text {
-                                                text: (PlaylistManager.liveChannelsModel.count > 0 && model.name) ? model.name : (modelData ? modelData.name : "Unknown")
+                                                text: model.name ? model.name : "Unknown Channel"
                                                 font.pixelSize: 16
                                                 font.bold: true
                                                 color: "#ffffff"
@@ -297,12 +321,14 @@ Rectangle {
                                             RowLayout {
                                                 spacing: 5
                                                 
+                                                // HD badge - show if URL suggests HD or if group contains HD
                                                 Rectangle {
                                                     width: 30
                                                     height: 16
                                                     radius: 8
-                                                    color: modelData.hd ? "#e50914" : "#564d4d"
-                                                    visible: modelData.hd
+                                                    color: "#e50914"
+                                                    visible: (model.url && model.url.toLowerCase().indexOf("hd") !== -1) || 
+                                                            (model.groupTitle && model.groupTitle.toLowerCase().indexOf("hd") !== -1)
                                                     
                                                     Text {
                                                         anchors.centerIn: parent
@@ -313,60 +339,127 @@ Rectangle {
                                                     }
                                                 }
                                                 
+                                                // Category/Group badge
                                                 Rectangle {
-                                                    width: 30
+                                                    width: Math.min(80, (model.groupTitle ? model.groupTitle.length * 6 : 40))
                                                     height: 16
                                                     radius: 8
                                                     color: "#27ae60"
-                                                    visible: modelData.catchup
+                                                    visible: model.groupTitle && model.groupTitle !== ""
                                                     
                                                     Text {
                                                         anchors.centerIn: parent
-                                                        text: "C+"
-                                                        font.pixelSize: 10
+                                                        text: model.groupTitle || ""
+                                                        font.pixelSize: 9
                                                         font.bold: true
                                                         color: "white"
+                                                        elide: Text.ElideRight
                                                     }
                                                 }
                                             }
                                         }
                                         
+                                        // Play button in header (alternative to clicking the card)
                                         Button {
-                                            text: modelData.favorite ? "❤️" : "🤍"
-                                            Layout.preferredWidth: 35
+                                            text: "▶ Play"
+                                            Layout.preferredWidth: 80
                                             Layout.preferredHeight: 35
                                             background: Rectangle {
-                                                color: "transparent"
+                                                color: channelMouseArea.containsMouse ? "#e50914" : "#564d4d"
+                                                radius: 4
+                                            }
+                                            contentItem: Text {
+                                                text: parent.text
+                                                color: "white"
+                                                font.pixelSize: 12
+                                                font.bold: true
+                                                horizontalAlignment: Text.AlignHCenter
+                                                verticalAlignment: Text.AlignVCenter
                                             }
                                             onClicked: {
-                                                // Toggle favorite
-                                                model.setProperty(index, "favorite", !modelData.favorite)
+                                                // Same click handler as MouseArea
+                                                console.log("=== Play button clicked ===")
+                                                var channelName = model.name || "Unknown Channel"
+                                                var channelUrl = model.url || ""
+                                                
+                                                console.log("Channel name:", channelName)
+                                                console.log("Channel URL:", channelUrl)
+                                                
+                                                if (!channelUrl || channelUrl === "") {
+                                                    var channel = PlaylistManager.liveChannelsModel.getChannel(index)
+                                                    if (channel) {
+                                                        channelUrl = channel.url || ""
+                                                        channelName = channel.name || channelName
+                                                        console.log("Got from getChannel() - URL:", channelUrl)
+                                                    }
+                                                }
+                                                
+                                                if (channelUrl && channelUrl !== "") {
+                                                    console.log("✓ Playing:", channelName)
+                                                    console.log("✓ URL:", channelUrl)
+                                                    // Navigate first, then play - this ensures PlayerPage is loaded to receive the signal
+                                                    navigateTo("/player")
+                                                    // Use a small delay to ensure PlayerPage is fully loaded
+                                                    Qt.callLater(function() {
+                                                        console.log("Calling playSingleStream after navigation...")
+                                                        PlaylistManager.playSingleStream(channelUrl)
+                                                    })
+                                                } else {
+                                                    console.error("✗ ERROR: Channel URL is empty!")
+                                                }
                                             }
                                         }
                                     }
                                     
-                                    // Now Playing
+                                    // Now Playing / Info section with Play Button
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.preferredHeight: 60
-                                        color: "#2f2f2f"
+                                        color: channelMouseArea.containsMouse ? "#3f3f3f" : "#2f2f2f"
                                         radius: 6
+                                        
+                                        Behavior on color {
+                                            ColorAnimation { duration: 200 }
+                                        }
+                                        
+                                        // Play button - always visible
+                                        Rectangle {
+                                            anchors.right: parent.right
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.margins: 10
+                                            width: 40
+                                            height: 40
+                                            radius: 20
+                                            color: channelMouseArea.containsMouse ? "#e50914" : "#564d4d"
+                                            
+                                            Behavior on color {
+                                                ColorAnimation { duration: 200 }
+                                            }
+                                            
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: "▶"
+                                                font.pixelSize: 16
+                                                color: "white"
+                                            }
+                                        }
                                         
                                         ColumnLayout {
                                             anchors.fill: parent
                                             anchors.margins: 10
+                                            anchors.rightMargin: 60  // Make room for play button
                                             spacing: 5
                                             
                                             Text {
-                                                text: "Now"
+                                                text: "Click to Play"
                                                 font.pixelSize: 12
                                                 color: "#e50914"
                                                 font.bold: true
                                             }
                                             
                                             Text {
-                                                text: modelData.now
-                                                font.pixelSize: 14
+                                                text: model.groupTitle ? ("Category: " + model.groupTitle) : "Live Channel"
+                                                font.pixelSize: 12
                                                 color: "#ffffff"
                                                 Layout.fillWidth: true
                                                 wrapMode: Text.WordWrap
@@ -374,9 +467,11 @@ Rectangle {
                                         }
                                     }
                                     
-                                    // Next
+                                    // Next - Show group for backend model
                                     Text {
-                                        text: "Next: " + modelData.next
+                                        text: PlaylistManager.liveChannelsModel.count > 0 ? 
+                                              ("Group: " + (model.groupTitle || "Default")) : 
+                                              ("Next: " + (modelData ? modelData.next : ""))
                                         font.pixelSize: 12
                                         color: "#b3b3b3"
                                         Layout.fillWidth: true
@@ -385,14 +480,67 @@ Rectangle {
                                 }
                                 
                                 MouseArea {
+                                    id: channelMouseArea
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
                                     onClicked: {
-                                        // If using backend model, play the channel URL
-                                        if (PlaylistManager.liveChannelsModel.count > 0 && model && model.url) {
-                                            PlaylistManager.playSingleStream(model.url)
+                                        console.log("=== Channel clicked ===")
+                                        console.log("PlaylistManager.liveChannelsModel.count:", PlaylistManager.liveChannelsModel.count)
+                                        console.log("Repeater index:", index)
+                                        
+                                        // Try to get URL from model - QAbstractListModel exposes properties directly as model.url
+                                        var channelName = model.name || "Unknown Channel"
+                                        var channelUrl = model.url || ""
+                                        
+                                        console.log("Channel name from model:", channelName)
+                                        console.log("Channel URL from model:", channelUrl)
+                                        console.log("Model.name type:", typeof model.name)
+                                        console.log("Model.url type:", typeof model.url)
+                                        
+                                        // Debug: Try to access model properties
+                                        try {
+                                            console.log("Trying model.name:", model.name)
+                                            console.log("Trying model.url:", model.url)
+                                            console.log("Trying model.groupTitle:", model.groupTitle)
+                                            console.log("Trying model.logo:", model.logo)
+                                        } catch (e) {
+                                            console.error("Error accessing model properties:", e)
                                         }
-                                        navigateTo("/player")
+                                        
+                                        // If URL is still empty, try accessing via the model's getChannel method
+                                        if (!channelUrl || channelUrl === "") {
+                                            console.log("URL empty, trying to get from model index:", index)
+                                            try {
+                                                var channel = PlaylistManager.liveChannelsModel.getChannel(index)
+                                                if (channel) {
+                                                    channelUrl = channel.url || ""
+                                                    channelName = channel.name || channelName
+                                                    console.log("Got from model.getChannel() - URL:", channelUrl)
+                                                    console.log("Got from model.getChannel() - Name:", channelName)
+                                                } else {
+                                                    console.error("getChannel returned null for index:", index)
+                                                }
+                                            } catch (e) {
+                                                console.error("Error using model.getChannel():", e)
+                                            }
+                                        }
+                                        
+                                        if (channelUrl && channelUrl !== "") {
+                                            console.log("✓ Playing channel:", channelName)
+                                            console.log("✓ URL:", channelUrl)
+                                            // Navigate first, then play - this ensures PlayerPage is loaded to receive the signal
+                                            navigateTo("/player")
+                                            // Use a small delay to ensure PlayerPage is fully loaded
+                                            Qt.callLater(function() {
+                                                console.log("Calling playSingleStream after navigation...")
+                                                PlaylistManager.playSingleStream(channelUrl)
+                                            })
+                                        } else {
+                                            console.error("✗ ERROR: Channel URL is empty!")
+                                            console.error("Cannot play channel:", channelName)
+                                            console.log("Model properties available:", Object.keys(model))
+                                        }
                                     }
                                 }
                             }

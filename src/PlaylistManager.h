@@ -40,6 +40,7 @@ public:
     Q_INVOKABLE void setActivePlaylist(const QString &id);
     Q_INVOKABLE void refreshActivePlaylist();
     Q_INVOKABLE void playSingleStream(const QString &url);
+    Q_INVOKABLE void clearError();
 
     void loadPlaylists();
     void savePlaylists();
@@ -55,7 +56,6 @@ signals:
 private slots:
     void onXtreamApiFinished();
     void onM3UDownloadFinished();
-    void onM3UFileRead();
 
 private:
     struct Playlist {
@@ -68,6 +68,8 @@ private:
         QString m3uUrl;
         QString filePath;
         qint64 lastUsed;
+        int channelCount;  // Number of live channels
+        int vodCount;      // Number of VOD items
     };
 
     void addPlaylist(const Playlist &playlist);

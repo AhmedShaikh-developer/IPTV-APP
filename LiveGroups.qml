@@ -130,7 +130,14 @@ Rectangle {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: navigateTo("/live/channels?category=" + modelData.name)
+                            onClicked: {
+                                console.log("=== Category clicked ===")
+                                console.log("Category:", modelData.name)
+                                // Navigate directly to channel list - show all channels
+                                // The ChannelList will handle category filtering internally
+                                navigateTo("/live/channels")
+                                console.log("Navigating to channel list...")
+                            }
                         }
                     }
                 }

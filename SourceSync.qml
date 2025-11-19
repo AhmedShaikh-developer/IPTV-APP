@@ -1,12 +1,14 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import IPTVBackend 1.0
 
 Rectangle {
     color: "#000000"
     
     property int currentStep: 0
-    property int totalChannels: 0
+    property int totalChannels: PlaylistManager.liveChannelsModel ? PlaylistManager.liveChannelsModel.rowCount : 0
+    property int totalVodItems: PlaylistManager.vodItemsModel ? PlaylistManager.vodItemsModel.rowCount : 0
     property int processedChannels: 0
     
     ColumnLayout {
@@ -102,7 +104,7 @@ Rectangle {
                     spacing: 5
                     
                     Text {
-                        text: "5,247"
+                        text: totalChannels.toLocaleString(Qt.locale(), "f", 0)
                         font.pixelSize: 32
                         font.bold: true
                         color: "#e50914"
@@ -126,14 +128,14 @@ Rectangle {
                     spacing: 5
                     
                     Text {
-                        text: "128"
+                        text: totalVodItems.toLocaleString(Qt.locale(), "f", 0)
                         font.pixelSize: 32
                         font.bold: true
                         color: "#27ae60"
                     }
                     
                     Text {
-                        text: "Categories"
+                        text: totalVodItems === 1 ? "VOD Item" : "VOD Items"
                         font.pixelSize: 14
                         color: "#b3b3b3"
                     }
@@ -213,8 +215,18 @@ Rectangle {
         onTriggered: {
             if (currentStep < 5) {
                 currentStep++
+                console.log("Sync step:", currentStep, "Channels:", totalChannels, "VOD:", totalVodItems)
+            } else {
+                console.log("Sync complete! Channels:", totalChannels, "VOD:", totalVodItems)
             }
         }
+    }
+    
+    Component.onCompleted: {
+        console.log("=== SourceSync screen loaded ===")
+        console.log("Initial channels:", totalChannels)
+        console.log("Initial VOD items:", totalVodItems)
+        currentStep = 0  // Start sync animation
     }
 }
 

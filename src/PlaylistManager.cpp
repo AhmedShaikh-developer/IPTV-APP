@@ -22,6 +22,10 @@ PlaylistManager::PlaylistManager(QObject *parent)
 {
     loadPlaylists();
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &PlaylistManager::onM3UDownloadFinished);
+    
+    // Set a proper User-Agent for network requests
+    // This helps with servers that require specific headers
+    m_networkManager->setProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
 }
 
 void PlaylistManager::addXtreamPlaylist(const QString &name, const QString &serverUrl, const QString &username, const QString &password)
@@ -61,6 +65,8 @@ void PlaylistManager::addXtreamPlaylist(const QString &name, const QString &serv
     m_pendingPlaylist.username = username;
     m_pendingPlaylist.password = password;
     m_pendingPlaylist.lastUsed = QDateTime::currentSecsSinceEpoch();
+    m_pendingPlaylist.channelCount = 0;  // Will be set after parsing
+    m_pendingPlaylist.vodCount = 0;
 
     // Call Xtream API to verify credentials
     QUrl apiUrl(normalizedUrl + "/player_api.php");
@@ -72,7 +78,10 @@ void PlaylistManager::addXtreamPlaylist(const QString &name, const QString &serv
     qDebug() << "PlaylistManager: Calling Xtream API:" << apiUrl.toString();
 
     QNetworkRequest request(apiUrl);
-    request.setRawHeader("User-Agent", "IPTV Pro/1.0");
+    // Set headers to avoid 403 Forbidden errors
+    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+    request.setRawHeader("Accept", "application/json");
+    request.setRawHeader("Accept-Language", "en-US,en;q=0.9");
     m_currentReply = m_networkManager->get(request);
     connect(m_currentReply, &QNetworkReply::finished, this, &PlaylistManager::onXtreamApiFinished);
 }
@@ -108,14 +117,21 @@ void PlaylistManager::addM3UUrlPlaylist(const QString &name, const QString &url)
     // Download M3U
     m_pendingPlaylist = playlist;
     QNetworkRequest request(qurl);
-    request.setRawHeader("User-Agent", "IPTV Pro/1.0");
+    // Set headers to avoid 403 Forbidden errors
+    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+    request.setRawHeader("Accept", "*/*");
+    request.setRawHeader("Accept-Language", "en-US,en;q=0.9");
+    request.setRawHeader("Connection", "keep-alive");
     m_currentReply = m_networkManager->get(request);
     connect(m_currentReply, &QNetworkReply::finished, this, &PlaylistManager::onM3UDownloadFinished);
 }
 
 void PlaylistManager::addM3UFilePlaylist(const QString &name, const QString &filePath)
 {
-    qDebug() << "PlaylistManager: Adding M3U file playlist:" << name;
+    qDebug() << "========================================";
+    qDebug() << "PlaylistManager::addM3UFilePlaylist CALLED";
+    qDebug() << "Name:" << name;
+    qDebug() << "FilePath:" << filePath;
 
     // Validate inputs
     if (name.isEmpty() || filePath.isEmpty()) {
@@ -125,12 +141,21 @@ void PlaylistManager::addM3UFilePlaylist(const QString &name, const QString &fil
         return;
     }
 
+    // Normalize file path - convert Windows backslashes to forward slashes
+    QString normalizedPath = filePath;
+    normalizedPath.replace("\\", "/");
+    qDebug() << "Normalized file path:" << normalizedPath;
+
     // Check if file exists
-    QFileInfo fileInfo(filePath);
+    QFileInfo fileInfo(normalizedPath);
+    qDebug() << "File exists:" << fileInfo.exists();
+    qDebug() << "Is file:" << fileInfo.isFile();
+    qDebug() << "Absolute path:" << fileInfo.absoluteFilePath();
+    
     if (!fileInfo.exists() || !fileInfo.isFile()) {
-        m_errorMessage = "File does not exist";
+        m_errorMessage = QString("File does not exist: %1").arg(normalizedPath);
         emit errorMessageChanged();
-        qDebug() << "PlaylistManager: File not found:" << filePath;
+        qDebug() << "PlaylistManager: File not found:" << normalizedPath;
         return;
     }
 
@@ -138,35 +163,55 @@ void PlaylistManager::addM3UFilePlaylist(const QString &name, const QString &fil
     playlist.id = generateId();
     playlist.name = name;
     playlist.type = "m3uFile";
-    playlist.filePath = filePath;
+    playlist.filePath = fileInfo.absoluteFilePath();  // Use absolute path
     playlist.lastUsed = QDateTime::currentSecsSinceEpoch();
+    playlist.channelCount = 0;  // Will be set after parsing
+    playlist.vodCount = 0;
 
     // Read file
-    QFile file(filePath);
+    QFile file(fileInfo.absoluteFilePath());
+    qDebug() << "Opening file:" << fileInfo.absoluteFilePath();
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        m_errorMessage = "Failed to read file";
+        m_errorMessage = QString("Failed to read file: %1").arg(file.errorString());
         emit errorMessageChanged();
-        qDebug() << "PlaylistManager: Failed to open file:" << filePath;
+        qDebug() << "PlaylistManager: Failed to open file:" << fileInfo.absoluteFilePath() << "Error:" << file.errorString();
         return;
     }
 
     QString content = QString::fromUtf8(file.readAll());
     file.close();
+    qDebug() << "File read successfully, content length:" << content.length();
 
     if (content.isEmpty()) {
         m_errorMessage = "File is empty";
         emit errorMessageChanged();
-        qDebug() << "PlaylistManager: File is empty:" << filePath;
+        qDebug() << "PlaylistManager: File is empty:" << fileInfo.absoluteFilePath();
         return;
     }
 
-    // Parse and add playlist
-    parseM3UContent(content);
+    // Parse M3U content to get channel counts
+    qDebug() << "Parsing M3U content...";
+    M3UParser::ParseResult result = m_parser->parse(content);
+    playlist.channelCount = result.liveChannels.size();
+    playlist.vodCount = result.vodItems.size();
+    qDebug() << "M3U parsed - Channels:" << playlist.channelCount << "VOD items:" << playlist.vodCount;
+    
+    // Add playlist with counts
+    qDebug() << "Adding playlist to list...";
     addPlaylist(playlist);
     savePlaylists();
+    qDebug() << "Playlist saved to disk with counts";
+    
+    // Populate models for immediate use (if this playlist should be active)
+    // Note: Models are populated here for immediate access, but playlist is only made active when setActivePlaylist is called
+    parseM3UContent(content);
+    
+    // Emit signals
+    qDebug() << "Emitting playlistAdded signal, ID:" << playlist.id;
     emit playlistAdded(playlist.id);
     emit playlistsChanged();
-    qDebug() << "PlaylistManager: M3U file playlist added successfully";
+    qDebug() << "PlaylistManager: M3U file playlist added successfully, ID:" << playlist.id << "Channels:" << playlist.channelCount;
+    qDebug() << "========================================";
 }
 
 void PlaylistManager::removePlaylist(const QString &id)
@@ -204,48 +249,100 @@ QJsonArray PlaylistManager::getPlaylists()
 
 void PlaylistManager::setActivePlaylist(const QString &id)
 {
-    qDebug() << "PlaylistManager: Setting active playlist:" << id;
+    qDebug() << "========================================";
+    qDebug() << "PlaylistManager::setActivePlaylist CALLED";
+    qDebug() << "Playlist ID:" << id;
+    qDebug() << "Current active playlist ID:" << m_activePlaylistId;
 
     if (m_activePlaylistId == id) {
+        qDebug() << "Playlist is already active, skipping";
         return;
     }
 
     for (const Playlist &playlist : m_playlists) {
         if (playlist.id == id) {
+            qDebug() << "Found playlist:" << playlist.name << "Type:" << playlist.type;
             m_activePlaylistId = id;
 
             if (playlist.type == "m3uFile") {
                 // Read from file
+                qDebug() << "Reading M3U file:" << playlist.filePath;
+                QFileInfo fileInfo(playlist.filePath);
+                if (!fileInfo.exists()) {
+                    qDebug() << "ERROR: File does not exist:" << playlist.filePath;
+                    m_errorMessage = QString("File not found: %1").arg(playlist.filePath);
+                    emit errorMessageChanged();
+                    return;
+                }
                 QFile file(playlist.filePath);
                 if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                     QString content = QString::fromUtf8(file.readAll());
                     file.close();
+                    qDebug() << "File read successfully, content length:" << content.length();
                     parseM3UContent(content);
+                    qDebug() << "M3U parsed - Channels:" << m_liveChannelsModel->rowCount() << "VOD:" << m_vodItemsModel->rowCount();
+                    
+                    // Update channel counts in playlist if they changed
+                    if (m_liveChannelsModel->rowCount() != playlist.channelCount || m_vodItemsModel->rowCount() != playlist.vodCount) {
+                        for (int i = 0; i < m_playlists.size(); ++i) {
+                            if (m_playlists[i].id == id) {
+                                m_playlists[i].channelCount = m_liveChannelsModel->rowCount();
+                                m_playlists[i].vodCount = m_vodItemsModel->rowCount();
+                                savePlaylists();
+                                emit playlistsChanged();
+                                qDebug() << "Updated channel counts in playlist";
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    qDebug() << "ERROR: Failed to open file:" << file.errorString();
+                    m_errorMessage = QString("Failed to read file: %1").arg(file.errorString());
+                    emit errorMessageChanged();
+                    return;
                 }
             } else if (playlist.type == "m3uUrl") {
                 // Download M3U
+                qDebug() << "Downloading M3U from URL:" << playlist.m3uUrl;
                 m_pendingPlaylist = playlist;
                 QUrl url(playlist.m3uUrl);
                 QNetworkRequest request(url);
-                request.setRawHeader("User-Agent", "IPTV Pro/1.0");
+                // Set headers to avoid 403 Forbidden errors
+                request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                request.setRawHeader("Accept", "*/*");
+                request.setRawHeader("Accept-Language", "en-US,en;q=0.9");
+                request.setRawHeader("Connection", "keep-alive");
                 m_currentReply = m_networkManager->get(request);
                 connect(m_currentReply, &QNetworkReply::finished, this, &PlaylistManager::onM3UDownloadFinished);
+                qDebug() << "Download started, will parse when finished";
             } else if (playlist.type == "xtream") {
                 // Build M3U URL from Xtream API
+                qDebug() << "Building Xtream M3U URL...";
                 QString m3uUrl = QString("%1/get.php?username=%2&password=%3&type=m3u_plus&output=ts")
                     .arg(playlist.serverUrl, playlist.username, playlist.password);
                 m_pendingPlaylist = playlist;
                 QUrl url(m3uUrl);
                 QNetworkRequest request(url);
-                request.setRawHeader("User-Agent", "IPTV Pro/1.0");
+                // Set headers to avoid 403 Forbidden errors
+                request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                request.setRawHeader("Accept", "*/*");
+                request.setRawHeader("Accept-Language", "en-US,en;q=0.9");
+                request.setRawHeader("Connection", "keep-alive");
                 m_currentReply = m_networkManager->get(request);
                 connect(m_currentReply, &QNetworkReply::finished, this, &PlaylistManager::onM3UDownloadFinished);
+                qDebug() << "Download started, will parse when finished";
             }
 
             emit activePlaylistChanged();
+            qDebug() << "Active playlist changed signal emitted";
+            qDebug() << "========================================";
             return;
         }
     }
+    
+    qDebug() << "ERROR: Playlist not found with ID:" << id;
+    qDebug() << "Available playlists:" << m_playlists.size();
+    qDebug() << "========================================";
 }
 
 void PlaylistManager::refreshActivePlaylist()
@@ -410,7 +507,11 @@ void PlaylistManager::onXtreamApiFinished()
     // Download M3U
     QUrl url(m3uUrl);
     QNetworkRequest request(url);
-    request.setRawHeader("User-Agent", "IPTV Pro/1.0");
+    // Set headers to avoid 403 Forbidden errors
+    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+    request.setRawHeader("Accept", "*/*");
+    request.setRawHeader("Accept-Language", "en-US,en;q=0.9");
+    request.setRawHeader("Connection", "keep-alive");
     m_currentReply = m_networkManager->get(request);
     connect(m_currentReply, &QNetworkReply::finished, this, &PlaylistManager::onM3UDownloadFinished);
 }
@@ -442,16 +543,22 @@ void PlaylistManager::onM3UDownloadFinished()
         return;
     }
 
-    // Parse M3U
+    // Parse M3U to get channel counts
+    M3UParser::ParseResult result = m_parser->parse(content);
+    m_pendingPlaylist.channelCount = result.liveChannels.size();
+    m_pendingPlaylist.vodCount = result.vodItems.size();
+    qDebug() << "M3U parsed - Channels:" << m_pendingPlaylist.channelCount << "VOD items:" << m_pendingPlaylist.vodCount;
+    
+    // Populate models
     parseM3UContent(content);
 
-    // Add playlist if it's new
+    // Add playlist if it's new (with counts)
     if (!m_pendingPlaylist.id.isEmpty()) {
         addPlaylist(m_pendingPlaylist);
         savePlaylists();
         emit playlistAdded(m_pendingPlaylist.id);
         emit playlistsChanged();
-        qDebug() << "PlaylistManager: Playlist added successfully";
+        qDebug() << "PlaylistManager: Playlist added successfully with" << m_pendingPlaylist.channelCount << "channels";
     }
 }
 
@@ -491,6 +598,15 @@ QString PlaylistManager::generateId()
     return QString::number(QDateTime::currentMSecsSinceEpoch());
 }
 
+void PlaylistManager::clearError()
+{
+    if (!m_errorMessage.isEmpty()) {
+        m_errorMessage.clear();
+        emit errorMessageChanged();
+        qDebug() << "PlaylistManager: Error message cleared";
+    }
+}
+
 QString PlaylistManager::getPlaylistsFilePath() const
 {
     QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -508,6 +624,8 @@ QJsonObject PlaylistManager::playlistToJson(const Playlist &playlist) const
     obj["name"] = playlist.name;
     obj["type"] = playlist.type;
     obj["lastUsed"] = playlist.lastUsed;
+    obj["channelCount"] = playlist.channelCount;
+    obj["vodCount"] = playlist.vodCount;
 
     if (playlist.type == "xtream") {
         obj["serverUrl"] = playlist.serverUrl;
@@ -530,6 +648,8 @@ PlaylistManager::Playlist PlaylistManager::jsonToPlaylist(const QJsonObject &jso
     playlist.name = json["name"].toString();
     playlist.type = json["type"].toString();
     playlist.lastUsed = json["lastUsed"].toVariant().toLongLong();
+    playlist.channelCount = json.contains("channelCount") ? json["channelCount"].toInt() : 0;
+    playlist.vodCount = json.contains("vodCount") ? json["vodCount"].toInt() : 0;
 
     if (playlist.type == "xtream") {
         playlist.serverUrl = json["serverUrl"].toString();

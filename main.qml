@@ -2,9 +2,27 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
+import Qt.labs.settings 1.0
+import Backend 1.0
 
 ApplicationWindow {
     id: mainWindow
+    
+    // Persistent Settings Store
+    Settings {
+        id: appSettings
+        property string theme: "system"
+        property string language: "en"
+        property string startupRoute: "/home"
+        property string lastRoute: "/home"
+        
+        property bool playbackHwDecode: true
+        property bool playbackAfr: false
+        property string playbackBuffer: "medium"
+        
+        property string favoritesJson: '{"channels":[],"movies":[],"series":[]}'
+        property string historyJson: '[]'
+    }
     
     // UI Components (defined early so they can be used throughout)
     component SectionGroup: ColumnLayout {
@@ -189,7 +207,7 @@ ApplicationWindow {
     title: "IPTV Pro"
     color: backgroundColor
     
-    property string currentRoute: "/home"
+    property string currentRoute: "/main" // Force start with main screen
     property bool isOnline: true
     property bool hasValidAuth: false
     property bool requiresUpdate: false
@@ -227,6 +245,26 @@ ApplicationWindow {
         navigateTo("/error")
     }
     
+    // JSON helper functions
+    function readJson(key, fallback) {
+        try {
+            var jsonString = appSettings[key]
+            if (!jsonString || jsonString === "") return fallback
+            return JSON.parse(jsonString)
+        } catch (e) {
+            console.log("JSON parse error for", key, ":", e)
+            return fallback
+        }
+    }
+    
+    function writeJson(key, object) {
+        try {
+            appSettings[key] = JSON.stringify(object)
+        } catch (e) {
+            console.log("JSON stringify error for", key, ":", e)
+        }
+    }
+    
     // Bootstrap checks simulation
     Timer {
         id: bootstrapTimer
@@ -238,6 +276,24 @@ ApplicationWindow {
         }
     }
     
+    // Force app to start with main screen
+    Timer {
+        id: initTimer
+        interval: 100
+        running: true
+        repeat: false
+        onTriggered: {
+            console.log("Init timer triggered, currentRoute:", currentRoute)
+            console.log("Forcing route to /main")
+            navigateTo("/main")
+        }
+    }
+    
+    // Debug route changes
+    onCurrentRouteChanged: {
+        console.log("Route changed to:", currentRoute)
+    }
+    
     // Main content area with routing
     StackLayout {
         id: mainStack
@@ -245,6 +301,7 @@ ApplicationWindow {
         currentIndex: getCurrentIndex()
         
         function getCurrentIndex() {
+            console.log("getCurrentIndex called with route:", currentRoute)
             switch(currentRoute) {
                 case "/boot": return 0
                 case "/update-required": return 1
@@ -273,8 +330,11 @@ ApplicationWindow {
                 case "/sources/manage": return 24
                 case "/sources/metadata": return 25
                 case "/downloads": return 26
-                case "/home": return 67 // Main Application layout
+                case "/home": 
+                    console.log("Returning index 67 for /home")
+                    return 67 // Main Application layout
                 case "/live/groups": return 67 // Main Application layout
+                case "/live/channels": return 67 // Main Application layout (ChannelList)
                 case "/inbox": return 28
                 case "/live": return 67 // Main Application layout
                 case "/guide": return 67 // Main Application layout
@@ -313,7 +373,9 @@ ApplicationWindow {
                 case "/account": return 5 // Sign In Screen
                 case "/main": return 67 // Main Application layout
                 case "/player": return 66 // Player Loader
-                default: return 0
+                default: 
+                    console.log("Unknown route:", currentRoute, "returning index 0")
+                    return 0
             }
         }
         
@@ -774,6 +836,7 @@ ApplicationWindow {
 
         // General Settings
         GeneralSettings {
+            property var appSettings: mainWindow.appSettings
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
@@ -781,6 +844,7 @@ ApplicationWindow {
 
         // Appearance Settings
         AppearanceSettings {
+            property var appSettings: mainWindow.appSettings
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
@@ -788,6 +852,7 @@ ApplicationWindow {
 
         // Playback Settings
         PlaybackSettings {
+            property var appSettings: mainWindow.appSettings
             function navigateTo(route) {
                 mainWindow.navigateTo(route)
             }
@@ -1115,8 +1180,9 @@ ApplicationWindow {
                             switch(currentRoute) {
                                 case "/home": return 0
                                 case "/live/groups": return 1
-                                case "/guide": return 2
-                                case "/catchup": return 3
+                                case "/live/channels": return 2
+                                case "/guide": return 3
+                                case "/catchup": return 4
                                 default: return 0
                             }
                         }
@@ -1130,6 +1196,12 @@ ApplicationWindow {
                         
                         // Live Groups Screen
                         LiveGroups {}
+                        
+                        // Channel List Screen
+                        ChannelList {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                        }
                         
                         // TV Guide Screen
                         EpgGrid {}

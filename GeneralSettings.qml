@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Backend 1.0
 
 Rectangle {
     id: generalSettings
@@ -11,12 +12,26 @@ Rectangle {
     property bool isTablet: screenWidth >= 768 && screenWidth < 1080
     property bool isMobile: screenWidth < 768
 
-    // Mock settings state
-    property string startupPage: "Home"
-    property string language: "English"
+    // Settings state
+    property string startupPage: AppState.get("startupRoute", appSettings ? appSettings.startupRoute : "Home")
+    property string language: AppState.get("language", appSettings ? appSettings.language : "en")
     property string region: "United States"
     property bool use24HourFormat: false
     property string contentRatingSystem: "MPAA"
+
+    // Listen for live updates from AppState and refresh bindings
+    Connections {
+        target: AppState
+        function onValueChanged(key, value) {
+            if (key === "language") {
+                // Force property refresh by reassigning
+                language = AppState.get("language", appSettings ? appSettings.language : "en")
+            } else if (key === "startupRoute") {
+                // Force property refresh by reassigning
+                startupPage = AppState.get("startupRoute", appSettings ? appSettings.startupRoute : "Home")
+            }
+        }
+    }
 
     function navigateTo(route) {
         if (typeof parent.navigateTo !== 'undefined') {
@@ -30,6 +45,36 @@ Rectangle {
 
     function applySettings() {
         showToast("Settings updated")
+    }
+
+    // Debouncing for settings writes
+    property var writeTimers: ({})
+    
+    function writeSetting(key, value) {
+        if (!appSettings) return
+        
+        // Only update if value actually changed
+        if (appSettings[key] === value) return
+        
+        // Debounce rapid writes
+        if (writeTimers[key]) {
+            writeTimers[key].stop()
+        }
+        
+        writeTimers[key] = Qt.createQmlObject('
+            import QtQuick 2.15
+            Timer {
+                interval: 300
+                repeat: false
+                onTriggered: {
+                    if (appSettings) {
+                        appSettings.' + key + ' = "' + value + '"
+                    }
+                }
+            }
+        ', generalSettings)
+        
+        writeTimers[key].start()
     }
 
     // Background gradient
@@ -176,7 +221,11 @@ Rectangle {
                             verticalAlignment: Text.AlignVCenter
                         }
 
-                        onCurrentIndexChanged: startupPage = model[currentIndex]
+                        onCurrentIndexChanged: {
+                            startupPage = model[currentIndex]
+                            AppState.set("startupRoute", model[currentIndex])
+                            writeSetting("startupRoute", model[currentIndex])
+                        }
                     }
                 }
 
@@ -208,7 +257,11 @@ Rectangle {
                             verticalAlignment: Text.AlignVCenter
                         }
 
-                        onCurrentIndexChanged: language = model[currentIndex]
+                        onCurrentIndexChanged: {
+                            language = model[currentIndex]
+                            AppState.set("language", model[currentIndex])
+                            writeSetting("language", model[currentIndex])
+                        }
                     }
                 }
 

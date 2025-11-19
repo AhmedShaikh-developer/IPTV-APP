@@ -39,8 +39,12 @@ void FilePicker::openFileDialog(const QString &title, const QString &filter)
     
     qDebug() << "About to call QFileDialog::getOpenFileName...";
     
+    // Force process events to ensure app is fully initialized
+    QCoreApplication::processEvents();
+    
     // QFileDialog::getOpenFileName works with QApplication (which we now use in main.cpp)
     // This will show the native Windows file dialog
+    qDebug() << "Creating QFileDialog...";
     QString filePath = QFileDialog::getOpenFileName(
         nullptr,  // Parent widget - nullptr works fine, shows as separate window
         title,

@@ -64,3 +64,8 @@ LiveChannel* ChannelModel::get(int index) const
     return nullptr;
 }
 
+LiveChannel* ChannelModel::getChannel(int index) const
+{
+    return get(index);
+}
+

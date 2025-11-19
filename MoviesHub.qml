@@ -213,7 +213,18 @@ Rectangle {
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
-                                onClicked: console.log("Add to watchlist")
+                                onClicked: {
+                                    console.log("Add to watchlist")
+                                    
+                                    // Add to favorites JSON
+                                    var favorites = parent.parent.parent.parent.readJson("favoritesJson", {"channels":[],"movies":[],"series":[]})
+                                    var movieId = "featured_movie" // Using placeholder ID
+                                    
+                                    if (!favorites.movies.includes(movieId)) {
+                                        favorites.movies.push(movieId)
+                                        parent.parent.parent.parent.writeJson("favoritesJson", favorites)
+                                    }
+                                }
                             }
                         }
                     }

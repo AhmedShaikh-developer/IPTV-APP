@@ -215,7 +215,7 @@ Rectangle {
                             }
                             
                             Text {
-                                text: (model.type || "Unknown") + " • " + (model.channels || 0) + " channels"
+                                text: (model.type || "Unknown") + " • " + (model.channelCount || 0) + " channels" + (model.vodCount > 0 ? " • " + model.vodCount + " VOD" : "")
                                 font.pixelSize: 14
                                 color: "#b3b3b3"
                             }
@@ -267,8 +267,13 @@ Rectangle {
                                     verticalAlignment: Text.AlignVCenter
                                 }
                                 onClicked: {
+                                    console.log("=== Play button clicked ===")
+                                    console.log("Playlist ID:", model.id)
+                                    console.log("Playlist name:", model.name)
                                     PlaylistManager.setActivePlaylist(model.id)
-                                    navigateTo("/home")
+                                    // Navigate to Live TV groups to show channels
+                                    navigateTo("/live/groups")
+                                    console.log("Navigating to Live TV groups...")
                                 }
                             }
                             

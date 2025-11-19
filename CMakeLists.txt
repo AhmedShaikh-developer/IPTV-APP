@@ -14,6 +14,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Quick Qml QuickCo
 
 set(PROJECT_SOURCES
         main.cpp
+        AppState.cpp
         qml.qrc
         src/PlaylistManager.cpp
         src/PlaylistManager.h

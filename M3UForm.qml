@@ -8,6 +8,7 @@ Rectangle {
     
     property bool isFileMode: false
     property bool saving: false
+    property bool shouldSync: false  // Track if Save & Sync was clicked
     
     FilePicker {
         id: filePicker
@@ -185,11 +186,11 @@ Rectangle {
                         
                         TextField {
                             id: playlistField
-                            placeholderText: isFileMode ? "Browse to select file..." : "http://example.com/playlist.m3u8"
+                            placeholderText: isFileMode ? "Paste full file path (e.g. C:/lists/myfile.m3u8)" : "http://example.com/playlist.m3u8"
                             font.pixelSize: 16
                             color: "#ffffff"
                             Layout.fillWidth: true
-                            readOnly: isFileMode
+                            readOnly: false
                             background: Rectangle {
                                 color: "transparent"
                             }
@@ -382,19 +383,60 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                     }
                     onClicked: {
-                        if (nameField.text.trim() === "" || playlistField.text.trim() === "") {
+                        console.log("=== Save button clicked ===")
+                        console.log("nameField:", nameField.text.trim())
+                        console.log("playlistField:", playlistField.text.trim())
+                        console.log("isFileMode:", isFileMode)
+                        
+                        // Validate playlist field (file path or URL)
+                        if (playlistField.text.trim() === "") {
+                            console.error("Validation failed: playlist field is empty")
                             errorRect.visible = true
                             return
                         }
+                        
+                        // Auto-generate name from file path if empty
+                        var playlistName = nameField.text.trim()
+                        if (playlistName === "") {
+                            if (isFileMode) {
+                                // Extract filename from path
+                                var filePath = playlistField.text.trim()
+                                var fileName = filePath.split(/[/\\]/).pop() // Get filename
+                                playlistName = fileName.replace(/\.(m3u|m3u8)$/i, "") // Remove extension
+                                if (playlistName === "") {
+                                    playlistName = "My M3U Playlist"
+                                }
+                            } else {
+                                // Extract domain from URL
+                                var url = playlistField.text.trim()
+                                try {
+                                    var urlObj = new URL(url)
+                                    playlistName = urlObj.hostname.replace(/^www\./, "")
+                                    if (playlistName === "") {
+                                        playlistName = "My M3U Playlist"
+                                    }
+                                } catch (e) {
+                                    playlistName = "My M3U Playlist"
+                                }
+                            }
+                            console.log("Auto-generated playlist name:", playlistName)
+                        }
+                        
+                        console.log("Calling PlaylistManager method (Save only)...")
                         saving = true
+                        shouldSync = false  // Save only, no sync
+                        PlaylistManager.clearError()  // Clear previous error
+                        
                         if (isFileMode) {
+                            console.log("Adding M3U file playlist...")
                             PlaylistManager.addM3UFilePlaylist(
-                                nameField.text.trim(),
+                                playlistName,
                                 playlistField.text.trim()
                             )
                         } else {
+                            console.log("Adding M3U URL playlist...")
                             PlaylistManager.addM3UUrlPlaylist(
-                                nameField.text.trim(),
+                                playlistName,
                                 playlistField.text.trim()
                             )
                         }
@@ -419,19 +461,60 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                     }
                     onClicked: {
-                        if (nameField.text.trim() === "" || playlistField.text.trim() === "") {
+                        console.log("=== Save & Sync button clicked ===")
+                        console.log("nameField:", nameField.text.trim())
+                        console.log("playlistField:", playlistField.text.trim())
+                        console.log("isFileMode:", isFileMode)
+                        
+                        // Validate playlist field (file path or URL)
+                        if (playlistField.text.trim() === "") {
+                            console.error("Validation failed: playlist field is empty")
                             errorRect.visible = true
                             return
                         }
+                        
+                        // Auto-generate name from file path if empty
+                        var playlistName = nameField.text.trim()
+                        if (playlistName === "") {
+                            if (isFileMode) {
+                                // Extract filename from path
+                                var filePath = playlistField.text.trim()
+                                var fileName = filePath.split(/[/\\]/).pop() // Get filename
+                                playlistName = fileName.replace(/\.(m3u|m3u8)$/i, "") // Remove extension
+                                if (playlistName === "") {
+                                    playlistName = "My M3U Playlist"
+                                }
+                            } else {
+                                // Extract domain from URL
+                                var url = playlistField.text.trim()
+                                try {
+                                    var urlObj = new URL(url)
+                                    playlistName = urlObj.hostname.replace(/^www\./, "")
+                                    if (playlistName === "") {
+                                        playlistName = "My M3U Playlist"
+                                    }
+                                } catch (e) {
+                                    playlistName = "My M3U Playlist"
+                                }
+                            }
+                            console.log("Auto-generated playlist name:", playlistName)
+                        }
+                        
+                        console.log("Calling PlaylistManager method (Save & Sync)...")
                         saving = true
+                        shouldSync = true  // Save and sync
+                        PlaylistManager.clearError()  // Clear previous error
+                        
                         if (isFileMode) {
+                            console.log("Adding M3U file playlist...")
                             PlaylistManager.addM3UFilePlaylist(
-                                nameField.text.trim(),
+                                playlistName,
                                 playlistField.text.trim()
                             )
                         } else {
+                            console.log("Adding M3U URL playlist...")
                             PlaylistManager.addM3UUrlPlaylist(
-                                nameField.text.trim(),
+                                playlistName,
                                 playlistField.text.trim()
                             )
                         }
@@ -444,8 +527,23 @@ Rectangle {
     Connections {
         target: PlaylistManager
         function onPlaylistAdded(id) {
+            console.log("=== Playlist added signal received ===")
+            console.log("Playlist ID:", id)
+            console.log("shouldSync:", shouldSync)
             saving = false
-            navigateTo("/sources/manage")
+            
+            if (shouldSync) {
+                // Save & Sync: Set playlist as active and navigate to sync screen
+                console.log("Setting playlist as active and navigating to sync...")
+                PlaylistManager.setActivePlaylist(id)
+                navigateTo("/sources/sync")
+            } else {
+                // Save only: Just navigate to manage screen
+                console.log("Navigating to manage screen...")
+                navigateTo("/sources/manage")
+            }
+            
+            shouldSync = false  // Reset flag
         }
         function onErrorMessageChanged() {
             if (PlaylistManager.errorMessage !== "") {

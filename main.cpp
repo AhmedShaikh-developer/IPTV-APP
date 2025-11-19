@@ -7,6 +7,7 @@
 #include <QJSEngine>
 #include "src/PlaylistManager.h"
 #include "src/FilePicker.h"
+#include "AppState.h"
 
 static QObject* playlistManagerProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -26,10 +27,18 @@ int main(int argc, char *argv[])
     // Set Qt Quick Controls 2 style to support customization
     QQuickStyle::setStyle("Basic");
     
-    // Register PlaylistManager as QML singleton
+    // Register AppState as QML singleton (for settings)
+    qmlRegisterSingletonType<AppState>("Backend", 1, 0, "AppState",
+        [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject * {
+            Q_UNUSED(engine)
+            Q_UNUSED(scriptEngine)
+            return new AppState();
+        });
+    
+    // Register PlaylistManager as QML singleton (for playlist management)
     qmlRegisterSingletonType<PlaylistManager>("IPTVBackend", 1, 0, "PlaylistManager", playlistManagerProvider);
     
-    // Register FilePicker as QML type
+    // Register FilePicker as QML type (for file dialog)
     qmlRegisterType<FilePicker>("IPTVBackend", 1, 0, "FilePicker");
     
     QQmlApplicationEngine engine;
