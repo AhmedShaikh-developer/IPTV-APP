@@ -20,11 +20,12 @@ CMAKE_ADDR2LINE:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/addr2line.exe
 //Path to a program.
 CMAKE_AR:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/ar.exe
 
-//No help, variable specified on the command line.
+//Choose the type of build, options are: None Debug Release RelWithDebInfo
+// MinSizeRel ...
 CMAKE_BUILD_TYPE:STRING=Debug
 
-//No help, variable specified on the command line.
-CMAKE_COLOR_DIAGNOSTICS:BOOL=ON
+//Enable/Disable color output during build.
+CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //CXX compiler
 CMAKE_CXX_COMPILER:STRING=C:/Qt/Tools/mingw1310_64/bin/g++.exe
@@ -38,13 +39,10 @@ CMAKE_CXX_COMPILER_AR:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/gcc-ar.exe
 CMAKE_CXX_COMPILER_RANLIB:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/gcc-ranlib.exe
 
 //Flags used by the CXX compiler during all build types.
-CMAKE_CXX_FLAGS:STRING=-DQT_QML_DEBUG
+CMAKE_CXX_FLAGS:STRING=
 
 //Flags used by the CXX compiler during DEBUG builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
-
-//No help, variable specified on the command line.
-CMAKE_CXX_FLAGS_INIT:STRING=-DQT_QML_DEBUG
 
 //Flags used by the CXX compiler during MINSIZEREL builds.
 CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
@@ -55,15 +53,11 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
-CMAKE_CXX_OUTPUT_EXTENSION:STRING=.obj
-
 //Libraries linked by default with all C++ applications.
 CMAKE_CXX_STANDARD_LIBRARIES:STRING=-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
 
 //No help, variable specified on the command line.
-CMAKE_C_COMPILER:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/gcc.exe
-
-CMAKE_C_OUTPUT_EXTENSION:STRING=
+CMAKE_C_COMPILER:UNINITIALIZED=C:/Qt/Tools/mingw1310_64/bin/gcc.exe
 
 //Path to a program.
 CMAKE_DLLTOOL:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/dlltool.exe
@@ -83,14 +77,8 @@ CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=
 //Flags used by the linker during RELWITHDEBINFO builds.
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
-//Enable/Disable output of compile commands during generation.
-CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=
-
 //Value Computed by CMake.
 CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CMakeFiles/pkgRedirects
-
-//No help, variable specified on the command line.
-CMAKE_GENERATOR:STRING=Ninja
 
 //Convert GNU import libraries to MS format (requires Visual Studio)
 CMAKE_GNUtoMS:BOOL=OFF
@@ -149,8 +137,8 @@ CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 //Path to a program.
 CMAKE_LINKER:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/ld.exe
 
-//Program used to build from build.ninja files.
-CMAKE_MAKE_PROGRAM:FILEPATH=C:/Qt/Tools/Ninja/ninja.exe
+//Path to a program.
+CMAKE_MAKE_PROGRAM:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe
 
 //Flags used by the linker during the creation of modules during
 // all build types.
@@ -182,16 +170,13 @@ CMAKE_OBJCOPY:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/objcopy.exe
 CMAKE_OBJDUMP:FILEPATH=C:/Qt/Tools/mingw1310_64/bin/objdump.exe
 
 //No help, variable specified on the command line.
-CMAKE_PREFIX_PATH:PATH=C:/Qt/6.9.2/mingw_64
+CMAKE_PREFIX_PATH:UNINITIALIZED=C:/Qt/6.9.2/mingw_64
 
 //Value Computed by CMake
 CMAKE_PROJECT_DESCRIPTION:STATIC=
 
 //Value Computed by CMake
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
-
-//No help, variable specified on the command line.
-CMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/.qtc/package-manager/auto-setup.cmake
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=untitled
@@ -301,26 +286,8 @@ QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH:STRING=
 //Additional directories where find(Qt6 ...) components are searched
 QT_ADDITIONAL_PACKAGES_PREFIX_PATH:STRING=
 
-//Use CLI mode for Qt Creator's MaintenanceTool find_package provider
-QT_CREATOR_MAINTENANCE_TOOL_PROVIDER_USE_CLI:BOOL=OFF
-
-//Skip Qt Creator's MaintenanceTool find_package provider
-QT_CREATOR_SKIP_MAINTENANCE_TOOL_PROVIDER:BOOL=OFF
-
-//Skip Qt Creator's package manager auto-setup
-QT_CREATOR_SKIP_PACKAGE_MANAGER_SETUP:BOOL=OFF
-
-//Qt Creator source groups extensions
-QT_CREATOR_SOURCE_GROUPS:BOOL=ON
-
 //The directory containing a CMake configuration file for QT.
 QT_DIR:PATH=C:/Qt/6.9.2/mingw_64/lib/cmake/Qt6
-
-//No help, variable specified on the command line.
-QT_MAINTENANCE_TOOL:FILEPATH=C:/Qt/MaintenanceTool.exe
-
-//No help, variable specified on the command line.
-QT_QMAKE_EXECUTABLE:FILEPATH=C:/Qt/6.9.2/mingw_64/bin/qmake.exe
 
 //The directory containing a CMake configuration file for Qt6ConcurrentPrivate.
 Qt6ConcurrentPrivate_DIR:PATH=C:/Qt/6.9.2/mingw_64/lib/cmake/Qt6ConcurrentPrivate
@@ -464,7 +431,7 @@ untitled_BINARY_DIR:STATIC=D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug
 untitled_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-untitled_SOURCE_DIR:STATIC=D:/Documents/QT/IPTV-APP
+untitled_SOURCE_DIR:STATIC=D:/IPTV
 
 
 ########################
@@ -483,6 +450,8 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=30
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=5
+//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
+CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Qt/Tools/CMake_64/bin/cmake.exe
 //Path to cpack program executable.
@@ -523,8 +492,10 @@ CMAKE_EXE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_EXPORT_COMPILE_COMMANDS
-CMAKE_EXPORT_COMPILE_COMMANDS-ADVANCED:INTERNAL=1
+//Name of external makefile project generator.
+CMAKE_EXTRA_GENERATOR:INTERNAL=
+//Name of generator.
+CMAKE_GENERATOR:INTERNAL=MinGW Makefiles
 //Generator instance identifier.
 CMAKE_GENERATOR_INSTANCE:INTERNAL=
 //Name of generator platform.
@@ -535,7 +506,7 @@ CMAKE_GENERATOR_TOOLSET:INTERNAL=
 CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=D:/Documents/QT/IPTV-APP
+CMAKE_HOME_DIRECTORY:INTERNAL=D:/IPTV
 //ADVANCED property for variable: CMAKE_INSTALL_BINDIR
 CMAKE_INSTALL_BINDIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_INSTALL_DATADIR
@@ -643,6 +614,8 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
+//Details about finding WrapAtomic
+FIND_PACKAGE_MESSAGE_DETAILS_WrapAtomic:INTERNAL=[1][v()]
 //Test HAVE_STDATOMIC
 HAVE_STDATOMIC:INTERNAL=1
 //Qt feature: abstractbutton (from target Qt6::Widgets)

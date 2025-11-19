@@ -1,4 +1,4 @@
-D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/untitled_autogen/EWIEGA46WW/moc_AppState.cpp: D:/Documents/QT/IPTV-APP/AppState.h \
+D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/untitled_autogen/EWIEGA46WW/moc_AppState.cpp: D:/IPTV/AppState.h \
   D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/untitled_autogen/moc_predefs.h \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QObject \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QSettings \
