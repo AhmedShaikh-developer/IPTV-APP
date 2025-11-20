@@ -1022,6 +1022,12 @@
 			null
 		],
 		[
+			"D:/IPTV/src/ExternalVlcLauncher.h",
+			"MU",
+			"UVLADIE3JM/moc_ExternalVlcLauncher.cpp",
+			null
+		],
+		[
 			"D:/IPTV/src/FilePicker.h",
 			"MU",
 			"UVLADIE3JM/moc_FilePicker.cpp",
@@ -1040,6 +1046,7 @@
 			"UVLADIE3JM/moc_PlaylistManager.cpp",
 			null
 		],
+		[ "D:/IPTV/src/VlcPlayer.h", "MU", "UVLADIE3JM/moc_VlcPlayer.cpp", null ],
 		[ "D:/IPTV/src/VodItem.h", "MU", "UVLADIE3JM/moc_VodItem.cpp", null ],
 		[ "D:/IPTV/src/VodModel.h", "MU", "UVLADIE3JM/moc_VodModel.cpp", null ]
 	],
@@ -1048,6 +1055,7 @@
 	"MOC_COMPILATION_FILE" : "D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/untitled_autogen/mocs_compilation.cpp",
 	"MOC_DEFINITIONS" : 
 	[
+		"HAVE_VLC",
 		"MINGW_HAS_SECURE_API=1",
 		"QT_CORE_LIB",
 		"QT_GUI_LIB",
@@ -1078,6 +1086,7 @@
 	],
 	"MOC_INCLUDES" : 
 	[
+		"C:/Program Files/VideoLAN/VLC/sdk/include",
 		"C:/Qt/6.9.2/mingw_64/include/QtCore",
 		"C:/Qt/6.9.2/mingw_64/include",
 		"C:/Qt/6.9.2/mingw_64/mkspecs/win32-g++",
@@ -1135,10 +1144,12 @@
 		[ "D:/IPTV/AppState.cpp", "MU", null ],
 		[ "D:/IPTV/main.cpp", "MU", null ],
 		[ "D:/IPTV/src/ChannelModel.cpp", "MU", null ],
+		[ "D:/IPTV/src/ExternalVlcLauncher.cpp", "MU", null ],
 		[ "D:/IPTV/src/FilePicker.cpp", "MU", null ],
 		[ "D:/IPTV/src/LiveChannel.cpp", "MU", null ],
 		[ "D:/IPTV/src/M3UParser.cpp", "MU", null ],
 		[ "D:/IPTV/src/PlaylistManager.cpp", "MU", null ],
+		[ "D:/IPTV/src/VlcPlayer.cpp", "MU", null ],
 		[ "D:/IPTV/src/VodItem.cpp", "MU", null ],
 		[ "D:/IPTV/src/VodModel.cpp", "MU", null ]
 	],

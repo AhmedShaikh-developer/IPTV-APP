@@ -358,6 +358,14 @@ CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qlist.h D:/IPTV/src/LiveChannel.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h \
+ D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\UVLADIE3JM/moc_ExternalVlcLauncher.cpp \
+ D:/IPTV/src/ExternalVlcLauncher.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QProcess \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qprocess.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qiodevice.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qspan.h \
+ C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cassert \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/q20iterator.h \
  D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\UVLADIE3JM/moc_FilePicker.cpp \
  D:/IPTV/src/FilePicker.h C:/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qurl.h \
@@ -405,10 +413,6 @@ CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qsslsocket.h \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qtcpsocket.h \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qabstractsocket.h \
- C:/Qt/6.9.2/mingw_64/include/QtCore/qiodevice.h \
- C:/Qt/6.9.2/mingw_64/include/QtCore/qspan.h \
- C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cassert \
- C:/Qt/6.9.2/mingw_64/include/QtCore/q20iterator.h \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qhostaddress.h \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qsslerror.h \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qsslcertificate.h \
@@ -475,6 +479,96 @@ CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.obj: \
  D:/IPTV/src/ChannelModel.h D:/IPTV/src/VodModel.h \
  D:/IPTV/src/M3UParser.h C:/Qt/6.9.2/mingw_64/include/QtNetwork/QSslError \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/qsslerror.h \
+ D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\UVLADIE3JM/moc_VlcPlayer.cpp \
+ D:/IPTV/src/VlcPlayer.h C:/Qt/6.9.2/mingw_64/include/QtQuick/QQuickItem \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qquickitem.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qtquickglobal.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qtqmlglobal.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qtqml-config.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qtqmlexports.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qtguiglobal.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qtgui-config.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qtguiexports.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qtquick-config.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qtquickexports.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqml.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlprivate.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qjsprimitivevalue.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qjsnumbercoercion.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qjsvalue.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmllist.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlparserstatus.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlpropertyvaluesource.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qmetaobject.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qpointer.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qversionnumber.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qtyperevision.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlregistration.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQmlIntegration/qqmlintegration.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlcomponent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlerror.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qproperty.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qpropertyprivate.h \
+ C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/experimental/source_location \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qevent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qcoreevent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qbasictimer.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qabstracteventdispatcher.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qeventloop.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qdeadlinetimer.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qelapsedtimer.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qeventpoint.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qvector2d.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qvectornd.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qpoint.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qrect.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qmargins.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qsize.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qpointingdevice.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qinputdevice.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qscreen.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QRect \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qrect.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QSize \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qsize.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QSizeF \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/QTransform \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qtransform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qpolygon.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qregion.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qwindowdefs.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qwindowdefs_win.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qline.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qnativeinterface.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qscreen_platform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qguiapplication.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qcoreapplication.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qcoreapplication_platform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qinputmethod.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qguiapplication_platform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qkeysequence.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qfont.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qaccessible.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qcolor.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qrgb.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qrgba64.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qaccessible_base.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/QWindow \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qwindow.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QEvent \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qcoreevent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QMargins \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qmargins.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qsurface.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qsurfaceformat.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qicon.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qpixmap.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qpaintdevice.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qimage.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qpixelformat.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qtransform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qcursor.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qbitmap.h \
  D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\UVLADIE3JM/moc_VodItem.cpp \
  D:/IPTV/src/VodItem.h \
  D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\UVLADIE3JM/moc_VodModel.cpp \

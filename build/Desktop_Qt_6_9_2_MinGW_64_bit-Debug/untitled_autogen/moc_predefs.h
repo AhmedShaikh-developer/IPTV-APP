@@ -268,6 +268,7 @@
 #define __UINTMAX_C(c) c ## ULL
 #define __FLT16_DIG__ 3
 #define __FLT32X_MIN__ 2.22507385850720138309023271733240406e-308F32x
+#define HAVE_VLC 1
 #define __SIG_ATOMIC_MAX__ 0x7fffffff
 #define __cpp_constexpr 201603L
 #define __GCC_ATOMIC_WCHAR_T_LOCK_FREE 2

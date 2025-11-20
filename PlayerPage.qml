@@ -1,87 +1,220 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtMultimedia 6.0
 import IPTVBackend 1.0
 
 Rectangle {
     id: playerPage
     color: "#000000"
+
+    // When true we don't render video inside this window. Instead, we launch
+    // the full VLC player UI in a separate window using ExternalVlcLauncher.
+    property bool useExternalVlc: false // DISABLED - play video inside app
     
-    property url currentSource: "qrc:/src/IPTV Pro.mp4"
+    // Format time from milliseconds to MM:SS or HH:MM:SS
+    function formatTime(milliseconds) {
+        if (!milliseconds || milliseconds < 0) return "00:00"
+        
+        var totalSeconds = Math.floor(milliseconds / 1000)
+        var hours = Math.floor(totalSeconds / 3600)
+        var minutes = Math.floor((totalSeconds % 3600) / 60)
+        var seconds = totalSeconds % 60
+        
+        if (hours > 0) {
+            return (hours < 10 ? "0" : "") + hours + ":" + 
+                   (minutes < 10 ? "0" : "") + minutes + ":" + 
+                   (seconds < 10 ? "0" : "") + seconds
+        } else {
+            return (minutes < 10 ? "0" : "") + minutes + ":" + 
+                   (seconds < 10 ? "0" : "") + seconds
+        }
+    }
+    
+    property url currentSource: "" // Changed from default video to empty
     property string streamUrl: ""
-    property bool isPlaying: false
-    property bool showControls: true
+    property bool showControls: true // Controls visibility - always show initially
     property bool showMiniPlayer: false
     property real playbackPosition: 0.3
     property real bufferedPosition: 0.7
     property bool isSeeking: false
-    property bool isPaused: videoPlayer.playbackState === MediaPlayer.PausedState
+    property bool isPaused: vlcPlayer.state === VlcPlayer.Paused
+    property bool isPlaying: vlcPlayer.state === VlcPlayer.Playing // Computed from VLC state
+    
+    // Force controls to always be visible when video is playing
+    onIsPlayingChanged: {
+        if (isPlaying) {
+            showControls = true
+            console.log("Video playing - forcing controls visible, showControls:", showControls)
+        }
+    }
+    property bool hasValidSource: false // Track if we have a valid source
+    
+    // External VLC launcher removed - using embedded player
+    
+    // Force controls to be visible initially and when playing
+    // Component.onCompleted will be at the end of the file
     
     onStreamUrlChanged: {
-        console.log("=== PlayerPage: streamUrl changed ===")
+        console.log("═══════════════════════════════════════════════════")
+        console.log("PlayerPage.onStreamUrlChanged")
+        console.log("═══════════════════════════════════════════════════")
         console.log("New streamUrl:", streamUrl)
         console.log("streamUrl type:", typeof streamUrl)
+        
         if (streamUrl !== "" && streamUrl !== undefined && streamUrl !== null) {
-            console.log("Setting video source to:", streamUrl)
+            console.log("✓ Valid streamUrl detected")
             
-            // Ensure URL has proper format
-            var urlString = streamUrl
-            if (!urlString.startsWith("http://") && !urlString.startsWith("https://") && !urlString.startsWith("qrc:/") && !urlString.startsWith("file://")) {
+            // Convert to string and clean
+            var urlString = String(streamUrl).trim()
+            
+            // Remove any quotes if present
+            urlString = urlString.replace(/^["']|["']$/g, '')
+            
+            // Add protocol if missing
+            if (!urlString.startsWith("http://") && !urlString.startsWith("https://") && 
+                !urlString.startsWith("qrc:/") && !urlString.startsWith("file://")) {
+                console.log("⚠ Adding http:// prefix")
                 urlString = "http://" + urlString
             }
-            console.log("Formatted URL string:", urlString)
             
-            // Stop current playback first
-            videoPlayer.stop()
+            console.log("✓ Final URL string:", urlString)
             
-            // Convert string to QUrl - this ensures proper URL handling
-            // For M3U8/HLS streams, Qt needs a proper QUrl object
-            var urlObj = Qt.resolvedUrl(urlString)
-            // If Qt.resolvedUrl doesn't work for HTTP URLs, create URL directly
-            if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
-                // For HTTP URLs, we must use the string directly as QUrl
-                // But ensure it's treated as a proper URL
-                console.log("Using HTTP URL string directly:", urlString)
-                currentSource = urlString  // Keep as string for HTTP URLs
-            } else {
-                currentSource = urlObj
+            // Validate URL format
+            try {
+                var testUrl = new URL(urlString)
+                console.log("✓ URL validation passed")
+                console.log("  Protocol:", testUrl.protocol)
+                console.log("  Host:", testUrl.host)
+            } catch (e) {
+                console.warn("⚠ URL validation warning:", e)
             }
             
-            console.log("currentSource set to:", currentSource)
-            console.log("currentSource type:", typeof currentSource)
-            
-            // The source binding will automatically update since currentSource changed
-            // But also explicitly set it to ensure it updates
-            Qt.callLater(function() {
-                console.log("Video player source before update:", videoPlayer.source)
-                // Force source update - use the string directly for HTTP URLs
-                if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
-                    videoPlayer.source = urlString
-                } else {
-                    videoPlayer.source = urlObj
+            // If we are using the external VLC UI, launch it here and skip internal playback
+            if (useExternalVlc) {
+                console.log("✓ Launching external VLC player with URL:", urlString)
+                externalVlc.playUrl(urlString)
+
+                // Still update state for history / other logic
+                hasValidSource = true
+                fallbackRect.visible = false
+                currentSource = urlString
+
+                // Do NOT configure internal vlcPlayer or start playTimer
+            } else {
+                // Stop any current playback
+                if (vlcPlayer.state !== VlcPlayer.Stopped && vlcPlayer.state !== VlcPlayer.Idle) {
+                    console.log("Stopping current playback...")
+                    vlcPlayer.stop()
                 }
-                console.log("Video player source after update:", videoPlayer.source)
-                console.log("Video player source toString:", videoPlayer.source.toString())
                 
-                // Wait a bit more for the source to be fully loaded before playing
+                // Mark that we have a valid source
+                hasValidSource = true
+                
+                // Hide fallback/error UI
+                fallbackRect.visible = false
+                
+                // Set source to VLC player
+                console.log("Setting currentSource property...")
+                currentSource = urlString
+                
+                console.log("Setting VLC player source...")
+                vlcPlayer.source = urlString
+                
+                // Verify it was set
                 Qt.callLater(function() {
-                    console.log("Calling videoPlayer.play() with source:", videoPlayer.source.toString())
-                    videoPlayer.play()
+                    console.log("Verification after setting:")
+                    console.log("  currentSource:", currentSource.toString())
+                    console.log("  vlcPlayer.source:", vlcPlayer.source)
+                    console.log("  Are they equal?", currentSource.toString() === vlcPlayer.source)
                 })
-            })
+                
+                // Start playback timer
+                console.log("Starting playTimer (1 second delay)...")
+                playTimer.start()
+            }
         } else {
-            console.log("streamUrl is empty, not changing source")
+            console.log("✗ streamUrl is empty or invalid")
+            hasValidSource = false
+            currentSource = ""
+            vlcPlayer.source = ""
+        }
+        console.log("═══════════════════════════════════════════════════")
+    }
+    
+    // Timer to start playback after source is set
+    Timer {
+        id: playTimer
+        interval: 1000  // Increased to 1 second for better reliability
+        repeat: false
+        onTriggered: {
+            console.log("=== playTimer: Attempting to start VLC playback ===")
+            console.log("VLC source:", vlcPlayer.source)
+            console.log("currentSource:", currentSource.toString())
+            console.log("streamUrl:", streamUrl)
+            console.log("hasValidSource:", hasValidSource)
+            console.log("VLC state:", vlcPlayer.state)
+            
+            // Double-check source is set
+            if (vlcPlayer.source === "" && currentSource.toString() !== "") {
+                console.log("⚠ Source binding issue detected, forcing source update...")
+                vlcPlayer.source = currentSource.toString()
+            }
+            
+            if (hasValidSource) {
+                var sourceStr = vlcPlayer.source
+                if (sourceStr !== "" && sourceStr !== "undefined") {
+                    console.log("✓ Source is valid, calling VLC play()...")
+                    console.log("Source URL:", sourceStr)
+                    
+                    // Try playing with VLC - embedded in app
+                    vlcPlayer.play()
+                    
+                    // Also check after a short delay if it didn't start
+                    playCheckTimer.start()
+                } else {
+                    console.error("✗ Source is empty, cannot play")
+                }
+            } else {
+                console.error("✗ hasValidSource is false, cannot play")
+            }
+        }
+    }
+    
+    // Check if playback actually started
+    Timer {
+        id: playCheckTimer
+        interval: 2000
+        repeat: false
+        onTriggered: {
+            console.log("=== Play Check Timer ===")
+            console.log("Playback state:", vlcPlayer.state === VlcPlayer.Playing ? "PLAYING ✓" : "NOT PLAYING ✗")
+            console.log("VLC state:", vlcPlayer.state)
+            console.log("Source:", vlcPlayer.source)
+            
+            if (!useExternalVlc && hasValidSource && vlcPlayer.state !== VlcPlayer.Playing) {
+                console.log("⚠ Playback didn't start, retrying...")
+                console.log("VLC state:", vlcPlayer.state === VlcPlayer.Error ? "Error ✗" : "Valid")
+                
+                // Retry once more
+                if (vlcPlayer.source !== "") {
+                    console.log("Retrying VLC play()...")
+                    vlcPlayer.stop()
+                    Qt.callLater(function() {
+                        vlcPlayer.play()
+                    })
+                }
+            }
         }
     }
     
     
     Timer {
         id: autoHideTimer
-        interval: 3000
-        running: showControls && !isPaused && !isSeeking
+        interval: 5000 // 5 seconds before hiding
+        running: false // DISABLED - NEVER HIDE CONTROLS
         onTriggered: {
-            showControls = false
+            // DO NOTHING - keep controls always visible
+            console.log("Auto-hide triggered (should not happen)")
         }
     }
     
@@ -89,7 +222,7 @@ Rectangle {
         id: placeholderDelayTimer
         interval: 350
         onTriggered: {
-            if (videoPlayer.playbackState === MediaPlayer.StoppedState) {
+                    if (vlcPlayer.state === VlcPlayer.Stopped || vlcPlayer.state === VlcPlayer.Idle) {
                 fallbackRect.visible = true
             }
         }
@@ -97,40 +230,61 @@ Rectangle {
     
     function revealControls() {
         showControls = true
-        autoHideTimer.restart()
+        // DO NOT restart timer - controls stay visible always
     }
     
     function retryPlayback() {
-        var source = streamUrl !== "" ? streamUrl : currentSource
-        videoPlayer.source = source
-        videoPlayer.play()
-        fallbackRect.visible = false
+        if (useExternalVlc) {
+            console.log("retryPlayback() called in external VLC mode - relaunching external VLC")
+            var url = streamUrl !== "" ? streamUrl : currentSource
+            if (url !== "") {
+                externalVlc.playUrl(String(url))
+            }
+        } else {
+            var source = streamUrl !== "" ? streamUrl : currentSource
+            if (source !== "") {
+                vlcPlayer.source = source
+                vlcPlayer.play()
+                fallbackRect.visible = false
+            }
+        }
     }
     
     Connections {
         target: PlaylistManager
         function onPlayStream(url) {
-            console.log("=== PlayerPage: Received playStream signal ===")
+            console.log("═══════════════════════════════════════")
+            console.log("PlayerPage: Received playStream signal")
+            console.log("═══════════════════════════════════════")
             console.log("URL from signal:", url)
             console.log("URL type:", typeof url)
-            console.log("URL string:", url.toString ? url.toString() : url)
             
             // Convert QVariant/QString to string if needed
             var urlString = url
             if (typeof url === "object" && url.toString) {
                 urlString = url.toString()
             }
-            console.log("URL string value:", urlString)
+            
+            console.log("✓ Final URL string:", urlString)
+            
+            // Validate URL
+            if (!urlString || urlString === "" || urlString === "undefined") {
+                console.error("✗ ERROR: Invalid URL received!")
+                return
+            }
+            
+            if (!urlString.startsWith("http://") && !urlString.startsWith("https://")) {
+                console.warn("⚠ WARNING: URL doesn't start with http:// or https://")
+            }
             
             // Set streamUrl - this will trigger onStreamUrlChanged
             streamUrl = urlString
-            console.log("streamUrl property set to:", streamUrl)
+            console.log("✓ streamUrl property set, will trigger video load")
+            console.log("═══════════════════════════════════════")
         }
         
         Component.onCompleted: {
-            console.log("=== PlayerPage: Connections to PlaylistManager completed ===")
-            console.log("PlaylistManager object:", PlaylistManager)
-            console.log("PlaylistManager type:", typeof PlaylistManager)
+            console.log("PlayerPage: Connections to PlaylistManager established")
         }
     }
     
@@ -139,102 +293,143 @@ Rectangle {
         anchors.fill: parent
         color: "#000000"
         
-        Video {
-            id: videoPlayer
+        // libVLC Player Component
+        VlcPlayer {
+            id: vlcPlayer
+            videoOutput: videoOutputItem
+        }
+        
+        // Video output surface for libVLC
+        Item {
+            id: videoOutputItem
             anchors.fill: parent
-            // For HTTP/HTTPS URLs, prefer currentSource (which is set from streamUrl)
-            // This ensures we use the properly formatted URL
-            source: (streamUrl !== "" && streamUrl !== undefined) ? streamUrl : currentSource
-            autoPlay: false  // We'll call play() explicitly in onSourceChanged
-            loops: MediaPlayer.Once
-            focus: true  // Allow focus for keyboard controls
+            visible: vlcPlayer.state === VlcPlayer.Playing || vlcPlayer.state === VlcPlayer.Paused
             
-            property bool mockPlaying: isPlaying && !isPaused
-            
-            onSourceChanged: {
-                console.log("=== Video source changed ===")
-                console.log("New source:", source)
-                console.log("Source URL string:", source.toString())
-                console.log("Source type:", typeof source)
-                var sourceStr = source.toString()
-                // Only auto-play if it's a valid URL (not empty and not the default resource)
-                if (sourceStr !== "" && sourceStr !== "qrc:/src/IPTV Pro.mp4" && sourceStr !== "undefined") {
-                    console.log("New source detected:", sourceStr)
-                    // Check if it's an HTTP/HTTPS URL
-                    if (sourceStr.startsWith("http://") || sourceStr.startsWith("https://")) {
-                        console.log("HTTP URL detected, calling play()...")
-                        // Use a small delay to ensure source is fully set and loaded
-                        Qt.callLater(function() {
-                            console.log("Calling videoPlayer.play() with source:", videoPlayer.source.toString())
-                            videoPlayer.play()
-                        })
-                    } else {
-                        console.log("Not an HTTP URL, skipping auto-play")
-                    }
-                } else {
-                    console.log("Source is default or empty, not playing")
+            Component.onCompleted: {
+                console.log("=== VLC Video Output initialized ===")
+                // Wait for window to be available before attaching
+                if (videoOutputItem.window) {
+                    console.log("✓ Window available immediately")
                 }
             }
             
-            onMockPlayingChanged: {
-                if (mockPlaying) {
-                    play()
-                } else {
-                    pause()
+            onWindowChanged: {
+                if (window) {
+                    console.log("✓ Video output window changed, attaching VLC player")
+                    // VlcPlayer will automatically attach via videoOutput property
                 }
             }
+        }
+        
+        // VLC Player state handling
+        Connections {
+            target: vlcPlayer
             
-            onErrorOccurred: function(error, errorString) {
-                console.error("=== Video error ===")
-                console.error("Error code:", error)
-                console.error("Error string:", errorString)
-                console.error("Source URL:", source)
-                playerError.showError("network", "Playback Error", errorString || "Failed to play stream")
+            function onStateChanged() {
+                var stateStr = ""
+                switch(vlcPlayer.state) {
+                    case VlcPlayer.Idle: stateStr = "Idle"; break
+                    case VlcPlayer.Opening: stateStr = "Opening"; break
+                    case VlcPlayer.Buffering: stateStr = "Buffering"; break
+                    case VlcPlayer.Playing: stateStr = "Playing"; break
+                    case VlcPlayer.Paused: stateStr = "Paused"; break
+                    case VlcPlayer.Stopped: stateStr = "Stopped"; break
+                    case VlcPlayer.Ended: stateStr = "Ended"; break
+                    case VlcPlayer.Error: stateStr = "Error"; break
+                }
+                console.log("=== VLC Player state changed ===")
+                console.log("State:", stateStr, "(" + vlcPlayer.state + ")")
+                console.log("Source:", vlcPlayer.source)
             }
             
-            onPlaybackStateChanged: {
-                console.log("=== Video playback state changed ===")
-                console.log("State:", playbackState)
-                console.log("Source:", source)
-                
-                if (playbackState === MediaPlayer.PlayingState) {
-                    console.log("✓ Video is now playing!")
-                    fallbackRect.visible = false
-                    placeholderDelayTimer.stop()
-                    isPlaying = true
-                } else if (playbackState === MediaPlayer.StoppedState) {
-                    console.log("Video stopped")
+            function onPlaying() {
+                console.log("✓✓✓ VLC VIDEO IS NOW PLAYING! ✓✓✓")
+                fallbackRect.visible = false
+                placeholderDelayTimer.stop()
+                isPlaying = true
+                showControls = true // Force controls to be visible
+                console.log("✓ Controls FORCED to visible, showControls:", showControls)
+                console.log("✓ PlayerControls opacity should be:", showControls ? 1.0 : 0.0)
+                autoHideTimer.stop() // Stop auto-hide - keep controls always visible
+                // DO NOT restart timer - controls stay visible permanently
+            }
+            
+            function onPaused() {
+                console.log("⏸ VLC Video paused")
+                isPlaying = false
+                showControls = true // Always show controls when paused
+            }
+            
+            function onStopped() {
+                console.log("⏹ VLC Video stopped")
+                if (hasValidSource && vlcPlayer.source !== "") {
                     placeholderDelayTimer.start()
                     
-                    // Add to history when playback stops
-                    var history = parent.parent.parent.parent.readJson("historyJson", [])
-                    var historyEntry = {
-                        type: "video",
-                        id: currentSource.toString(),
-                        progress: playbackPosition,
-                        ts: Date.now()
+                    // Add to history
+                    try {
+                        var history = playerPage.parent.parent.parent.readJson("historyJson", [])
+                        var historyEntry = {
+                            type: "video",
+                            id: currentSource.toString(),
+                            progress: playbackPosition,
+                            ts: Date.now()
+                        }
+                        history.unshift(historyEntry)
+                        if (history.length > 50) {
+                            history = history.slice(0, 50)
+                        }
+                        playerPage.parent.parent.parent.writeJson("historyJson", history)
+                    } catch (e) {
+                        console.log("Could not save to history:", e)
                     }
-                    
-                    // Add to beginning of history
-                    history.unshift(historyEntry)
-                    
-                    // Truncate to max 50 items
-                    if (history.length > 50) {
-                        history = history.slice(0, 50)
+                }
+                isPlaying = false
+            }
+            
+            function onEnded() {
+                console.log("▶️ VLC Video ended")
+                isPlaying = false
+            }
+            
+            function onError() {
+                console.error("=== VLC Player error ===")
+                if (vlcPlayer.errorMessage) {
+                    var userMessage = vlcPlayer.errorMessage
+                    // Check if it's a 403 error (from logs)
+                    if (userMessage.indexOf("403") !== -1 || userMessage.indexOf("Forbidden") !== -1 || 
+                        userMessage.indexOf("can't be opened") !== -1) {
+                        userMessage = "Access denied (403).\n\nThis stream may be:\n• Region-locked\n• Require authentication\n• Protected by the server\n\nTry a different stream or check if the URL is valid."
+                    } else if (userMessage.indexOf("404") !== -1 || userMessage.indexOf("not found") !== -1) {
+                        userMessage = "Stream not found (404).\n\nThe URL may be invalid or the stream may have been removed."
+                    } else if (userMessage.indexOf("timeout") !== -1) {
+                        userMessage = "Connection timeout.\n\nPlease check your internet connection and try again."
+                    } else if (userMessage.indexOf("network") !== -1) {
+                        userMessage = "Network error.\n\nPlease check your internet connection."
                     }
-                    
-                    parent.parent.parent.parent.writeJson("historyJson", history)
-                } else if (playbackState === MediaPlayer.PausedState) {
-                    console.log("Video paused")
-                    isPlaying = false
+                    console.error("Error message:", userMessage)
+                    playerError.showError("network", "Playback Error", userMessage)
+                } else {
+                    // Generic error if no specific message
+                    playerError.showError("network", "Playback Error", "Unable to play this stream. It may be unavailable or require authentication.")
                 }
             }
             
-            opacity: (playbackState === MediaPlayer.PlayingState || 
-                     playbackState === MediaPlayer.PausedState) ? 1.0 : 0.0
+            function onErrorMessageChanged() {
+                if (vlcPlayer.errorMessage) {
+                    console.error("VLC Error:", vlcPlayer.errorMessage)
+                }
+            }
             
-            Behavior on opacity {
-                NumberAnimation { duration: 300; easing.type: Easing.InOutQuad }
+            function onPositionChanged() {
+                playbackPosition = vlcPlayer.position
+            }
+            
+            function onTimeChanged() {
+                // Time updated
+            }
+            
+            function onLengthChanged() {
+                console.log("VLC Media length:", vlcPlayer.length, "ms")
             }
         }
         
@@ -246,7 +441,7 @@ Rectangle {
             color: "#181818"
             radius: 8
             visible: currentSource === "" || 
-                    videoPlayer.playbackState === MediaPlayer.StoppedState
+                    vlcPlayer.state === VlcPlayer.Stopped || vlcPlayer.state === VlcPlayer.Idle
             
             opacity: visible ? 1.0 : 0.0
             
@@ -313,13 +508,24 @@ Rectangle {
     
     PlayerControls {
         id: playerControls
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: 24
-        opacity: showControls ? 1.0 : 0.0
-        visible: showControls
-        enabled: showControls
-        z: 900
+        anchors.margins: 0  // No margins - go full width
+        height: 160 // EXPLICIT HEIGHT - this is critical
+        // Force controls to always be visible - disable auto-hide for now
+        opacity: 1.0 // Always fully visible
+        visible: true // Always visible
+        enabled: true // Always enabled
+        z: 10000 // Very high z-order to ensure it's on top of everything
+        
+        Component.onCompleted: {
+            console.log("========== PLAYERCONTROLS COMPONENT ==========")
+            console.log("PlayerControls width:", width, "height:", height)
+            console.log("PlayerControls opacity:", opacity, "visible:", visible)
+            console.log("PlayerControls enabled:", enabled, "z:", z)
+            console.log("==============================================")
+        }
         
         Behavior on opacity {
             NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
@@ -328,6 +534,10 @@ Rectangle {
         isPlaying: playerPage.isPlaying
         playbackPosition: playerPage.playbackPosition
         bufferedPosition: playerPage.bufferedPosition
+        currentTime: formatTime(vlcPlayer.time)
+        totalTime: formatTime(vlcPlayer.length)
+        volume: vlcPlayer.volume * 100 // Convert 0-1 to 0-100
+        muted: vlcPlayer.muted
         
         onAnyUserAction: {
             revealControls()
@@ -336,11 +546,22 @@ Rectangle {
         onTogglePlay: {
             playerPage.isPaused = !playerPage.isPaused
             playerPage.isPlaying = !playerPage.isPaused
-            videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
+            // VLC player doesn't need mockPlaying - state is controlled directly
+            if (playerPage.isPaused) {
+                vlcPlayer.pause()
+            } else if (playerPage.isPlaying) {
+                vlcPlayer.play()
+            }
+            revealControls()
+        }
+        
+        onStopRequested: {
+            vlcPlayer.stop()
             revealControls()
         }
         
         onBackPressed: {
+            vlcPlayer.stop()
             if (typeof navigateTo !== "undefined") {
                 navigateTo("/home")
             } else {
@@ -355,6 +576,25 @@ Rectangle {
         
         onSeekEnd: {
             playerPage.isSeeking = false
+            revealControls()
+        }
+        
+        onSeekTo: {
+            if (vlcPlayer.length > 0) {
+                var seekTime = position * vlcPlayer.length
+                vlcPlayer.seek(seekTime)
+                console.log("Seeking to:", seekTime, "ms (", position * 100, "%)")
+            }
+            revealControls()
+        }
+        
+        onSetVolume: {
+            vlcPlayer.setVolume(volume / 100) // Convert 0-100 to 0-1
+            revealControls()
+        }
+        
+        onToggleMute: {
+            vlcPlayer.setMuted(!vlcPlayer.muted)
             revealControls()
         }
     }
@@ -444,7 +684,12 @@ Rectangle {
             case Qt.Key_Space:
                 playerPage.isPaused = !playerPage.isPaused
                 playerPage.isPlaying = !playerPage.isPaused
-                videoPlayer.mockPlaying = playerPage.isPlaying && !playerPage.isPaused
+                // VLC player doesn't need mockPlaying - state is controlled directly
+            if (playerPage.isPaused) {
+                vlcPlayer.pause()
+            } else if (playerPage.isPlaying) {
+                vlcPlayer.play()
+            }
                 revealControls()
                 event.accepted = true
                 break
@@ -501,6 +746,8 @@ Rectangle {
         forceActiveFocus()
         
         // Show controls initially
+        showControls = true
+        console.log("PlayerPage completed, showControls:", showControls)
         revealControls()
     }
     

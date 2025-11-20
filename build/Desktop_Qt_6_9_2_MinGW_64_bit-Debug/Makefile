@@ -284,6 +284,30 @@ src/ChannelModel.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/ChannelModel.cpp.s
 .PHONY : src/ChannelModel.cpp.s
 
+src/ExternalVlcLauncher.obj: src/ExternalVlcLauncher.cpp.obj
+.PHONY : src/ExternalVlcLauncher.obj
+
+# target to build an object file
+src/ExternalVlcLauncher.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj
+.PHONY : src/ExternalVlcLauncher.cpp.obj
+
+src/ExternalVlcLauncher.i: src/ExternalVlcLauncher.cpp.i
+.PHONY : src/ExternalVlcLauncher.i
+
+# target to preprocess a source file
+src/ExternalVlcLauncher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.i
+.PHONY : src/ExternalVlcLauncher.cpp.i
+
+src/ExternalVlcLauncher.s: src/ExternalVlcLauncher.cpp.s
+.PHONY : src/ExternalVlcLauncher.s
+
+# target to generate assembly for a file
+src/ExternalVlcLauncher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.s
+.PHONY : src/ExternalVlcLauncher.cpp.s
+
 src/FilePicker.obj: src/FilePicker.cpp.obj
 .PHONY : src/FilePicker.obj
 
@@ -379,6 +403,30 @@ src/PlaylistManager.s: src/PlaylistManager.cpp.s
 src/PlaylistManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/PlaylistManager.cpp.s
 .PHONY : src/PlaylistManager.cpp.s
+
+src/VlcPlayer.obj: src/VlcPlayer.cpp.obj
+.PHONY : src/VlcPlayer.obj
+
+# target to build an object file
+src/VlcPlayer.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj
+.PHONY : src/VlcPlayer.cpp.obj
+
+src/VlcPlayer.i: src/VlcPlayer.cpp.i
+.PHONY : src/VlcPlayer.i
+
+# target to preprocess a source file
+src/VlcPlayer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/VlcPlayer.cpp.i
+.PHONY : src/VlcPlayer.cpp.i
+
+src/VlcPlayer.s: src/VlcPlayer.cpp.s
+.PHONY : src/VlcPlayer.s
+
+# target to generate assembly for a file
+src/VlcPlayer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled.dir\build.make CMakeFiles/untitled.dir/src/VlcPlayer.cpp.s
+.PHONY : src/VlcPlayer.cpp.s
 
 src/VodItem.obj: src/VodItem.cpp.obj
 .PHONY : src/VodItem.obj
@@ -501,6 +549,9 @@ help:
 	@echo ... src/ChannelModel.obj
 	@echo ... src/ChannelModel.i
 	@echo ... src/ChannelModel.s
+	@echo ... src/ExternalVlcLauncher.obj
+	@echo ... src/ExternalVlcLauncher.i
+	@echo ... src/ExternalVlcLauncher.s
 	@echo ... src/FilePicker.obj
 	@echo ... src/FilePicker.i
 	@echo ... src/FilePicker.s
@@ -513,6 +564,9 @@ help:
 	@echo ... src/PlaylistManager.obj
 	@echo ... src/PlaylistManager.i
 	@echo ... src/PlaylistManager.s
+	@echo ... src/VlcPlayer.obj
+	@echo ... src/VlcPlayer.i
+	@echo ... src/VlcPlayer.s
 	@echo ... src/VodItem.obj
 	@echo ... src/VodItem.i
 	@echo ... src/VodItem.s

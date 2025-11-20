@@ -533,7 +533,47 @@ CMakeFiles/untitled.dir/main.cpp.obj: D:\IPTV\main.cpp \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qabstractitemmodel.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QList D:\IPTV\src/LiveChannel.h \
  D:\IPTV\src/VodModel.h D:\IPTV\src/VodItem.h D:\IPTV\src/M3UParser.h \
- D:\IPTV\src/FilePicker.h D:\IPTV\AppState.h \
+ D:\IPTV\src/FilePicker.h D:\IPTV\src/VlcPlayer.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/QQuickItem \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qquickitem.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qtquickglobal.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qtquick-config.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQuick/qtquickexports.h \
+ C:/Qt/6.9.2/mingw_64/include/QtQml/qqmlcomponent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qproperty.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qpropertyprivate.h \
+ C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/experimental/source_location \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qevent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qeventpoint.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qvector2d.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qvectornd.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qpointingdevice.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qinputdevice.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qscreen.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QRect \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qrect.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QSize \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qsize.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QSizeF \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/QTransform \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qtransform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qscreen_platform.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qkeysequence.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qfont.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qaccessible.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qaccessible_base.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/QWindow \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qwindow.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QEvent \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qcoreevent.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QMargins \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qmargins.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qsurface.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qsurfaceformat.h \
+ C:/Qt/6.9.2/mingw_64/include/QtGui/qicon.h \
+ D:\IPTV\src/ExternalVlcLauncher.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QProcess \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qprocess.h D:\IPTV\AppState.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QSettings \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qsettings.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QVariant

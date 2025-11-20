@@ -87,6 +87,7 @@ untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/RecordBadge.qml
 untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/DownloadQualitySheet.qml
 untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/PinPad.qml
 untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/SeriesDetails.qml
+untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/TestPlayer.qml
 untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/SignIn.qml
 untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/PlayerPage.qml
 untitled_autogen/EWIEGA46WW/qrc_qml.cpp: D:/IPTV/Downloads.qml
@@ -317,11 +318,41 @@ CMakeFiles/untitled.dir/src/FilePicker.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/src/FilePicker.cpp.s"
 	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\IPTV\src\FilePicker.cpp -o CMakeFiles\untitled.dir\src\FilePicker.cpp.s
 
+CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj: CMakeFiles/untitled.dir/includes_CXX.rsp
+CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj: D:/IPTV/src/VlcPlayer.cpp
+CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj: CMakeFiles/untitled.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj -MF CMakeFiles\untitled.dir\src\VlcPlayer.cpp.obj.d -o CMakeFiles\untitled.dir\src\VlcPlayer.cpp.obj -c D:\IPTV\src\VlcPlayer.cpp
+
+CMakeFiles/untitled.dir/src/VlcPlayer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/untitled.dir/src/VlcPlayer.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\IPTV\src\VlcPlayer.cpp > CMakeFiles\untitled.dir\src\VlcPlayer.cpp.i
+
+CMakeFiles/untitled.dir/src/VlcPlayer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/src/VlcPlayer.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\IPTV\src\VlcPlayer.cpp -o CMakeFiles\untitled.dir\src\VlcPlayer.cpp.s
+
+CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj: CMakeFiles/untitled.dir/includes_CXX.rsp
+CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj: D:/IPTV/src/ExternalVlcLauncher.cpp
+CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj: CMakeFiles/untitled.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj -MF CMakeFiles\untitled.dir\src\ExternalVlcLauncher.cpp.obj.d -o CMakeFiles\untitled.dir\src\ExternalVlcLauncher.cpp.obj -c D:\IPTV\src\ExternalVlcLauncher.cpp
+
+CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E D:\IPTV\src\ExternalVlcLauncher.cpp > CMakeFiles\untitled.dir\src\ExternalVlcLauncher.cpp.i
+
+CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S D:\IPTV\src\ExternalVlcLauncher.cpp -o CMakeFiles\untitled.dir\src\ExternalVlcLauncher.cpp.s
+
 CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/untitled.dir/includes_CXX.rsp
 CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj: untitled_autogen/EWIEGA46WW/qrc_qml.cpp
 CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/untitled.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj -MF CMakeFiles\untitled.dir\untitled_autogen\EWIEGA46WW\qrc_qml.cpp.obj.d -o CMakeFiles\untitled.dir\untitled_autogen\EWIEGA46WW\qrc_qml.cpp.obj -c D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\EWIEGA46WW\qrc_qml.cpp
 
 CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.i: cmake_force
@@ -344,6 +375,8 @@ untitled_OBJECTS = \
 "CMakeFiles/untitled.dir/src/LiveChannel.cpp.obj" \
 "CMakeFiles/untitled.dir/src/VodItem.cpp.obj" \
 "CMakeFiles/untitled.dir/src/FilePicker.cpp.obj" \
+"CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj" \
+"CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj" \
 "CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 
 # External object files for target untitled
@@ -359,10 +392,13 @@ untitled.exe: CMakeFiles/untitled.dir/src/VodModel.cpp.obj
 untitled.exe: CMakeFiles/untitled.dir/src/LiveChannel.cpp.obj
 untitled.exe: CMakeFiles/untitled.dir/src/VodItem.cpp.obj
 untitled.exe: CMakeFiles/untitled.dir/src/FilePicker.cpp.obj
+untitled.exe: CMakeFiles/untitled.dir/src/VlcPlayer.cpp.obj
+untitled.exe: CMakeFiles/untitled.dir/src/ExternalVlcLauncher.cpp.obj
 untitled.exe: CMakeFiles/untitled.dir/untitled_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 untitled.exe: CMakeFiles/untitled.dir/build.make
 untitled.exe: C:/Qt/6.9.2/mingw_64/lib/libQt6QuickControls2.a
 untitled.exe: C:/Qt/6.9.2/mingw_64/lib/libQt6Widgets.a
+untitled.exe: C:/Program\ Files/VideoLAN/VLC/sdk/lib/libvlc.lib
 untitled.exe: C:/Qt/6.9.2/mingw_64/lib/libQt6Quick.a
 untitled.exe: C:/Qt/6.9.2/mingw_64/lib/libQt6QmlMeta.a
 untitled.exe: C:/Qt/6.9.2/mingw_64/lib/libQt6QmlWorkerScript.a
@@ -376,7 +412,7 @@ untitled.exe: C:/Qt/6.9.2/mingw_64/lib/libQt6EntryPoint.a
 untitled.exe: CMakeFiles/untitled.dir/linkLibs.rsp
 untitled.exe: CMakeFiles/untitled.dir/objects1.rsp
 untitled.exe: CMakeFiles/untitled.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable untitled.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable untitled.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\untitled.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

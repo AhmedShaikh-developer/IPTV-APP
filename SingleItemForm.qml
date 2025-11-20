@@ -178,8 +178,13 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                     }
                     onClicked: {
-                        if (urlField.text.trim() !== "") {
-                            PlaylistManager.playSingleStream(urlField.text.trim())
+                        var url = urlField.text.trim()
+                        if (url !== "") {
+                            // Navigate first, then play with delay to ensure PlayerPage is loaded
+                            navigateTo("/player")
+                            Qt.callLater(function() {
+                                PlaylistManager.playSingleStream(url)
+                            })
                         }
                     }
                 }
@@ -208,11 +213,6 @@ Rectangle {
     
     Connections {
         target: PlaylistManager
-        function onPlayStream(url) {
-            // Navigate to player with URL
-            // The player will need to be updated to accept URL parameter
-            navigateTo("/player")
-        }
         function onErrorMessageChanged() {
             if (PlaylistManager.errorMessage !== "") {
                 console.log("Error:", PlaylistManager.errorMessage)

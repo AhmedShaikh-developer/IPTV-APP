@@ -6,12 +6,36 @@ Rectangle {
     id: playerControls
     color: "transparent"
     
+    // CRITICAL: Force size and visibility
+    width: parent ? parent.width : 1366
+    height: 160
+    implicitHeight: 160
+    implicitWidth: 1366
+    
+    // FORCE VISIBLE - ALWAYS ALWAYS ALWAYS
+    visible: true
+    opacity: 1.0
+    enabled: true
+    z: 1000
+    
+    // Override any bindings that might hide this
+    Component.onCompleted: {
+        playerControls.visible = true
+        playerControls.opacity = 1.0
+        console.log("PlayerControls FORCED visible in component")
+    }
+    
     property bool isPlaying: false
     property real playbackPosition: 0.3
     property real bufferedPosition: 0.7
     property bool isSeeking: false
+    property string currentTime: "00:00"
+    property string totalTime: "00:00"
+    property real volume: 100
+    property bool muted: false
     
     signal togglePlay()
+    signal stopRequested()
     signal showInfo()
     signal zapUp()
     signal zapDown()
@@ -22,6 +46,9 @@ Rectangle {
     signal toggleRecording()
     signal seekStart()
     signal seekEnd()
+    signal seekTo(real position)
+    signal setVolume(real volume)
+    signal toggleMute()
     signal anyUserAction()
     
     Behavior on opacity {
@@ -30,15 +57,24 @@ Rectangle {
     
     Rectangle {
         id: controlsBar
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 20
-        height: 120
-        radius: 14
-        color: "#FF0000"
-        border.color: "#333333"
-        border.width: 1
+        anchors.fill: parent
+        anchors.margins: 10
+        height: 140
+        radius: 12
+        color: "#F0000000" // Very opaque black background (94% opacity) - clearly visible
+        opacity: 1.0 // Fully opaque
+        visible: true // Always visible
+        z: 10001 // Even higher z-order
+        border.color: "#FF0000" // RED border so it's VERY visible for debugging
+        border.width: 3
+        
+        Component.onCompleted: {
+            console.log("========== CONTROLS BAR LOADED ==========")
+            console.log("ControlsBar width:", width, "height:", height)
+            console.log("ControlsBar x:", x, "y:", y)
+            console.log("ControlsBar color:", color, "opacity:", opacity)
+            console.log("==========================================")
+        }
         
         ColumnLayout {
             anchors.fill: parent

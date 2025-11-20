@@ -85,5 +85,6 @@
     <file>HelpCenter.qml</file>
     <file>ReportIssue.qml</file>
     <file>LegalDocs.qml</file>
+    <file>TestPlayer.qml</file>
 </qresource>
 </RCC>

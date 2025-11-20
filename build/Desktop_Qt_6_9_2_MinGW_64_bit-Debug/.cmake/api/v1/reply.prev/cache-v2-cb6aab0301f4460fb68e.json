@@ -7734,6 +7734,30 @@
 			"value" : "C:/Qt/6.9.2/mingw_64/lib/cmake/Qt6"
 		},
 		{
+			"name" : "VLC_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "C:/Program Files/VideoLAN/VLC/sdk/include"
+		},
+		{
+			"name" : "VLC_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "C:/Program Files/VideoLAN/VLC/sdk/lib/libvlc.lib"
+		},
+		{
 			"name" : "Vulkan_GLSLANG_VALIDATOR_EXECUTABLE",
 			"properties" : 
 			[

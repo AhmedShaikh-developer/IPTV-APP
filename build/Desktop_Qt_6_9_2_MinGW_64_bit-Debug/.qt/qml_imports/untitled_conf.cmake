@@ -1,4 +1,4 @@
-set(qml_import_scanner_imports_count 34)
+set(qml_import_scanner_imports_count 33)
 set(qml_import_scanner_import_0 "CLASSNAME;QtQuick2Plugin;LINKTARGET;Qt6::qtquick2plugin;NAME;QtQuick;PATH;C:/Qt/6.9.2/mingw_64/qml/QtQuick;PLUGIN;qtquick2plugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQuick/;RELATIVEPATH;QtQuick;TYPE;module;")
 set(qml_import_scanner_import_1 "CLASSNAME;QtQmlPlugin;LINKTARGET;Qt6::qmlplugin;NAME;QtQml;PATH;C:/Qt/6.9.2/mingw_64/qml/QtQml;PLUGIN;qmlplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQml/;RELATIVEPATH;QtQml;TYPE;module;")
 set(qml_import_scanner_import_2 "NAME;QML;PATH;C:/Qt/6.9.2/mingw_64/qml/QML;PREFER;:/qt-project.org/imports/QML/;RELATIVEPATH;QML;TYPE;module;")
@@ -32,5 +32,4 @@ set(qml_import_scanner_import_29 "CLASSNAME;QtQmlLabsModelsPlugin;LINKTARGET;Qt6
 set(qml_import_scanner_import_30 "NAME;Backend;TYPE;module;")
 set(qml_import_scanner_import_31 "NAME;IPTVBackend;TYPE;module;")
 set(qml_import_scanner_import_32 "CLASSNAME;QmlSettingsPlugin;LINKTARGET;Qt6::qmlsettingsplugin;NAME;Qt.labs.settings;PATH;C:/Qt/6.9.2/mingw_64/qml/Qt/labs/settings;PLUGIN;qmlsettingsplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/Qt/labs/settings/;RELATIVEPATH;Qt/labs/settings;TYPE;module;")
-set(qml_import_scanner_import_33 "CLASSNAME;QMultimediaQuickModule;COMPONENTS;C:/Qt/6.9.2/mingw_64/qml/QtMultimedia/Video.qml;LINKTARGET;Qt6::quickmultimedia;NAME;QtMultimedia;PATH;C:/Qt/6.9.2/mingw_64/qml/QtMultimedia;PLUGIN;quickmultimediaplugin;PREFER;:/qt-project.org/imports/QtMultimedia/;RELATIVEPATH;QtMultimedia;TYPE;module;")
 

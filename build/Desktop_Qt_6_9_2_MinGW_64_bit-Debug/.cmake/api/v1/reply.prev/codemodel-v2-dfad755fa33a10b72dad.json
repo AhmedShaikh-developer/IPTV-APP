@@ -7,7 +7,7 @@
 				{
 					"build" : ".",
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-.-Debug-c5b1d573509ce8482f84.json",
+					"jsonFile" : "directory-.-Debug-14b9b9c0d56ee82fe59a.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.16"
@@ -46,7 +46,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "untitled::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-untitled-Debug-f5c6b0278888f329a950.json",
+					"jsonFile" : "target-untitled-Debug-c40caab8b39c95753c52.json",
 					"name" : "untitled",
 					"projectIndex" : 0
 				},
@@ -67,7 +67,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "untitled_qmlimportscan::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-untitled_qmlimportscan-Debug-5b3433b5df93c9b2e9c2.json",
+					"jsonFile" : "target-untitled_qmlimportscan-Debug-83a7b764dbd300084563.json",
 					"name" : "untitled_qmlimportscan",
 					"projectIndex" : 0
 				}
