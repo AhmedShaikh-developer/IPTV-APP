@@ -43,12 +43,12 @@ static void vlcEventCallback(const libvlc_event_t *event, void *userData)
         break;
     case libvlc_MediaPlayerEncounteredError:
         // Note: libVLC doesn't directly expose HTTP status codes in events
-        // The actual HTTP status (like 403) is logged by libVLC but not exposed via API
-        // We'll provide a generic error message and let the user know it might be a 403
+        // The actual HTTP status (403, 404, etc.) is logged by libVLC but not exposed via API
+        // We'll provide a generic error message that covers common issues
         QMetaObject::invokeMethod(player, "updateState", Qt::QueuedConnection);
         QMetaObject::invokeMethod(player, "error", Qt::QueuedConnection);
         QMetaObject::invokeMethod(player, "setErrorMessage", Qt::QueuedConnection, 
-                                  Q_ARG(QString, "Unable to access stream (Error 403). This stream may be region-locked, require authentication, or be blocked by the server."));
+                                  Q_ARG(QString, "Unable to access stream. The stream URL may be invalid, expired, region-locked, or require authentication. Check the console for detailed HTTP status codes."));
         break;
     case libvlc_MediaPlayerPositionChanged:
         if (event->u.media_player_position_changed.new_position >= 0) {
@@ -241,14 +241,27 @@ void VlcPlayer::setupMedia(const QString &url)
     // Calculate origin first
     QString origin = qurl.scheme() + "://" + qurl.host();
     
+    // Set HTTP headers - VLC requires proper formatting
     // Use http-referrer (standard VLC option name)
-    libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=%1").arg(referer).toUtf8().constData());
-    // Also try alternate spelling for compatibility
-    libvlc_media_add_option(m_vlcMedia, QString(":http-referer=%1").arg(referer).toUtf8().constData());
+    QString refererOpt = QString(":http-referrer=%1").arg(referer);
+    libvlc_media_add_option(m_vlcMedia, refererOpt.toUtf8().constData());
+    qDebug() << "VlcPlayer: Applied option:" << refererOpt;
     
-    // User-Agent: Don't duplicate if set at instance level, but ensure per-media override works
-    // Note: Per-media options override instance-level options
-    libvlc_media_add_option(m_vlcMedia, QString(":http-user-agent=%1").arg(userAgent).toUtf8().constData());
+    // Also try alternate spelling for compatibility
+    QString refererOpt2 = QString(":http-referer=%1").arg(referer);
+    libvlc_media_add_option(m_vlcMedia, refererOpt2.toUtf8().constData());
+    qDebug() << "VlcPlayer: Applied option:" << refererOpt2;
+    
+    // User-Agent: Per-media options override instance-level options
+    // Try both quoted and unquoted versions (some VLC versions need quotes for values with spaces)
+    QString uaOpt1 = QString(":http-user-agent=%1").arg(userAgent);
+    libvlc_media_add_option(m_vlcMedia, uaOpt1.toUtf8().constData());
+    qDebug() << "VlcPlayer: Applied option:" << uaOpt1;
+    
+    // Also try with quotes around the value
+    QString uaOpt2 = QString(":http-user-agent=\"%1\"").arg(userAgent);
+    libvlc_media_add_option(m_vlcMedia, uaOpt2.toUtf8().constData());
+    qDebug() << "VlcPlayer: Applied option (quoted):" << uaOpt2;
     
     // Accept headers
     libvlc_media_add_option(m_vlcMedia, ":http-accept=*/*");
@@ -276,8 +289,11 @@ void VlcPlayer::setupMedia(const QString &url)
         libvlc_media_add_option(m_vlcMedia, ":network-caching=1000"); // 1 second cache for direct files
     }
     
-    qDebug() << "VlcPlayer: HTTP headers set - Referer:" << referer;
-    qDebug() << "VlcPlayer: HTTP headers set - User-Agent:" << userAgent;
+    qDebug() << "VlcPlayer: HTTP headers configured:";
+    qDebug() << "  - Referer:" << referer;
+    qDebug() << "  - User-Agent:" << userAgent;
+    qDebug() << "  - Origin:" << origin;
+    qDebug() << "VlcPlayer: Note - Check VLC debug output for actual HTTP request headers sent";
 
     // Apply any per-stream VLC options coming from the playlist (e.g. #EXTVLCOPT)
     // Each entry is in the form "option=value" (without leading colon)
