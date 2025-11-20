@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QUrl>
 #include <QQuickItem>
 #include <QWindow>
@@ -24,6 +25,10 @@ class VlcPlayer : public QObject
     Q_PROPERTY(bool muted READ muted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QQuickItem* videoOutput READ videoOutput WRITE setVideoOutput NOTIFY videoOutputChanged)
+    // Additional libVLC options (from #EXTVLCOPT). Each entry should be in the
+    // form "option=value" (without leading colon). They will be passed to
+    // libvlc_media_add_option as ":option=value".
+    Q_PROPERTY(QStringList vlcOptions READ vlcOptions WRITE setVlcOptions NOTIFY vlcOptionsChanged)
 
 public:
     enum State {
@@ -59,6 +64,9 @@ public:
     QQuickItem* videoOutput() const { return m_videoOutput; }
     void setVideoOutput(QQuickItem* videoOutput);
 
+    QStringList vlcOptions() const { return m_vlcOptions; }
+    void setVlcOptions(const QStringList &options);
+
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
@@ -85,6 +93,7 @@ signals:
     void stopped();
     void ended();
     void error();
+    void vlcOptionsChanged(const QStringList &options);
 
 public slots:
     // Public slots for QMetaObject::invokeMethod access
@@ -115,6 +124,7 @@ private:
     QString m_errorMessage;
     QQuickItem *m_videoOutput;
     QWindow *m_videoWindow;
+    QStringList m_vlcOptions;
 };
 
 #endif // VLCPLAYER_H

@@ -64,6 +64,8 @@ template <> constexpr inline auto PlaylistManager::qt_create_metaobjectdata<qt_m
         "setActivePlaylist",
         "refreshActivePlaylist",
         "playSingleStream",
+        "getChannelVlcOptions",
+        "getVodVlcOptions",
         "clearError",
         "liveChannelsModel",
         "ChannelModel*",
@@ -123,16 +125,24 @@ template <> constexpr inline auto PlaylistManager::qt_create_metaobjectdata<qt_m
         QtMocHelpers::MethodData<void(const QString &)>(24, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 8 },
         }}),
+        // Method 'getChannelVlcOptions'
+        QtMocHelpers::MethodData<QStringList(const QString &) const>(25, 2, QMC::AccessPublic, QMetaType::QStringList, {{
+            { QMetaType::QString, 8 },
+        }}),
+        // Method 'getVodVlcOptions'
+        QtMocHelpers::MethodData<QStringList(const QString &) const>(26, 2, QMC::AccessPublic, QMetaType::QStringList, {{
+            { QMetaType::QString, 8 },
+        }}),
         // Method 'clearError'
-        QtMocHelpers::MethodData<void()>(25, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(27, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
         // property 'liveChannelsModel'
-        QtMocHelpers::PropertyData<ChannelModel*>(26, 0x80000000 | 27, QMC::DefaultPropertyFlags | QMC::EnumOrFlag | QMC::Constant),
+        QtMocHelpers::PropertyData<ChannelModel*>(28, 0x80000000 | 29, QMC::DefaultPropertyFlags | QMC::EnumOrFlag | QMC::Constant),
         // property 'vodItemsModel'
-        QtMocHelpers::PropertyData<VodModel*>(28, 0x80000000 | 29, QMC::DefaultPropertyFlags | QMC::EnumOrFlag | QMC::Constant),
+        QtMocHelpers::PropertyData<VodModel*>(30, 0x80000000 | 31, QMC::DefaultPropertyFlags | QMC::EnumOrFlag | QMC::Constant),
         // property 'errorMessage'
-        QtMocHelpers::PropertyData<QString>(30, QMetaType::QString, QMC::DefaultPropertyFlags, 0),
+        QtMocHelpers::PropertyData<QString>(32, QMetaType::QString, QMC::DefaultPropertyFlags, 0),
     };
     QtMocHelpers::UintData qt_enums {
     };
@@ -171,7 +181,11 @@ void PlaylistManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 13: _t->setActivePlaylist((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 14: _t->refreshActivePlaylist(); break;
         case 15: _t->playSingleStream((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 16: _t->clearError(); break;
+        case 16: { QStringList _r = _t->getChannelVlcOptions((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])));
+            if (_a[0]) *reinterpret_cast< QStringList*>(_a[0]) = std::move(_r); }  break;
+        case 17: { QStringList _r = _t->getVodVlcOptions((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])));
+            if (_a[0]) *reinterpret_cast< QStringList*>(_a[0]) = std::move(_r); }  break;
+        case 18: _t->clearError(); break;
         default: ;
         }
     }
@@ -228,14 +242,14 @@ int PlaylistManager::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 17)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 19;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 17)
+        if (_id < 19)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 17;
+        _id -= 19;
     }
     if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty

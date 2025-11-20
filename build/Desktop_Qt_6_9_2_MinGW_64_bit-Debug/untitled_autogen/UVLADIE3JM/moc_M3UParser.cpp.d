@@ -3,6 +3,7 @@ D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/untitled_autogen/UVLADIE3JM/mo
   C:/Qt/6.9.2/mingw_64/include/QtCore/QList \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QObject \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
+  C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
   C:/Qt/6.9.2/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.9.2/mingw_64/include/QtCore/q20functional.h \
   C:/Qt/6.9.2/mingw_64/include/QtCore/q20memory.h \

@@ -485,6 +485,8 @@ CMakeFiles/untitled.dir/main.cpp.obj: D:\IPTV\main.cpp \
  C:/Qt/6.9.2/mingw_64/include/QtNetwork/QNetworkAccessManager \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QStandardPaths \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qstandardpaths.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstringlist.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QFile \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qfile.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qfiledevice.h \

@@ -323,7 +323,9 @@ CMakeFiles/untitled.dir/src/M3UParser.cpp.obj: D:\IPTV\src\M3UParser.cpp \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QList \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qlist.h D:\IPTV\src\LiveChannel.h \
- D:\IPTV\src\VodItem.h C:/Qt/6.9.2/mingw_64/include/QtCore/QDebug \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstringlist.h D:\IPTV\src\VodItem.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QDebug \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qdebug.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qtextstream.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qcontiguouscache.h \

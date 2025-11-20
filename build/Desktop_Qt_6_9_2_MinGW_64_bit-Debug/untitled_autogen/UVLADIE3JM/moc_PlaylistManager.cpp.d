@@ -15,6 +15,7 @@ D:/IPTV/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/untitled_autogen/UVLADIE3JM/mo
   C:/Qt/6.9.2/mingw_64/include/QtCore/QSharedDataPointer \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QStandardPaths \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
+  C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QUrl \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QUrlQuery \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QVariant \

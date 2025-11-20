@@ -593,6 +593,100 @@ void PlaylistManager::parseM3UContent(const QString &content)
     qDebug() << "PlaylistManager: Parsed M3U -" << result.liveChannels.size() << "channels," << result.vodItems.size() << "VOD items";
 }
 
+QStringList PlaylistManager::getChannelVlcOptions(const QString &url) const
+{
+    QStringList options;
+    if (!m_liveChannelsModel)
+        return options;
+
+    // Normalize URL for matching (remove trailing slashes, handle encoding)
+    QString normalizedUrl = url.trimmed();
+    if (normalizedUrl.endsWith('/'))
+        normalizedUrl.chop(1);
+
+    qDebug() << "PlaylistManager: Looking for VLC options for URL:" << normalizedUrl;
+
+    const int count = m_liveChannelsModel->rowCount();
+    for (int i = 0; i < count; ++i) {
+        LiveChannel *channel = m_liveChannelsModel->get(i);
+        if (!channel) continue;
+
+        QString channelUrl = channel->url().trimmed();
+        if (channelUrl.endsWith('/'))
+            channelUrl.chop(1);
+
+        // Try exact match first
+        if (channelUrl == normalizedUrl || channelUrl == url) {
+            options = channel->vlcOptions();
+            qDebug() << "PlaylistManager: Found matching channel at index" << i << "with" << options.size() << "VLC options";
+            if (!options.isEmpty()) {
+                qDebug() << "PlaylistManager: VLC options:" << options;
+            }
+            break;
+        }
+
+        // Also try case-insensitive match
+        if (channelUrl.compare(normalizedUrl, Qt::CaseInsensitive) == 0) {
+            options = channel->vlcOptions();
+            qDebug() << "PlaylistManager: Found case-insensitive match at index" << i << "with" << options.size() << "VLC options";
+            if (!options.isEmpty()) {
+                qDebug() << "PlaylistManager: VLC options:" << options;
+            }
+            break;
+        }
+    }
+
+    if (options.isEmpty()) {
+        qDebug() << "PlaylistManager: No VLC options found for URL. Searched" << count << "channels.";
+    }
+
+    return options;
+}
+
+QStringList PlaylistManager::getVodVlcOptions(const QString &url) const
+{
+    QStringList options;
+    if (!m_vodItemsModel)
+        return options;
+
+    // Normalize URL for matching (remove trailing slashes, handle encoding)
+    QString normalizedUrl = url.trimmed();
+    if (normalizedUrl.endsWith('/'))
+        normalizedUrl.chop(1);
+
+    qDebug() << "PlaylistManager: Looking for VOD VLC options for URL:" << normalizedUrl;
+
+    const int count = m_vodItemsModel->rowCount();
+    for (int i = 0; i < count; ++i) {
+        VodItem *item = m_vodItemsModel->get(i);
+        if (!item) continue;
+
+        QString itemUrl = item->url().trimmed();
+        if (itemUrl.endsWith('/'))
+            itemUrl.chop(1);
+
+        // Try exact match first
+        if (itemUrl == normalizedUrl || itemUrl == url) {
+            options = item->vlcOptions();
+            qDebug() << "PlaylistManager: Found matching VOD item at index" << i << "with" << options.size() << "VLC options";
+            break;
+        }
+
+        // Also try case-insensitive match
+        if (itemUrl.compare(normalizedUrl, Qt::CaseInsensitive) == 0) {
+            options = item->vlcOptions();
+            qDebug() << "PlaylistManager: Found case-insensitive VOD match at index" << i << "with" << options.size() << "VLC options";
+            break;
+        }
+    }
+
+    if (options.isEmpty()) {
+        qDebug() << "PlaylistManager: No VOD VLC options found for URL. Searched" << count << "items.";
+    }
+
+    return options;
+}
+
 QString PlaylistManager::generateId()
 {
     return QString::number(QDateTime::currentMSecsSinceEpoch());

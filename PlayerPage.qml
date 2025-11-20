@@ -7,9 +7,8 @@ Rectangle {
     id: playerPage
     color: "#000000"
 
-    // When true we don't render video inside this window. Instead, we launch
-    // the full VLC player UI in a separate window using ExternalVlcLauncher.
-    property bool useExternalVlc: false // DISABLED - play video inside app
+    // Legacy flag (no longer used) - always play inside the app
+    property bool useExternalVlc: false
     
     // Format time from milliseconds to MM:SS or HH:MM:SS
     function formatTime(milliseconds) {
@@ -160,6 +159,7 @@ Rectangle {
                 vlcPlayer.source = currentSource.toString()
             }
             
+            // Internal embedded VLC playback
             if (hasValidSource) {
                 var sourceStr = vlcPlayer.source
                 if (sourceStr !== "" && sourceStr !== "undefined") {
@@ -275,6 +275,21 @@ Rectangle {
             
             if (!urlString.startsWith("http://") && !urlString.startsWith("https://")) {
                 console.warn("⚠ WARNING: URL doesn't start with http:// or https://")
+            }
+            
+            // Lookup any per-stream VLC options (from #EXTVLCOPT) and pass them to VlcPlayer
+            try {
+                var opts = PlaylistManager.getChannelVlcOptions(urlString)
+                if (opts && opts.length !== undefined) {
+                    console.log("✓ Applying", opts.length, "VLC options from playlist")
+                    vlcPlayer.vlcOptions = opts
+                } else {
+                    console.log("No per-channel VLC options for this URL")
+                    vlcPlayer.vlcOptions = []
+                }
+            } catch (e) {
+                console.warn("Failed to get channel VLC options:", e)
+                vlcPlayer.vlcOptions = []
             }
             
             // Set streamUrl - this will trigger onStreamUrlChanged

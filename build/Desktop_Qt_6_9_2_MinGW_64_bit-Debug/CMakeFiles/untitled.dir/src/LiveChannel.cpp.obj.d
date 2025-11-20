@@ -321,4 +321,6 @@ CMakeFiles/untitled.dir/src/LiveChannel.cpp.obj: \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ratio \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ctime \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
- C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstringlist.h

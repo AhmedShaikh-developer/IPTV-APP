@@ -42,7 +42,8 @@ template <> constexpr inline auto VodItem::qt_create_metaobjectdata<qt_meta_tag_
         "name",
         "groupTitle",
         "logo",
-        "url"
+        "url",
+        "vlcOptions"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -56,6 +57,8 @@ template <> constexpr inline auto VodItem::qt_create_metaobjectdata<qt_meta_tag_
         QtMocHelpers::PropertyData<QString>(3, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Constant),
         // property 'url'
         QtMocHelpers::PropertyData<QString>(4, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Constant),
+        // property 'vlcOptions'
+        QtMocHelpers::PropertyData<QStringList>(5, QMetaType::QStringList, QMC::DefaultPropertyFlags | QMC::Constant),
     };
     QtMocHelpers::UintData qt_enums {
     };
@@ -82,6 +85,7 @@ void VodItem::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 1: *reinterpret_cast<QString*>(_v) = _t->groupTitle(); break;
         case 2: *reinterpret_cast<QString*>(_v) = _t->logo(); break;
         case 3: *reinterpret_cast<QString*>(_v) = _t->url(); break;
+        case 4: *reinterpret_cast<QStringList*>(_v) = _t->vlcOptions(); break;
         default: break;
         }
     }
@@ -109,7 +113,7 @@ int VodItem::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
             || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
 }

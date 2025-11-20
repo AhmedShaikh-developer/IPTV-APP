@@ -16,6 +16,7 @@ M3UParser::ParseResult M3UParser::parse(const QString &m3uContent)
     QString currentGroup;
     QString currentLogo;
     QString currentUrl;
+    QStringList currentOptions;
 
     for (int i = 0; i < lines.size(); ++i) {
         QString line = lines[i].trimmed();
@@ -46,6 +47,17 @@ M3UParser::ParseResult M3UParser::parse(const QString &m3uContent)
                     currentGroup = match.captured(1);
                 }
             }
+
+            // Reset per-entry VLC options for the new entry
+            currentOptions.clear();
+        } else if (line.startsWith("#EXTVLCOPT:")) {
+            // Per-entry VLC options that should be passed directly to libVLC
+            // Example: #EXTVLCOPT:http-user-agent=...
+            QString opt = line.mid(QStringLiteral("#EXTVLCOPT:").length()).trimmed();
+            if (!opt.isEmpty()) {
+                currentOptions.append(opt);
+                qDebug() << "M3U Parser: Found VLC option for" << currentName << ":" << opt;
+            }
         } else if (!line.startsWith("#") && !line.isEmpty()) {
             // This is the URL line
             currentUrl = line.trimmed();
@@ -53,12 +65,18 @@ M3UParser::ParseResult M3UParser::parse(const QString &m3uContent)
             // Create channel/item if we have all necessary data
             if (!currentUrl.isEmpty() && !currentName.isEmpty()) {
                 if (isVodGroup(currentGroup)) {
-                    VodItem *item = new VodItem(currentName, currentGroup, currentLogo, currentUrl, this);
+                    VodItem *item = new VodItem(currentName, currentGroup, currentLogo, currentUrl, currentOptions, this);
                     result.vodItems.append(item);
+                    if (!currentOptions.isEmpty()) {
+                        qDebug() << "M3U Parser: Created VOD item" << currentName << "with" << currentOptions.size() << "VLC options";
+                    }
                 } else {
                     // Default to live channel
-                    LiveChannel *channel = new LiveChannel(currentName, currentGroup, currentLogo, currentUrl, this);
+                    LiveChannel *channel = new LiveChannel(currentName, currentGroup, currentLogo, currentUrl, currentOptions, this);
                     result.liveChannels.append(channel);
+                    if (!currentOptions.isEmpty()) {
+                        qDebug() << "M3U Parser: Created live channel" << currentName << "with" << currentOptions.size() << "VLC options";
+                    }
                 }
             }
 
@@ -67,6 +85,7 @@ M3UParser::ParseResult M3UParser::parse(const QString &m3uContent)
             currentGroup.clear();
             currentLogo.clear();
             currentUrl.clear();
+            currentOptions.clear();
         }
     }
 

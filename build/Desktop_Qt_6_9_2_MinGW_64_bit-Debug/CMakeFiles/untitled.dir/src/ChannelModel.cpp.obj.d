@@ -346,4 +346,6 @@ CMakeFiles/untitled.dir/src/ChannelModel.cpp.obj: \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QObject \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qobject.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
- C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstringlist.h

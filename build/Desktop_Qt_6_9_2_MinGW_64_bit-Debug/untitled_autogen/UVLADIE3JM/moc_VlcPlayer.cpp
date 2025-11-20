@@ -63,6 +63,8 @@ template <> constexpr inline auto VlcPlayer::qt_create_metaobjectdata<qt_meta_ta
         "paused",
         "stopped",
         "ended",
+        "vlcOptionsChanged",
+        "options",
         "updateState",
         "setErrorMessage",
         "onVideoOutputWindowChanged",
@@ -77,6 +79,7 @@ template <> constexpr inline auto VlcPlayer::qt_create_metaobjectdata<qt_meta_ta
         "setTimeInternal",
         "setLengthInternal",
         "errorMessage",
+        "vlcOptions",
         "State",
         "Idle",
         "Opening",
@@ -135,40 +138,44 @@ template <> constexpr inline auto VlcPlayer::qt_create_metaobjectdata<qt_meta_ta
         QtMocHelpers::SignalData<void()>(24, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'error'
         QtMocHelpers::SignalData<void()>(17, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'vlcOptionsChanged'
+        QtMocHelpers::SignalData<void(const QStringList &)>(25, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QStringList, 26 },
+        }}),
         // Slot 'updateState'
-        QtMocHelpers::SlotData<void()>(25, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(27, 2, QMC::AccessPublic, QMetaType::Void),
         // Slot 'setErrorMessage'
-        QtMocHelpers::SlotData<void(const QString &)>(26, 2, QMC::AccessPublic, QMetaType::Void, {{
+        QtMocHelpers::SlotData<void(const QString &)>(28, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 17 },
         }}),
         // Slot 'onVideoOutputWindowChanged'
-        QtMocHelpers::SlotData<void(QWindow *)>(27, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { 0x80000000 | 28, 29 },
+        QtMocHelpers::SlotData<void(QWindow *)>(29, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { 0x80000000 | 30, 31 },
         }}),
         // Method 'play'
-        QtMocHelpers::MethodData<void()>(30, 2, QMC::AccessPublic, QMetaType::Void),
-        // Method 'pause'
-        QtMocHelpers::MethodData<void()>(31, 2, QMC::AccessPublic, QMetaType::Void),
-        // Method 'stop'
         QtMocHelpers::MethodData<void()>(32, 2, QMC::AccessPublic, QMetaType::Void),
+        // Method 'pause'
+        QtMocHelpers::MethodData<void()>(33, 2, QMC::AccessPublic, QMetaType::Void),
+        // Method 'stop'
+        QtMocHelpers::MethodData<void()>(34, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'seek'
-        QtMocHelpers::MethodData<void(int)>(33, 2, QMC::AccessPublic, QMetaType::Void, {{
+        QtMocHelpers::MethodData<void(int)>(35, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 9 },
         }}),
         // Method 'setTimePosition'
-        QtMocHelpers::MethodData<void(float)>(34, 2, QMC::AccessPublic, QMetaType::Void, {{
+        QtMocHelpers::MethodData<void(float)>(36, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Float, 7 },
         }}),
         // Method 'setPositionInternal'
-        QtMocHelpers::MethodData<void(float)>(35, 2, QMC::AccessPublic, QMetaType::Void, {{
+        QtMocHelpers::MethodData<void(float)>(37, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Float, 7 },
         }}),
         // Method 'setTimeInternal'
-        QtMocHelpers::MethodData<void(int)>(36, 2, QMC::AccessPublic, QMetaType::Void, {{
+        QtMocHelpers::MethodData<void(int)>(38, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 9 },
         }}),
         // Method 'setLengthInternal'
-        QtMocHelpers::MethodData<void(int)>(37, 2, QMC::AccessPublic, QMetaType::Void, {{
+        QtMocHelpers::MethodData<void(int)>(39, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 11 },
         }}),
     };
@@ -188,21 +195,23 @@ template <> constexpr inline auto VlcPlayer::qt_create_metaobjectdata<qt_meta_ta
         // property 'muted'
         QtMocHelpers::PropertyData<bool>(15, QMetaType::Bool, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 6),
         // property 'errorMessage'
-        QtMocHelpers::PropertyData<QString>(38, QMetaType::QString, QMC::DefaultPropertyFlags, 7),
+        QtMocHelpers::PropertyData<QString>(40, QMetaType::QString, QMC::DefaultPropertyFlags, 7),
         // property 'videoOutput'
         QtMocHelpers::PropertyData<QQuickItem*>(20, 0x80000000 | 19, QMC::DefaultPropertyFlags | QMC::Writable | QMC::EnumOrFlag | QMC::StdCppSet, 8),
+        // property 'vlcOptions'
+        QtMocHelpers::PropertyData<QStringList>(41, QMetaType::QStringList, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 14),
     };
     QtMocHelpers::UintData qt_enums {
         // enum 'State'
-        QtMocHelpers::EnumData<enum State>(39, 39, QMC::EnumFlags{}).add({
-            {   40, State::Idle },
-            {   41, State::Opening },
-            {   42, State::Buffering },
-            {   43, State::Playing },
-            {   44, State::Paused },
-            {   45, State::Stopped },
-            {   46, State::Ended },
-            {   47, State::Error },
+        QtMocHelpers::EnumData<enum State>(42, 42, QMC::EnumFlags{}).add({
+            {   43, State::Idle },
+            {   44, State::Opening },
+            {   45, State::Buffering },
+            {   46, State::Playing },
+            {   47, State::Paused },
+            {   48, State::Stopped },
+            {   49, State::Ended },
+            {   50, State::Error },
         }),
     };
     return QtMocHelpers::metaObjectData<VlcPlayer, qt_meta_tag_ZN9VlcPlayerE_t>(QMC::MetaObjectFlag{}, qt_stringData,
@@ -237,17 +246,18 @@ void VlcPlayer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 11: _t->stopped(); break;
         case 12: _t->ended(); break;
         case 13: _t->error(); break;
-        case 14: _t->updateState(); break;
-        case 15: _t->setErrorMessage((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 16: _t->onVideoOutputWindowChanged((*reinterpret_cast< std::add_pointer_t<QWindow*>>(_a[1]))); break;
-        case 17: _t->play(); break;
-        case 18: _t->pause(); break;
-        case 19: _t->stop(); break;
-        case 20: _t->seek((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 21: _t->setTimePosition((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
-        case 22: _t->setPositionInternal((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
-        case 23: _t->setTimeInternal((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 24: _t->setLengthInternal((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 14: _t->vlcOptionsChanged((*reinterpret_cast< std::add_pointer_t<QStringList>>(_a[1]))); break;
+        case 15: _t->updateState(); break;
+        case 16: _t->setErrorMessage((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 17: _t->onVideoOutputWindowChanged((*reinterpret_cast< std::add_pointer_t<QWindow*>>(_a[1]))); break;
+        case 18: _t->play(); break;
+        case 19: _t->pause(); break;
+        case 20: _t->stop(); break;
+        case 21: _t->seek((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 22: _t->setTimePosition((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
+        case 23: _t->setPositionInternal((*reinterpret_cast< std::add_pointer_t<float>>(_a[1]))); break;
+        case 24: _t->setTimeInternal((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 25: _t->setLengthInternal((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -261,7 +271,7 @@ void VlcPlayer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
                 *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< QQuickItem* >(); break;
             }
             break;
-        case 16:
+        case 17:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
@@ -299,6 +309,8 @@ void VlcPlayer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
             return;
         if (QtMocHelpers::indexOfMethod<void (VlcPlayer::*)()>(_a, &VlcPlayer::error, 13))
             return;
+        if (QtMocHelpers::indexOfMethod<void (VlcPlayer::*)(const QStringList & )>(_a, &VlcPlayer::vlcOptionsChanged, 14))
+            return;
     }
     if (_c == QMetaObject::RegisterPropertyMetaType) {
         switch (_id) {
@@ -319,6 +331,7 @@ void VlcPlayer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 6: *reinterpret_cast<bool*>(_v) = _t->muted(); break;
         case 7: *reinterpret_cast<QString*>(_v) = _t->errorMessage(); break;
         case 8: *reinterpret_cast<QQuickItem**>(_v) = _t->videoOutput(); break;
+        case 9: *reinterpret_cast<QStringList*>(_v) = _t->vlcOptions(); break;
         default: break;
         }
     }
@@ -331,6 +344,7 @@ void VlcPlayer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 5: _t->setVolume(*reinterpret_cast<float*>(_v)); break;
         case 6: _t->setMuted(*reinterpret_cast<bool*>(_v)); break;
         case 8: _t->setVideoOutput(*reinterpret_cast<QQuickItem**>(_v)); break;
+        case 9: _t->setVlcOptions(*reinterpret_cast<QStringList*>(_v)); break;
         default: break;
         }
     }
@@ -355,20 +369,20 @@ int VlcPlayer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 25)
+        if (_id < 26)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 25;
+        _id -= 26;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 25)
+        if (_id < 26)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 25;
+        _id -= 26;
     }
     if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
             || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 10;
     }
     return _id;
 }
@@ -455,5 +469,11 @@ void VlcPlayer::ended()
 void VlcPlayer::error()
 {
     QMetaObject::activate(this, &staticMetaObject, 13, nullptr);
+}
+
+// SIGNAL 14
+void VlcPlayer::vlcOptionsChanged(const QStringList & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 14, nullptr, _t1);
 }
 QT_WARNING_POP

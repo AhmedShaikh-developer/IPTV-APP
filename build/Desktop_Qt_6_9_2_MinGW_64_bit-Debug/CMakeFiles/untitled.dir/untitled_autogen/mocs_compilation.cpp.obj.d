@@ -358,6 +358,8 @@ CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qlist.h D:/IPTV/src/LiveChannel.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstringlist.h \
  D:\IPTV\build\Desktop_Qt_6_9_2_MinGW_64_bit-Debug\untitled_autogen\UVLADIE3JM/moc_ExternalVlcLauncher.cpp \
  D:/IPTV/src/ExternalVlcLauncher.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QProcess \

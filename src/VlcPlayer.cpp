@@ -87,6 +87,7 @@ VlcPlayer::VlcPlayer(QObject *parent)
     , m_muted(false)
     , m_videoOutput(nullptr)
     , m_videoWindow(nullptr)
+    , m_vlcOptions()
 {
     qDebug() << "VlcPlayer: Constructor called";
     createVlcInstance();
@@ -104,13 +105,16 @@ void VlcPlayer::createVlcInstance()
 #ifdef HAVE_VLC
     // Create VLC instance with options for HTTP headers
     // Set User-Agent at instance level (applies to all media)
+    // IMPORTANT: Only use instance-level options that are valid
     const char *vlc_args[] = {
         "--intf", "dummy",           // No interface
         "--no-video-title-show",     // Don't show video title
         "--quiet",                   // Quiet mode
+        // User-Agent with proper format (VLC 3.x)
         "--http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "--network-caching=2000",    // 2 second network cache (default, can be overridden per media)
         "--http-reconnect",          // Auto-reconnect on errors
+        // Note: http-timeout is a per-media option, NOT an instance-level option
         // Note: HLS-specific options are set per-media, not at instance level
     };
 
@@ -215,7 +219,7 @@ void VlcPlayer::setupMedia(const QString &url)
         return;
     }
 
-    // Set HTTP headers for this media
+    // Set HTTP headers for this media (defaults)
     // Extract referer from URL
     QUrl qurl(url);
     QString referer = qurl.scheme() + "://" + qurl.host();
@@ -231,15 +235,33 @@ void VlcPlayer::setupMedia(const QString &url)
     QByteArray userAgentBytes = userAgent.toUtf8();
     
     // Set headers using libvlc_media_add_option (must be called before set_media)
-    // Note: Some versions of libVLC use different option names
+    // IMPORTANT: Values with spaces need to be properly formatted
+    // libVLC accepts options in format ":option=value" where value can be quoted if needed
+    
+    // Calculate origin first
+    QString origin = qurl.scheme() + "://" + qurl.host();
+    
+    // Use http-referrer (standard VLC option name)
     libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=%1").arg(referer).toUtf8().constData());
+    // Also try alternate spelling for compatibility
+    libvlc_media_add_option(m_vlcMedia, QString(":http-referer=%1").arg(referer).toUtf8().constData());
+    
+    // User-Agent: Don't duplicate if set at instance level, but ensure per-media override works
+    // Note: Per-media options override instance-level options
     libvlc_media_add_option(m_vlcMedia, QString(":http-user-agent=%1").arg(userAgent).toUtf8().constData());
+    
+    // Accept headers
     libvlc_media_add_option(m_vlcMedia, ":http-accept=*/*");
-    libvlc_media_add_option(m_vlcMedia, ":http-accept-language=en-US,en;q=0.9,*;q=0.8");
-    libvlc_media_add_option(m_vlcMedia, ":http-accept-encoding=gzip, deflate, br");
+    libvlc_media_add_option(m_vlcMedia, ":http-accept-language=en-US,en;q=0.9");
+    libvlc_media_add_option(m_vlcMedia, ":http-accept-encoding=gzip,deflate,br");
+    
+    // Connection settings
     libvlc_media_add_option(m_vlcMedia, ":http-keep-alive=true");
-    libvlc_media_add_option(m_vlcMedia, ":http-timeout=30000"); // 30 second timeout
-    libvlc_media_add_option(m_vlcMedia, ":http-forward-cookies=true"); // Forward cookies if any
+    libvlc_media_add_option(m_vlcMedia, ":http-timeout=30000");
+    libvlc_media_add_option(m_vlcMedia, ":http-forward-cookies=true");
+    
+    // Origin header (important for CORS/CloudFront)
+    libvlc_media_add_option(m_vlcMedia, QString(":http-origin=%1").arg(origin).toUtf8().constData());
     
     // HLS-specific options for better compatibility
     // Check if URL is HLS/M3U8 stream
@@ -256,6 +278,75 @@ void VlcPlayer::setupMedia(const QString &url)
     
     qDebug() << "VlcPlayer: HTTP headers set - Referer:" << referer;
     qDebug() << "VlcPlayer: HTTP headers set - User-Agent:" << userAgent;
+
+    // Apply any per-stream VLC options coming from the playlist (e.g. #EXTVLCOPT)
+    // Each entry is in the form "option=value" (without leading colon)
+    bool hasCustomOptions = false;
+    for (const QString &opt : std::as_const(m_vlcOptions)) {
+        QString trimmed = opt.trimmed();
+        if (trimmed.isEmpty())
+            continue;
+
+        hasCustomOptions = true;
+        QString optionString;
+        if (trimmed.startsWith(QLatin1Char(':'))) {
+            optionString = trimmed;
+        } else {
+            optionString = QLatin1Char(':') + trimmed;
+        }
+
+        qDebug() << "VlcPlayer: Applying extra VLC option:" << optionString;
+        libvlc_media_add_option(m_vlcMedia, optionString.toUtf8().constData());
+    }
+
+    // If no custom options were provided, add intelligent fallbacks based on URL pattern
+    if (!hasCustomOptions) {
+        QString urlLower = url.toLower();
+        
+        // Amazon CloudFront / Amagi streams often need Origin header and specific referer
+        if (urlLower.contains("amazonaws.com") || urlLower.contains("cloudfront.net") || 
+            urlLower.contains("amagi.tv") || urlLower.contains(".amagi.")) {
+            qDebug() << "VlcPlayer: Detected Amazon CloudFront/Amagi stream, applying enhanced headers";
+            
+            // Try multiple referer/origin strategies for CloudFront
+            // CloudFront often expects referer from a legitimate domain
+            QString host = qurl.host();
+            QString baseOrigin = qurl.scheme() + "://" + host;
+            QString baseReferer = baseOrigin + "/";
+            
+            // For Amagi streams, try common referer patterns
+            if (urlLower.contains("amagi")) {
+                // Try Amagi's own domain as referer
+                libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=https://www.amagi.com/").toUtf8().constData());
+                libvlc_media_add_option(m_vlcMedia, QString(":http-origin=https://www.amagi.com").toUtf8().constData());
+                
+                // Also try the stream's own domain
+                libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=%1").arg(baseReferer).toUtf8().constData());
+                libvlc_media_add_option(m_vlcMedia, QString(":http-origin=%1").arg(baseOrigin).toUtf8().constData());
+                
+                // Try common browser referers
+                libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=https://www.google.com/").toUtf8().constData());
+            } else {
+                // For CloudFront, use the stream domain
+                libvlc_media_add_option(m_vlcMedia, QString(":http-origin=%1").arg(baseOrigin).toUtf8().constData());
+                libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=%1").arg(baseReferer).toUtf8().constData());
+                
+                // Also try root domain variations
+                if (host.contains(".")) {
+                    QString rootDomain = host.mid(host.indexOf(".") + 1);
+                    libvlc_media_add_option(m_vlcMedia, QString(":http-referrer=%1://%2/").arg(qurl.scheme(), rootDomain).toUtf8().constData());
+                }
+            }
+            
+            // Add additional headers that CloudFront might check
+            // Some CloudFront streams check for specific Accept headers
+            libvlc_media_add_option(m_vlcMedia, ":http-accept-language=en-US,en;q=0.9");
+            libvlc_media_add_option(m_vlcMedia, ":http-accept-encoding=identity");  // Some CloudFront prefers identity over gzip
+            
+            qDebug() << "VlcPlayer: Applied CloudFront/Amagi enhanced headers with multiple referer strategies";
+        }
+    }
+
     qDebug() << "VlcPlayer: Note - Some streams may be region-locked or require authentication";
 
     // Set media to player
@@ -577,4 +668,14 @@ void VlcPlayer::setVideoOutput(QQuickItem* videoOutput)
     }
 
     emit videoOutputChanged(m_videoOutput);
+}
+
+void VlcPlayer::setVlcOptions(const QStringList &options)
+{
+    if (m_vlcOptions == options)
+        return;
+
+    m_vlcOptions = options;
+    qDebug() << "VlcPlayer: Received" << m_vlcOptions.size() << "playlist options";
+    emit vlcOptionsChanged(m_vlcOptions);
 }

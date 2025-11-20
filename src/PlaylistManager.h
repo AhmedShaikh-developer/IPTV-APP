@@ -9,6 +9,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QStandardPaths>
+#include <QStringList>
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
@@ -40,6 +41,10 @@ public:
     Q_INVOKABLE void setActivePlaylist(const QString &id);
     Q_INVOKABLE void refreshActivePlaylist();
     Q_INVOKABLE void playSingleStream(const QString &url);
+
+    // Look up per-channel or per-VOD VLC options (from #EXTVLCOPT lines)
+    Q_INVOKABLE QStringList getChannelVlcOptions(const QString &url) const;
+    Q_INVOKABLE QStringList getVodVlcOptions(const QString &url) const;
     Q_INVOKABLE void clearError();
 
     void loadPlaylists();

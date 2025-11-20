@@ -346,4 +346,6 @@ CMakeFiles/untitled.dir/src/VodModel.cpp.obj: D:\IPTV\src\VodModel.cpp \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QObject \
  C:/Qt/6.9.2/mingw_64/include/QtCore/qobject.h \
  C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
- C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstring.h \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.9.2/mingw_64/include/QtCore/qstringlist.h
